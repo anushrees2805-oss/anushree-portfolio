@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Anushree Sahu — Graphic Designer & Visual Storyteller</title>
+  <meta name="description" content="Portfolio of Anushree Sahu — graphic designer and visual storyteller from Mumbai. Branding, packaging, illustration, photography and film.">
+  <meta name="theme-color" content="#080808">
+  <meta property="og:title" content="Anushree Sahu — Graphic Designer & Visual Storyteller">
+  <meta property="og:description" content="Exploring the space between image, identity, and storytelling.">
+  <meta property="og:image" content="assets/character/og.jpg">
+  <link rel="icon" type="image/png" href="assets/character/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,800;0,900;1,500&family=Instrument+Serif:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/character/anushree.webp">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    /* decide before paint whether the intro plays */
+    (function () {
+      var d = document.documentElement, skip = false;
+      if (location.hash && location.hash.length > 1) skip = true;
+      if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { skip = true; d.classList.add('reduced'); }
+      d.classList.add(skip ? 'no-intro' : 'play-intro');
+      d.classList.add('js');
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============ INTRO: character → mouth opens → name ============ -->
+  <div id="intro" class="intro" aria-hidden="true">
+    <div class="intro__meta intro__meta--tr mono">Graphic designer<br>&amp; visual storyteller</div>
+    <div class="intro__meta intro__meta--bl mono">Mumbai, India</div>
+    <img class="intro__char" src="assets/character/anushree.webp" alt="" width="1289" height="1006" decoding="async">
+    <div class="intro__mouth">
+      <div class="intro__name"><span class="ln"><span>ANUSHREE</span></span><span class="ln"><span>SAHU</span></span></div>
+    </div>
+    <div class="intro__hint mono"><span>Scroll to open</span><i aria-hidden="true"></i></div>
+    <button class="intro__skip mono" type="button">Skip intro →</button>
+  </div>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="#home" data-nav="home">Anushree Sahu<sup>©</sup></a>
+    <nav class="nav__links" aria-label="Main">
+      <a href="#home" data-nav="home">Home</a>
+      <a href="#about" data-nav="about">About</a>
+      <a href="#work" data-nav="work">Work</a>
+      <a href="#contact" data-nav="contact">Contact</a>
+    </nav>
+    <div class="nav__meta"><strong>Based in Mumbai</strong><br>Graphic designer &amp; visual storyteller</div>
+  </header>
+
+  <main id="main">
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="home" aria-label="Introduction">
+      <div class="hero__top">
+        <div class="hvid" aria-hidden="true">
+          <img class="hvid__v hvid__img" id="heroImg" src="assets/hero/light.webp" srcset="assets/hero/light-s.webp 1200w, assets/hero/light.webp 2400w" sizes="100vw" alt="" width="2400" height="1599" fetchpriority="high" decoding="async">
+          <canvas class="hvid__dust" id="heroDust"></canvas>
+        </div>
+        <div class="trail" id="trail" aria-hidden="true"></div>
+        <div class="hx" id="heroLead">
+          <p class="hx__eyebrow mono"><span class="hx__dot"></span>Graphic designer · Visual storyteller · Mumbai</p>
+          <p class="hx__lead"><span class="ln"><span>Exploring the space between</span></span></p>
+          <h2 class="hx__words" aria-label="image, identity and storytelling">
+            <span class="ln"><span>IMAGE,</span></span>
+            <span class="ln"><span>IDENTITY</span></span>
+            <span class="ln"><span><i class="hx__amp">&amp;</i><span>STORYTELLING</span><b class="u-red">.</b></span></span>
+          </h2>
+        </div>
+        <a class="hero__scroll mono" href="#about"><span class="hero__scroll-line"></span>Scroll</a>
+      </div>
+
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee__track">
+          <span>Visual Storytelling</span><i></i><span>Posters &amp; Illustrations</span><i></i><span>Branding &amp; Packaging Design</span><i></i><span>Visual Storytelling</span><i></i><span>Posters &amp; Illustrations</span><i></i><span>Branding &amp; Packaging Design</span><i></i><span>Visual Storytelling</span><i></i><span>Posters &amp; Illustrations</span><i></i><span>Branding &amp; Packaging Design</span><i></i><span>Visual Storytelling</span><i></i><span>Posters &amp; Illustrations</span><i></i><span>Branding &amp; Packaging Design</span><i></i>
+        </div>
+      </div>
+
+      <h1 class="hero__name" id="heroName"><span class="fit"><span>ANUSHREE</span><b class="dot" aria-hidden="true"></b><span>SAHU</span></span></h1>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section class="about section" id="about" aria-labelledby="aboutTitle">
+      <div class="sec-head">
+        <span class="mono">(01) — About me</span>
+        <span class="mono dim">Curious mind · Mumbai</span>
+      </div>
+      <h2 class="mega mega--sentence reveal-lines" id="aboutTitle">
+        <span class="ln"><span>Curious <em class="serif">by nature.</em></span></span>
+        <span class="ln"><span>Creative <em class="serif">by instinct.</em></span></span>
+      </h2>
+
+      <div class="about__grid">
+        <figure class="about__char reveal" aria-hidden="true">
+          <img src="assets/character/anushree-sticker.webp" alt="" loading="lazy" width="1349" height="1066">
+          <figcaption class="mono">fig. 01 — me, mid-thought</figcaption>
+        </figure>
+        <div class="about__copy">
+          <p class="about__statement reveal">Hi, I'm Anushree — a graphic designer and visual storyteller from Mumbai. I build <strong>brand identities</strong> from the first sketch to the shelf, design <strong>packaging</strong> people want to pick up, draw <strong>illustrations and posters</strong>, and tell stories through <strong>photography and film</strong>.</p>
+          <p class="about__more reveal">Every project starts with questions — who is this for, what should it feel like, what will make someone remember it? I research, collect references and test ideas until the answer looks obvious. The result is work that is <em>clear, warm and a little unexpected</em>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TIMELINE ============ -->
+    <section class="timeline" id="timeline" aria-labelledby="tlTitle">
+      <div class="arc" id="arc">
+        <div class="arc__sticky">
+          <div class="arc__head">
+            <span class="mono">(02) — Creative timeline</span>
+            <span class="mono dim">Scroll to turn the wheel</span>
+          </div>
+          <div class="arc__wheel" id="arcWheel" aria-hidden="true"></div>
+          <div class="arc__panel" id="arcPanel">
+            <h2 class="visually-hidden" id="tlTitle">What I make, in three chapters</h2>
+            <!-- chapter text rendered from data in main.js -->
+          </div>
+          <div class="arc__dots" id="arcDots" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ KEYCHAIN ============ -->
+    <section class="keys" id="keychain" aria-labelledby="keysTitle">
+      <h2 class="visually-hidden" id="keysTitle">Choose a category of work</h2>
+      <div class="keys__bg" aria-hidden="true">PICK<br>ONE</div>
+      <div class="keys__meta keys__meta--l mono">A collection<br>of visual works</div>
+      <div class="keys__meta keys__meta--r mono">Branding · Posters<br>Visual stories</div>
+      <div class="keys__stage" id="keysStage"><!-- svg injected --></div>
+      <div class="keys__caption" id="keysCaption" aria-live="polite">
+        <span class="mono keys__hint">Hover, drag or tap a tag</span>
+        <span class="keys__label" id="keysLabel"></span>
+      </div>
+    </section>
+
+    <!-- ============ WORK ============ -->
+    <div id="work">
+      <!-- 01 Branding & Packaging -->
+      <section class="cat cat--light section" id="branding" aria-labelledby="brTitle">
+        <div class="sec-head">
+          <span class="mono">(03) — Work · 01</span>
+          <span class="mono dim">Branding &amp; Packaging Design</span>
+        </div>
+        <h2 class="mega reveal-lines" id="brTitle">
+          <span class="ln"><span>BRANDS YOU <em class="serif">remember.</em></span></span>
+          <span class="ln"><span>BOXES YOU <em class="serif">keep.</em></span></span>
+        </h2>
+        <p class="cat__intro reveal">A sun-kissed bakery in Lyon that smells of cinnamon. A Himalayan chilli oil that whispers instead of shouts. A yoga studio that runs on a heartbeat. Three brands I built from a single idea — name, logo, colour, voice and packaging — followed by real boxes, dielines and shelf-ready packs from my internship at Nexibles.</p>
+        <div class="plist" id="plist"><!-- rendered --></div>
+      </section>
+
+      <!-- 02 Visual storytelling -->
+      <section class="cat cat--dark section" id="lens" aria-labelledby="lnTitle">
+        <div class="sec-head">
+          <span class="mono">(03) — Work · 02</span>
+          <span class="mono dim">Visual Storytelling Through My Lens</span>
+        </div>
+        <h2 class="mega reveal-lines" id="lnTitle">
+          <span class="ln"><span>STORIES</span></span>
+          <span class="ln"><span><em class="serif">through my</em> LENS.</span></span>
+        </h2>
+        <p class="cat__intro reveal">Two short films and an edit to press play on. Then four photo stories: a fashion shoot in dry grass and late light, a styling day across the city, the gulls that crowd the Gateway, and the potters of Kumbharvada shaping clay in low light.</p>
+
+        <div class="films-zone" id="filmsZone">
+          <video class="films-zone__bg" id="filmsBg" src="assets/films/bg-reel.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+          <h3 class="sub-head mono">Films &amp; edits</h3>
+          <div class="films" id="films"><!-- rendered --></div>
+        </div>
+
+        <h3 class="sub-head mono">Photo stories</h3>
+        <div class="stories" id="stories"><!-- rendered --></div>
+      </section>
+
+      <!-- 03 Illustrations & Posters -->
+      <section class="cat cat--grey section" id="illustration" aria-labelledby="ilTitle">
+        <div class="sec-head">
+          <span class="mono">(03) — Work · 03</span>
+          <span class="mono dim">Illustrations &amp; Posters</span>
+        </div>
+        <h2 class="mega reveal-lines" id="ilTitle">
+          <span class="ln"><span>POSTERS THAT <em class="serif">speak</em><b class="u-red">.</b></span></span>
+          <span class="ln"><span>DRAWINGS THAT <em class="serif">stay</em><b class="u-red">.</b></span></span>
+        </h2>
+        <div class="gallery" id="illGallery"><!-- rendered --></div>
+      </section>
+    </div>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="contact section" id="contact" aria-labelledby="ctTitle">
+      <div class="sec-head">
+        <span class="mono">(04) — Contact</span>
+        <span class="mono dim">Say hello</span>
+      </div>
+      <h2 class="mega mega--contact reveal-lines" id="ctTitle">
+        <span class="ln"><span>HAVE AN IDEA<b class="u-blue">?</b></span></span>
+        <span class="ln"><span>LET'S MAKE</span></span>
+        <span class="ln"><span>SOMETHING <em class="serif">meaningful.</em></span></span>
+      </h2>
+
+      <div class="contact__grid">
+        <div class="contact__links">
+          <a class="big-link" href="tel:+918591263578" data-cursor="Call">
+            <span class="mono">Call or WhatsApp</span>
+            <span class="big-link__t">+91 85912 63578</span>
+          </a>
+          <a class="big-link" href="mailto:anushree.s2805@gmail.com" data-cursor="Write">
+            <span class="mono">Drop me a line</span>
+            <span class="big-link__t">anushree.s2805@gmail.com</span>
+          </a>
+          <a class="big-link" href="https://www.instagram.com/_.anushrees_/" target="_blank" rel="noopener" data-cursor="Follow">
+            <span class="mono">Instagram</span>
+            <span class="big-link__t">@_.anushrees_</span>
+          </a>
+        </div>
+        <div class="card-hi reveal" aria-hidden="true">
+          <img class="card-hi__char" src="assets/character/anushree-sticker.webp" alt="" loading="lazy" width="1349" height="1066">
+          <div class="card-hi__box">
+            <p class="card-hi__t">Got a brand with a story?</p>
+            <p class="mono dim">Open for</p>
+            <p>Brand identities, packaging, posters and visual stories — freelance, collaborations and studio roles. Tell me about your brand; I'll bring the curiosity and the details.</p>
+          </div>
+        </div>
+      </div>
+
+      <footer class="foot">
+        <span class="mono">© Anushree Sahu</span>
+        <span class="mono dim">Designed with curiosity in Mumbai</span>
+        <a class="mono" href="#home">Back to top ↑</a>
+      </footer>
+    </section>
+  </main>
+
+  <!-- ============ CASE STUDY (route view) ============ -->
+  <div class="case" id="case" role="dialog" aria-modal="true" aria-labelledby="caseTitle" hidden>
+    <div class="case__curtain" aria-hidden="true"><span id="curtainTitle"></span></div>
+    <div class="case__scroll" id="caseScroll"><div class="case__inner" id="caseInner"></div></div>
+  </div>
+
+  <!-- ============ LIGHTBOX ============ -->
+  <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Image viewer" hidden>
+    <button class="lb__close mono" type="button" aria-label="Close viewer">Close ✕</button>
+    <button class="lb__nav lb__prev" type="button" aria-label="Previous image">←</button>
+    <figure class="lb__fig"><img id="lbImg" alt=""><figcaption class="mono" id="lbCap"></figcaption></figure>
+    <button class="lb__nav lb__next" type="button" aria-label="Next image">→</button>
+  </div>
+
+  <!-- ============ FILM PLAYER ============ -->
+  <div class="player" id="player" role="dialog" aria-modal="true" aria-labelledby="playerTitle" hidden>
+    <div class="player__bar">
+      <span class="mono" id="playerTitle"></span>
+      <button class="mono player__close" type="button">Close ✕</button>
+    </div>
+    <video id="playerVideo" controls playsinline preload="metadata"></video>
+  </div>
+
+  <!-- ============ CURSOR ============ -->
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <img class="cursor__a" src="assets/character/cursor.png" alt="">
+    <img class="cursor__b" src="assets/character/cursor-wow.png" alt="">
+    <span class="cursor__label mono" id="cursorLabel"></span>
+  </div>
+
+  <script src="js/dims.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
