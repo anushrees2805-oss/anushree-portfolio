@@ -27,9 +27,13 @@
       var d = noiseBuf.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
       return ctx;
     }
-    function unlock() { if (init() && ctx.state === 'suspended') ctx.resume().catch(function () {}); }
+    function unlock() {
+      /* iPhone: let sound play even when the ring/silent switch is on */
+      try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+      if (init() && ctx.state === 'suspended') ctx.resume().catch(function () {});
+    }
     ['pointerdown', 'keydown', 'touchend'].forEach(function (ev) { addEventListener(ev, unlock, true); });
-    function ready() { return init() && ctx.state === 'running'; }
+    function ready() { return !window.__muted && init() && ctx.state === 'running'; }
     function noise(t, dur, type, f, q, vol, f2) {
       var src = ctx.createBufferSource(); src.buffer = noiseBuf;
       var bq = ctx.createBiquadFilter(); bq.type = type; bq.frequency.setValueAtTime(f, t); bq.Q.value = q;
@@ -69,6 +73,12 @@
         var t = ctx.currentTime;
         var g = noise(t, 0.09, 'bandpass', 1800, 1.2, 0, 3600); g.linearRampToValueAtTime(0.07, t + 0.03); g.exponentialRampToValueAtTime(0.0001, t + 0.09);
         tone(t, 2400, 2100, 0.05, 0.028);
+      },
+      /* a soft cardboard "pop" — the hamper lid lifting */
+      pop: function () {
+        if (!ready()) return; var t = ctx.currentTime;
+        tone(t, 210, 90, 0.18, 0.12, 'sine');
+        var g = noise(t, 0.12, 'lowpass', 900, 0.8, 0); g.linearRampToValueAtTime(0.06, t + 0.008); g.exponentialRampToValueAtTime(0.0001, t + 0.12);
       },
       /* a tiny, cute jingle — little bells as the charms swing into each other */
       jingle: function (amt) {
@@ -170,35 +180,54 @@
     ['Illustrations & Posters', 2], ['Character design', null, 'b'], ['portraits', null, 's'], ['Procreate'], ['Pop art', null, 'b'], ['line drawing', null, 's'], ['Typographic posters'], ['Product posters', null, 'b'], ['lettering', null, 's'],
     ['sound', null, 's'], ['Mood', null, 'b'], ['stories', null, 's']
   ];
+  /* the process keyring — one hanging tag per step, each with a visual */
+  var PROC = [
+    { t: 'Research', d: 'Who is it for? What is already on the shelf?', img: 'assets/research/p06-s.webp', c: 'red' },
+    { t: 'Moodboard', d: 'Colour, mood and memory, pinned in one place.', img: 'assets/research/p09-s.webp', c: 'white' },
+    { t: 'Sketches', d: 'Characters and layouts, drawn by hand first.', img: 'assets/research/p10-s.webp', c: 'grey' },
+    { t: 'Identity', d: 'Logo, type and palette — the brand gets a face.', img: 'assets/sunbuns/04-s.webp', c: 'black' },
+    { t: 'Dieline', d: 'Flat to fold: every panel planned.', img: 'assets/nexibles/10-s.webp', c: 'red' },
+    { t: 'Test print', d: 'Printed, folded and checked in hand.', img: 'assets/nexibles/testprint-s.webp', c: 'white' },
+    { t: 'On the shelf', d: 'The final pack, ready to be picked up.', img: 'assets/hamper/h01.webp', c: 'grey' }
+  ];
   function renderTimeline() {
-    var wheel = $('#arcWheel'), panel = $('#arcPanel'), dots = $('#arcDots'), w = '', h = '', d = '';
-    ARC.forEach(function (a) {
-      w += a[1] != null
-        ? '<span class="arc__w arc__w--ch" data-ch="' + a[1] + '"><i></i>' + esc(a[0]) + '</span>'
-        : '<span class="arc__w' + (a[2] ? ' arc__w--' + a[2] : '') + '">' + esc(a[0]) + '</span>';
-    });
-    TIMELINE.forEach(function (e, i) {
-      var tt = e.sub ? '<b>' + esc(e.title) + '</b> <em>' + esc(e.sub.trim()) + '</em>' : esc(e.title).replace(/^(\S+) (&amp;.*)$/, '<b>$1</b> <em>$2</em>');
-      h += '<div class="arc__ch" data-ch="' + i + '">' +
-        '<h3 class="arc__title">' + tt + '</h3>' +
-        '<p class="arc__desc">' + esc(e.long || e.desc).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>') + '</p>' +
-        '<p class="arc__tags">' + e.items.map(function (t) { return '<span class="mono">' + esc(t) + '</span>'; }).join('') + '</p>' +
-        '</div>';
-      d += '<span data-ch="' + i + '"></span>';
-    });
-    wheel.innerHTML = w; panel.insertAdjacentHTML('beforeend', h); dots.innerHTML = d;
+    var host = $('#procTrack'); if (!host) return;
+    host.insertAdjacentHTML('beforeend', PROC.map(function (p, i) {
+      return '<figure class="ptag ptag--' + p.c + '" data-i="' + i + '">' +
+        '<span class="ptag__ring" aria-hidden="true"></span><span class="ptag__body">' +
+        '<span class="ptag__hole" aria-hidden="true"></span>' +
+        '<span class="ptag__img"><img src="' + p.img + '" alt="' + esc(p.t) + '" loading="lazy" decoding="async"></span>' +
+        '<span class="ptag__no mono">Step ' + pad(i + 1) + '</span><span class="ptag__t">' + esc(p.t) + '</span><span class="ptag__d">' + esc(p.d) + '</span>' +
+        '</span></figure>';
+    }).join(''));
+  }
+
+  /* about: the hamper — a box full of packaging that opens as you arrive */
+  var HAMPER = [
+    ['h01', 'kogen'], ['h02', 'sunbuns'], ['h03', 'nexibles'], ['h04', 'sunbuns'], ['h05', 'nexibles'],
+    ['h06', 'pulse'], ['h07', 'nexibles'], ['h08', 'nexibles'], ['h09', 'kogen']
+  ];
+  function renderHamper() {
+    var host = $('#hamperPacks'); if (!host) return;
+    var n = HAMPER.length;
+    host.innerHTML = HAMPER.map(function (h, i) {
+      var a = (i - (n - 1) / 2) / ((n - 1) / 2);            /* -1 … 1 across the fan */
+      var x = a * 118, y = -(1 - a * a) * 46 - 150 + (i % 2) * 34, r = a * 26;
+      return '<a class="hpack" href="#/work/' + h[1] + '" data-cursor="Open" style="--x:' + x.toFixed(0) + '%;--y:' + y.toFixed(0) + '%;--r:' + r.toFixed(1) + 'deg;--d:' + (i * 70) + 'ms;--z:' + (10 - Math.abs(i - (n - 1) / 2)).toFixed(0) + '">' +
+        '<img src="assets/hamper/' + h[0] + '.webp" alt="' + h[1] + ' packaging" loading="lazy" decoding="async" width="640" height="640"></a>';
+    }).join('');
   }
 
   function renderProjects() {
     var host = $('#plist'), h = '';
     S.projects.forEach(function (p, i) {
-      if (p.internship) h += '<div class="plist__divider"><span class="pill pill--blue mono">Internship</span><span class="mono dim">Real packaging, designed at Nexibles</span></div>';
+      if (p.internship) h += '<div class="plist__divider"><span class="pill pill--red mono">Internship</span><span class="mono dim">Real packaging, designed at Nexibles</span></div>';
       var t = p.logo ? { src: p.logo, small: p.logo.replace('.webp', '-s.webp'), w: 2400, h: 1350 } : img(p.folder, p.thumb);
       h += '<a class="prow" href="#/work/' + p.slug + '" data-cursor="Open">' +
         '<span class="prow__no mono">' + p.no + '</span>' +
         '<span class="prow__title">' + esc(p.title) + '</span>' +
         '<span class="prow__meta"><strong>' + esc(p.line) + '</strong><span class="mono dim">' + esc(p.discipline) + '</span>' +
-        '<span class="pill mono' + (p.internship ? ' pill--blue' : '') + '">' + esc(p.kind) + '</span></span>' +
+        '<span class="pill mono' + (p.internship ? ' pill--red' : '') + '">' + esc(p.kind) + '</span></span>' +
         '<span class="prow__thumb">' + imgTag(t, { small: true, alt: p.title + ' preview' }) + '<span class="prow__arrow" aria-hidden="true">→</span></span>' +
         '</a>';
     });
@@ -242,7 +271,7 @@
     }).join('');
   }
 
-  renderTimeline(); renderProjects(); renderIllustrations(); renderFilms(); renderStories();
+  renderTimeline(); renderHamper(); renderProjects(); renderIllustrations(); renderFilms(); renderStories();
 
   /* ======================================================================
      REVEALS + NAV STATE + TIMELINE PROGRESS
@@ -270,6 +299,7 @@
 
   /* timeline wheel motion */
   (function arcWheel() {
+    if (!$('#arc')) return;
     var arc = $('#arc'), wheelEl = $('#arcWheel'), words = $$('.arc__w', wheelEl), chs = $$('.arc__ch'), dots = $$('#arcDots span');
     var STEP = 5.4, stops = [];
     words.forEach(function (el, k) { if (el.classList.contains('arc__w--ch')) stops.push(k * STEP); });
@@ -485,7 +515,13 @@
     addEventListener('touchstart', onTouchStart, { passive: true });
     addEventListener('touchmove', onTouchMove, { passive: false });
     addEventListener('keydown', onKey);
-    hintEl.addEventListener('click', function () { push(0.5); });
+    /* a tap (which also unlocks sound) plays the whole opening by itself */
+    function autoOpen(e) {
+      if (introDone || (e && e.target.closest('.intro__skip'))) return;
+      intro.removeEventListener('click', autoOpen);
+      (function step() { if (introDone || auto) return; push(0.018); requestAnimationFrame(step); })();
+    }
+    intro.addEventListener('click', autoOpen);
     $('.intro__skip', intro).addEventListener('click', function () { finishIntro(true); });
     var rz; addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { if (!introDone) { layout(); render(cur, 0); } }, 100); });
     stopIntro = function () {
@@ -838,7 +874,7 @@
     var hero = img(p.folder, p.cover);
     var h = '<div class="case__bar"><a class="case__back mono" href="#branding">← All work</a><span class="mono">' + esc(p.title) + ' — ' + esc(p.discipline) + '</span><span class="mono">' + p.no + ' / ' + pad(S.projects.length) + '</span></div>';
     h += '<header class="case__head">' +
-      '<div class="case__label"><span class="mono">Branding &amp; Packaging · ' + p.no + '</span><span class="pill mono' + (p.internship ? ' pill--blue' : '') + '">' + esc(p.kind) + '</span></div>' +
+      '<div class="case__label"><span class="mono">Branding &amp; Packaging · ' + p.no + '</span><span class="pill mono' + (p.internship ? ' pill--red' : '') + '">' + esc(p.kind) + '</span></div>' +
       '<h2 class="case__title" id="caseTitle">' + esc(p.title) + '</h2>' +
       '<p class="case__tag">' + esc(p.tagline) + '</p>' +
       '<dl class="case__facts">' + p.facts.map(function (f) { return '<dt>' + esc(f[0]) + '</dt><dd>' + esc(f[1]) + '</dd>'; }).join('') + '</dl>' +
@@ -1344,6 +1380,64 @@
     else new MutationObserver(function (m, o) { if (root.classList.contains('hero-in')) { o.disconnect(); setTimeout(start, 250); } }).observe(root, { attributes: true, attributeFilter: ['class'] });
   })();
   /* ======================================================================
+     PROCESS KEYRING — pinned; scrolling slides the rail, the tags swing
+     ====================================================================== */
+  (function procRing() {
+    var sec = $('#timeline.proc'), track = $('#procTrack'), bar = $('#procBar'); if (!sec || !track) return;
+    var tags = $$('.ptag', track), small = false, maxX = 0, x = 0, tx = 0, lastY = scrollY, vel = 0, raf = 0, act = -1;
+    var sw = tags.map(function (t, i) { return { th: (i % 2 ? 2 : -2), w: 0 }; });
+    function size() {
+      small = innerWidth < 760;
+      var last = tags[tags.length - 1];
+      maxX = last ? Math.max(0, last.offsetLeft + last.offsetWidth + (small ? 20 : 60) - innerWidth) : 0;
+      sec.style.height = (innerHeight + maxX * (small ? 1.1 : 1.25)) + 'px';
+    }
+    function prog() { var r = sec.getBoundingClientRect(); return clamp(-r.top / Math.max(1, sec.offsetHeight - innerHeight), 0, 1); }
+    function frame(now) {
+      raf = 0;
+      var dt = 1 / 60, p = prog();
+      tx = -p * maxX; x += (tx - x) * (REDUCED ? 1 : 0.14);
+      track.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,0)';
+      if (bar) bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+      var moving = Math.abs(tx - x) > 0.3;
+      vel *= 0.9;
+      var mid = innerWidth / 2, best = -1, bd = 1e9;
+      tags.forEach(function (t, i) {
+        var s = sw[i];
+        s.w += (-(s.th) * 26 - s.w * 3.4 + vel * 0.9) * dt; s.th += s.w * dt; s.th = clamp(s.th, -24, 24);
+        t.style.setProperty('--sw', s.th.toFixed(2) + 'deg');
+        var r = t.getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - mid); if (d < bd) { bd = d; best = i; }
+      });
+      if (best !== act) { act = best; tags.forEach(function (t, i) { t.classList.toggle('is-on', i === best); }); if (moving) SFX.tick(); }
+      if (moving || tags.some(function (t, i) { return Math.abs(sw[i].w) > 0.4 || Math.abs(sw[i].th) > 0.3; })) raf = requestAnimationFrame(frame);
+    }
+    function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+    addEventListener('scroll', function () { var dy = scrollY - lastY; lastY = scrollY; if (prog() > 0 && prog() < 1) vel = clamp(vel - dy * 0.9, -160, 160); kick(); }, { passive: true });
+    tags.forEach(function (t, i) { t.addEventListener('pointerenter', function () { sw[i].w += (i % 2 ? -1 : 1) * 70; SFX.hover(); kick(); }); });
+    addEventListener('resize', function () { size(); kick(); });
+    if (document.fonts) document.fonts.ready.then(function () { size(); kick(); });
+    addEventListener('load', function () { size(); kick(); });
+    size(); kick();
+  })();
+
+  /* the hamper opens when it comes into view; tap the lid to open / close */
+  (function hamperBox() {
+    var box = $('#hamper'); if (!box) return;
+    var lid = $('.hamper__lid', box);
+    function set(open, quiet) {
+      if (box.classList.contains('is-open') === open) return;
+      box.classList.toggle('is-open', open);
+      if (!quiet) { SFX.pop(); if (open) setTimeout(function () { SFX.jingle(0.9); }, 380); }
+    }
+    if (REDUCED) { box.classList.add('is-open'); return; }
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting && e.intersectionRatio > 0.45) set(true); });
+    }, { threshold: [0, 0.45, 0.7] }).observe(box);
+    else set(true, true);
+    lid.addEventListener('click', function () { set(!box.classList.contains('is-open')); });
+  })();
+
+  /* ======================================================================
      BACKGROUND MUSIC — original loops tied to sections:
        · the films area gets a slow, cinematic ambient score
        · the contact page gets a fun, upbeat loop
@@ -1361,6 +1455,7 @@
     btn.innerHTML = '<span class="snd__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="snd__t">Sound</span>';
     document.body.appendChild(btn);
     var want = true; try { want = localStorage.getItem('as-music2') !== 'off'; } catch (e) {}
+    window.__muted = !want;
     var ctx = null, filmOn = false, started = false, loading = null;
     function near(tr) { if (root.style.overflow === 'hidden') return false; var r = tr.el.getBoundingClientRect(); return r.top < innerHeight * tr.top && r.bottom > innerHeight * tr.bottom; }
     function anyNear() { return TRACKS.some(near); }
@@ -1411,12 +1506,12 @@
     ['pointerdown', 'keydown', 'touchend'].forEach(function (ev) { addEventListener(ev, firstGesture, true); });
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
-      want = !(want && started); try { localStorage.setItem('as-music2', want ? 'on' : 'off'); } catch (er) {}
+      want = !(want && started); window.__muted = !want; try { localStorage.setItem('as-music2', want ? 'on' : 'off'); } catch (er) {}
       if (want) go(); else fade(0.6);
       ui();
     });
     var sc = 0;
-    addEventListener('scroll', function () { if (!sc) sc = requestAnimationFrame(function () { sc = 0; btn.classList.toggle('is-near', anyNear()); fade(); }); }, { passive: true });
+    addEventListener('scroll', function () { if (!sc) sc = requestAnimationFrame(function () { sc = 0; fade(); }); }, { passive: true });
     document.addEventListener('visibilitychange', function () { fade(0.4); });
     document.addEventListener('film:open', function () { filmOn = true; fade(0.5); });
     document.addEventListener('film:close', function () { filmOn = false; fade(); });

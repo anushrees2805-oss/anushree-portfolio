@@ -37,7 +37,7 @@
     <div class="intro__mouth">
       <div class="intro__name"><span class="ln"><span>ANUSHREE</span></span><span class="ln"><span>SAHU</span></span></div>
     </div>
-    <div class="intro__hint mono"><span>Scroll to open</span><i aria-hidden="true"></i></div>
+    <div class="intro__hint mono"><span>Scroll or tap to open</span><i aria-hidden="true"></i></div>
     <button class="intro__skip mono" type="button">Skip intro →</button>
   </div>
 
@@ -94,33 +94,38 @@
         <span class="ln"><span>Creative <em class="serif">by instinct.</em></span></span>
       </h2>
 
-      <div class="about__grid">
-        <figure class="about__char reveal" aria-hidden="true">
-          <img src="assets/character/anushree-sticker.webp" alt="" loading="lazy" width="1349" height="1066">
-          <figcaption class="mono">fig. 01 — me, mid-thought</figcaption>
-        </figure>
+      <div class="about__wrap">
         <div class="about__copy">
-          <p class="about__statement reveal">Hi, I'm Anushree — a graphic designer and visual storyteller from Mumbai. I build <strong>brand identities</strong> from the first sketch to the shelf, design <strong>packaging</strong> people want to pick up, draw <strong>illustrations and posters</strong>, and tell stories through <strong>photography and film</strong>.</p>
-          <p class="about__more reveal">Every project starts with questions — who is this for, what should it feel like, what will make someone remember it? I research, collect references and test ideas until the answer looks obvious. The result is work that is <em>clear, warm and a little unexpected</em>.</p>
+          <p class="about__statement reveal">Hi, I'm Anushree — a graphic designer from Mumbai who lives for <strong>packaging</strong> and <strong>brand identity</strong>. I build brands from the first sketch to the shelf, and boxes people want to keep.</p>
+          <p class="about__more reveal">Every box starts with questions — who is it for, what should it feel like, what makes someone pick it up? The answer is work that is <em>clear, warm and a little unexpected</em>.</p>
+          <div class="about__me reveal"><img src="assets/character/anushree-sticker.webp" alt="" loading="lazy" width="1349" height="1066"><span class="mono">That's me — open the box →</span></div>
+        </div>
+        <div class="hamper" id="hamper" role="group" aria-label="A gift box filled with my packaging designs">
+          <div class="hamper__packs" id="hamperPacks"><!-- rendered --></div>
+          <div class="hamper__back" aria-hidden="true"></div>
+          <div class="hamper__front" aria-hidden="true">
+            <span class="hamper__ribbon"></span>
+            <span class="hamper__brand">A<b>.</b>S<b>.</b></span>
+            <span class="hamper__note mono">Packed with care · Mumbai</span>
+            <span class="hamper__tag"><i></i><b>Open me</b><span class="mono">Packaging &amp; identity</span></span>
+          </div>
+          <button class="hamper__lid" type="button" aria-label="Open or close the box"><span class="hamper__ribbon"></span><span class="hamper__bow"></span></button>
         </div>
       </div>
     </section>
 
-    <!-- ============ TIMELINE ============ -->
-    <section class="timeline" id="timeline" aria-labelledby="tlTitle">
-      <div class="arc" id="arc">
-        <div class="arc__sticky">
-          <div class="arc__head">
-            <span class="mono">(02) — Creative timeline</span>
-            <span class="mono dim">Scroll to turn the wheel</span>
-          </div>
-          <div class="arc__wheel" id="arcWheel" aria-hidden="true"></div>
-          <div class="arc__panel" id="arcPanel">
-            <h2 class="visually-hidden" id="tlTitle">What I make, in three chapters</h2>
-            <!-- chapter text rendered from data in main.js -->
-          </div>
-          <div class="arc__dots" id="arcDots" aria-hidden="true"></div>
+    <!-- ============ PROCESS (keychain timeline) ============ -->
+    <section class="proc" id="timeline" aria-labelledby="tlTitle">
+      <div class="proc__pin">
+        <div class="proc__head">
+          <div class="sec-head"><span class="mono">(02) — How a box is born</span><span class="mono dim">Scroll — the keyring moves</span></div>
+          <h2 class="proc__title" id="tlTitle">From first sketch <em class="serif">to the shelf.</em></h2>
         </div>
+        <div class="proc__track" id="procTrack">
+          <div class="proc__rail" aria-hidden="true"></div>
+          <!-- tags rendered from data in main.js -->
+        </div>
+        <div class="proc__bar" aria-hidden="true"><i id="procBar"></i></div>
       </div>
     </section>
 
@@ -196,7 +201,7 @@
         <span class="mono dim">Say hello</span>
       </div>
       <h2 class="mega mega--contact reveal-lines" id="ctTitle">
-        <span class="ln"><span>HAVE AN IDEA<b class="u-blue">?</b></span></span>
+        <span class="ln"><span>HAVE AN IDEA<b class="u-red">?</b></span></span>
         <span class="ln"><span>LET'S MAKE</span></span>
         <span class="ln"><span>SOMETHING <em class="serif">meaningful.</em></span></span>
       </h2>

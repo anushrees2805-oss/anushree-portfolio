@@ -95,7 +95,7 @@ window.SITE = {
       discipline: "Packaging Design Internship",
       line: "A digital packaging solutions brand",
       tagline: "Packaging a moment, one story at a time.",
-      accent: "#304FFE",
+      accent: "#FF3038",
       internship: true,
       cover: 4, thumb: 1, logo: "assets/nexibles/logo.webp",
       intro: [
