@@ -884,3 +884,131 @@ em{font-style:normal}
 .snd{opacity:1!important;pointer-events:auto!important}
 .play-intro .snd{opacity:0!important;pointer-events:none!important}
 @media (max-width:640px){.hamper.is-open .hpack{transform:translate(calc(-50% + var(--x) * .72),var(--y)) rotate(var(--r)) scale(.92)}}
+
+/* ==========================================================================
+   Round 6 — creative hero, eye-catching box, process inside Branding
+   ========================================================================== */
+/* nav: plain black / white chosen per background (no blend-mode colour shifts) */
+.nav.nav--tone{mix-blend-mode:normal}
+.nav--tone .nav__brand{color:var(--tone-brand,#fff)}
+.nav--tone .nav__links a{color:var(--tone-links,#fff)}
+.nav--tone .nav__meta{color:var(--tone-meta,#fff)}
+.nav--tone a,.nav--tone .nav__meta{transition:color .35s ease}
+.nav--tone .nav__links a::after{background:currentColor}
+
+/* hero: a red panel, a swinging portfolio tag and a spinning badge */
+.hred{position:absolute;left:0;top:0;bottom:0;width:46%;z-index:1;background:var(--red);clip-path:inset(0 100% 0 0);transition:clip-path 1.2s cubic-bezier(.7,0,.2,1)}
+.hero-in .hred{clip-path:inset(0 0 0 0)}
+.hred__grain{position:absolute;inset:0;opacity:.18;mix-blend-mode:multiply;background-image:radial-gradient(rgba(0,0,0,.5) 1px,transparent 1.2px);background-size:4px 4px}
+.hred::after{content:"";position:absolute;right:-1px;top:0;bottom:0;width:120px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.18))}
+.hvid::after{background:linear-gradient(180deg,rgba(8,8,8,.35) 0%,rgba(8,8,8,0) 20%,rgba(8,8,8,0) 75%,rgba(8,8,8,.7) 100%)!important}
+.hx{z-index:5}
+.hx__eyebrow{color:#fff!important}
+.hx__dot{background:#fff!important;box-shadow:none!important;animation:none!important}
+.hx__lead{color:#fff!important}
+.hx__words span{color:#fff}
+.hx__words .ln:nth-child(2) span{color:var(--black)}
+.hx__amp{color:var(--black)!important}
+.hx__words b.u-red{color:#fff}
+.htag{position:absolute;z-index:6;top:0;left:calc(46% - 150px);width:104px;padding:30px 12px 14px;background:#fff;color:var(--black);text-align:center;display:grid;gap:3px;
+  transform-origin:50% -70px;transform:translateY(-140%);transition:transform 1.4s cubic-bezier(.3,1.4,.4,1) .6s;
+  clip-path:polygon(25% 0,75% 0,100% 15%,100% 100%,0 100%,0 15%);filter:drop-shadow(0 14px 16px rgba(0,0,0,.35))}
+.hero-in .htag{transform:translateY(96px);animation:htagSwing 4.2s ease-in-out 2s infinite}
+@keyframes htagSwing{0%,100%{transform:translateY(96px) rotate(-6deg)}50%{transform:translateY(96px) rotate(5deg)}}
+.htag::before{content:"";position:absolute;left:50%;top:-100px;width:1.5px;height:104px;background:rgba(255,255,255,.9)}
+.htag i{position:absolute;top:10px;left:50%;width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:var(--black)}
+.htag b{font-weight:900;font-size:17px;letter-spacing:-.04em;text-transform:uppercase}
+.htag .mono{font-size:9px;color:var(--red)}
+.hbadge{position:absolute;z-index:6;left:calc(46% - 70px);bottom:16%;width:140px;height:140px;border-radius:50%;background:var(--black);color:#fff;display:grid;place-items:center;
+  box-shadow:0 20px 40px -16px rgba(0,0,0,.6);opacity:0;transform:scale(.6);transition:opacity .8s ease 1s,transform 1s cubic-bezier(.3,1.5,.4,1) 1s}
+.hero-in .hbadge{opacity:1;transform:none}
+.hbadge svg{position:absolute;inset:0;width:100%;height:100%;animation:spin 18s linear infinite}
+.hbadge text{fill:#fff;font:700 13.5px "Space Mono",monospace;letter-spacing:2.6px}
+.hbadge>span{font-weight:900;font-size:26px;letter-spacing:-.06em}
+.hbadge b{color:var(--red)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (min-width:901px){.hvid__img{-webkit-mask-image:none!important;mask-image:none!important}}
+@media (max-width:900px){
+  .hred{top:auto;width:100%;height:44%}
+  .htag{display:none}
+  .hbadge{left:auto;right:var(--gut);bottom:46%;width:104px;height:104px}
+  .hbadge>span{font-size:20px}
+  .hbadge text{font-size:15px}
+}
+
+/* the box: red, glossy, with its message */
+.hamper__front{background:linear-gradient(165deg,#ff5b61 0%,var(--red) 30%,#d81a22 100%)!important;box-shadow:0 34px 60px -26px rgba(160,10,16,.6),inset 0 1px 0 rgba(255,255,255,.35),inset 0 -18px 30px rgba(0,0,0,.12)!important}
+.hamper__back{background:linear-gradient(180deg,#b5131a,#5e070b 45%)!important}
+.hamper__lid{background:linear-gradient(170deg,#ff6a6f,var(--red) 35%,#cf1a21)!important;box-shadow:0 12px 22px -8px rgba(120,8,12,.55),inset 0 1px 0 rgba(255,255,255,.4)!important}
+.hamper__ribbon{background:linear-gradient(90deg,#000,#2a2a2a 30%,#4a4a4a 50%,#2a2a2a 70%,#000)!important}
+.hamper__bow::before,.hamper__bow::after{border-color:var(--black)!important}
+.hamper__line{position:absolute;left:7%;top:13%;width:38%;color:#fff;opacity:.9;font-size:9.5px;line-height:1.5}
+.hamper__brand{top:auto!important;bottom:28%;left:7%!important;width:40%;color:#fff!important;font-weight:900;text-transform:uppercase;font-size:clamp(26px,3.1vw,44px)!important;line-height:.9!important;letter-spacing:-.05em}
+.hamper__brand .serif{display:block;text-transform:none;color:var(--black);font-weight:400;font-size:1.12em;letter-spacing:-.02em}
+.hamper__note{color:rgba(255,255,255,.85)!important;bottom:9%!important;font-size:9.5px}
+.hamper__note b{color:var(--black)}
+.hamper__stamp{position:absolute;right:6%;bottom:12%;width:66px;height:66px;border:1.5px solid rgba(0,0,0,.75);border-radius:50%;display:grid;place-items:center;text-align:center;color:var(--black);font-size:8px;line-height:1.15;transform:rotate(-14deg);opacity:.8}
+.hamper__tag{left:calc(50% + 6%)!important}
+.hpack{box-shadow:0 18px 30px -12px rgba(0,0,0,.45),0 0 0 4px #fff,0 0 0 5px rgba(0,0,0,.06)!important}
+.hamper{animation:boxBob 5s ease-in-out infinite}
+@keyframes boxBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.hamper::after{content:"";position:absolute;left:10%;right:10%;bottom:-26px;height:26px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.18),transparent);z-index:0}
+
+/* process keyring now lives inside Branding & Packaging */
+.cat .proc{margin:clamp(40px,6vw,90px) calc(-1 * var(--gut)) clamp(20px,3vw,40px)}
+.cat .proc .sec-head{border-color:rgba(8,8,8,.14)}
+.plist__head{color:var(--black);border-top-color:rgba(8,8,8,.18)!important}
+
+.hx__words{text-shadow:none!important}
+.hbadge text{font-size:12.5px!important;letter-spacing:1.5px}
+.hamper__line{top:9%;width:40%}
+.hamper__brand{top:30%!important;bottom:auto!important;font-size:clamp(24px,2.7vw,38px)!important}
+.hamper__note{bottom:8%!important}
+.hamper.is-open .hamper__lid{transform:translate(2%,-238%) rotate(7deg)!important}
+
+/* ---------- Round 7 — mobile polish ---------- */
+/* readable nav: a soft backdrop once the page scrolls */
+.nav::before{content:"";position:absolute;inset:0;z-index:-1;opacity:0;transition:opacity .4s ease;background:var(--nav-bg,rgba(255,255,255,.86));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.nav.is-scrolled::before{opacity:1}
+/* never clip italic descenders in the big reveal headings */
+.reveal-lines .ln{padding-bottom:.22em!important;margin-bottom:-.22em!important}
+@media (max-width:640px){
+  .mega{font-size:clamp(40px,12.5vw,64px)!important;line-height:.95}
+  .mega .serif{font-size:.95em}
+  .hamper{max-width:360px}
+  .hamper__stamp{display:none}
+  .hamper__line{font-size:8px;width:42%;top:8%}
+  .hamper__brand{font-size:24px!important;top:32%!important;width:44%}
+  .hamper__note{font-size:8px;left:7%;right:52%}
+  .hamper__tag{width:74px;padding:18px 6px 9px;top:22%}
+  .hamper__tag b{font-size:12px}
+  .hamper__tag .mono{font-size:7px}
+  .case__bar{font-size:10px}
+  .case__bar>span:nth-child(2){display:none}
+  .case__logo{position:static;display:block;margin:14px 0 0;width:120px}
+  .proc__title{font-size:clamp(30px,9vw,44px)}
+  .ptag__d{font-size:13px}
+  .snd{bottom:10px;right:10px;padding:6px 10px;border-radius:20px;mix-blend-mode:normal;background:rgba(8,8,8,.72);color:#fff}
+  .about__statement{font-size:22px}
+  .cat__intro{font-size:17px}
+  .hbadge{bottom:47%}
+}
+@media (max-width:640px){
+  .mega{line-height:1.06!important}
+  .hamper.is-open .hamper__lid{opacity:0;transform:translate(0,-120%) rotate(4deg)!important;transition:transform .8s ease,opacity .5s ease}
+}
+
+/* phones: the process keyring is a sideways swipe, not a pinned scroll */
+.proc--swipe .proc__pin{position:relative;height:auto;padding:30px 0 40px}
+.proc--swipe .proc__track{width:auto;transform:none!important;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:50px}
+.proc--swipe .proc__track::-webkit-scrollbar{display:none}
+.proc--swipe .ptag{flex:none;scroll-snap-align:center;width:min(72vw,270px)}
+.proc--swipe .proc__rail{right:auto;width:calc(7 * (min(72vw,270px) + 22px) + 60px)}
+.proc--swipe .proc__bar{position:relative;left:auto;right:auto;bottom:auto;margin:0 var(--gut)}
+.proc--swipe .sec-head .dim{font-size:0}
+.proc--swipe .sec-head .dim::after{content:"Swipe the tags →";font-size:11px}
+@media (max-width:640px){
+  .hamper__line{font-size:9px}
+  .hamper__brand{font-size:24px!important}
+  .ptag__d{font-size:15px}
+}

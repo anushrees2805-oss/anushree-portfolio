@@ -284,7 +284,7 @@
   }
   observeReveals(document);
 
-  var navMap = { home: 'home', about: 'about', timeline: 'about', keychain: 'work', branding: 'work', illustration: 'work', lens: 'work', contact: 'contact' };
+  var navMap = { home: 'home', about: 'about', timeline: 'work', keychain: 'work', branding: 'work', illustration: 'work', lens: 'work', contact: 'contact' };
   var navLinks = $$('.nav__links a');
   if ('IntersectionObserver' in window) {
     var nio = new IntersectionObserver(function (es) {
@@ -1379,6 +1379,35 @@
     if (root.classList.contains('hero-in')) start();
     else new MutationObserver(function (m, o) { if (root.classList.contains('hero-in')) { o.disconnect(); setTimeout(start, 250); } }).observe(root, { attributes: true, attributeFilter: ['class'] });
   })();
+  /* nav text turns black over light backgrounds, white over dark ones */
+  (function navTone() {
+    var nav = $('#nav'); if (!nav) return;
+    var q = 0, last = '';
+    function bgAt(x, y) {
+      var el = document.elementFromPoint(x, y);
+      while (el && el !== document.documentElement) {
+        if (el.tagName === 'IMG' || el.tagName === 'VIDEO' || el.tagName === 'CANVAS') return 'dark';
+        var c = getComputedStyle(el).backgroundColor, m = c.match(/[\d.]+/g);
+        if (m && (m.length < 4 || +m[3] > 0.5)) { var L = (0.299 * m[0] + 0.587 * m[1] + 0.114 * m[2]) / 255; return L > 0.62 ? 'light' : 'dark'; }
+        el = el.parentElement;
+      }
+      return 'dark';
+    }
+    function upd() {
+      q = 0;
+      var parts = [[innerWidth * 0.06, 6], [innerWidth * 0.5, 6], [innerWidth * 0.94, 6]].map(function (p) { return bgAt(p[0], p[1]); });
+      var k = parts.join(',') + (scrollY > innerHeight * 0.85);
+      if (k === last) return; last = k;
+      nav.classList.add('nav--tone');
+      nav.classList.toggle('is-scrolled', scrollY > innerHeight * 0.85 || !!document.querySelector('.case.is-open, #case:not([hidden])'));
+      nav.style.setProperty('--nav-bg', parts[1] === 'light' ? 'rgba(255,255,255,.86)' : 'rgba(8,8,8,.78)');
+      ['brand', 'links', 'meta'].forEach(function (n, i) { nav.style.setProperty('--tone-' + n, parts[i] === 'light' ? '#080808' : '#ffffff'); });
+    }
+    function kick() { if (!q) q = requestAnimationFrame(upd); }
+    addEventListener('scroll', kick, { passive: true }); addEventListener('resize', kick); addEventListener('hashchange', function () { setTimeout(kick, 400); });
+    setInterval(kick, 700); kick();
+  })();
+
   /* ======================================================================
      PROCESS KEYRING — pinned; scrolling slides the rail, the tags swing
      ====================================================================== */
@@ -1388,16 +1417,18 @@
     var sw = tags.map(function (t, i) { return { th: (i % 2 ? 2 : -2), w: 0 }; });
     function size() {
       small = innerWidth < 760;
+      sec.classList.toggle('proc--swipe', small);
+      if (small) { maxX = 0; sec.style.height = ''; track.style.transform = ''; return; }   /* phones: swipe sideways instead of a pinned scroll */
       var last = tags[tags.length - 1];
-      maxX = last ? Math.max(0, last.offsetLeft + last.offsetWidth + (small ? 20 : 60) - innerWidth) : 0;
-      sec.style.height = (innerHeight + maxX * (small ? 1.1 : 1.25)) + 'px';
+      maxX = last ? Math.max(0, last.offsetLeft + last.offsetWidth + 60 - innerWidth) : 0;
+      sec.style.height = (innerHeight + maxX * 1.25) + 'px';
     }
     function prog() { var r = sec.getBoundingClientRect(); return clamp(-r.top / Math.max(1, sec.offsetHeight - innerHeight), 0, 1); }
     function frame(now) {
       raf = 0;
       var dt = 1 / 60, p = prog();
-      tx = -p * maxX; x += (tx - x) * (REDUCED ? 1 : 0.14);
-      track.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,0)';
+      if (small) { p = clamp(track.scrollLeft / Math.max(1, track.scrollWidth - track.clientWidth), 0, 1); tx = x; }
+      else { tx = -p * maxX; x += (tx - x) * (REDUCED ? 1 : 0.14); track.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,0)'; }
       if (bar) bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
       var moving = Math.abs(tx - x) > 0.3;
       vel *= 0.9;
@@ -1413,6 +1444,8 @@
     }
     function kick() { if (!raf) raf = requestAnimationFrame(frame); }
     addEventListener('scroll', function () { var dy = scrollY - lastY; lastY = scrollY; if (prog() > 0 && prog() < 1) vel = clamp(vel - dy * 0.9, -160, 160); kick(); }, { passive: true });
+    var lastL = 0;
+    track.addEventListener('scroll', function () { if (!small) return; var dx = track.scrollLeft - lastL; lastL = track.scrollLeft; vel = clamp(vel - dx * 0.6, -160, 160); if (Math.abs(dx) > 2) SFX.tick(); kick(); }, { passive: true });
     tags.forEach(function (t, i) { t.addEventListener('pointerenter', function () { sw[i].w += (i % 2 ? -1 : 1) * 70; SFX.hover(); kick(); }); });
     addEventListener('resize', function () { size(); kick(); });
     if (document.fonts) document.fonts.ready.then(function () { size(); kick(); });
