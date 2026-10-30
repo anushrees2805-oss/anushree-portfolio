@@ -1070,3 +1070,8 @@ em{font-style:normal}
 @media (prefers-reduced-motion:reduce){.about__fob{animation:none}}
 .about__wrap{align-items:start!important}
 @media (max-width:900px){.about__wrap{align-items:stretch!important}}
+/* phones: sound toggle becomes a small round icon so it never covers text */
+@media (max-width:640px){
+  .snd{width:40px;height:40px;padding:0!important;gap:0;justify-content:center;border-radius:50%;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;font-size:0}
+  .snd .snd__t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
