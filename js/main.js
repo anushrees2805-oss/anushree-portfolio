@@ -22,7 +22,7 @@
     var AC = window.AudioContext || window.webkitAudioContext, ctx = null, out = null, noiseBuf = null, lastTick = 0, tock = false;
     function init() {
       if (ctx || !AC) return ctx;
-      ctx = new AC(); out = ctx.createGain(); out.gain.value = 1; out.connect(ctx.destination);
+      ctx = new AC(); out = ctx.createGain(); out.gain.value = 1.7; out.connect(ctx.destination);
       noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
       var d = noiseBuf.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
       return ctx;
@@ -30,9 +30,12 @@
     function unlock() {
       /* iPhone: let sound play even when the ring/silent switch is on */
       try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
-      if (init() && ctx.state === 'suspended') ctx.resume().catch(function () {});
+      if (!init()) return;
+      if (ctx.state !== 'running') ctx.resume().catch(function () {});
+      /* Safari / iOS: playing a silent sample inside the tap is what actually unlocks audio */
+      try { var b = ctx.createBuffer(1, 1, 22050), sn = ctx.createBufferSource(); sn.buffer = b; sn.connect(ctx.destination); sn.start(0); } catch (e) {}
     }
-    ['pointerdown', 'keydown', 'touchend'].forEach(function (ev) { addEventListener(ev, unlock, true); });
+    ['pointerdown', 'mousedown', 'touchstart', 'touchend', 'click', 'keydown'].forEach(function (ev) { addEventListener(ev, unlock, true); });
     function ready() { return !window.__muted && init() && ctx.state === 'running'; }
     function noise(t, dur, type, f, q, vol, f2) {
       var src = ctx.createBufferSource(); src.buffer = noiseBuf;
@@ -50,6 +53,8 @@
       o.connect(g); g.connect(out); o.start(t); o.stop(t + dur + 0.02);
     }
     return {
+      ctxGet: function () { return init(); },
+      isReady: function () { return ready(); },
       /* timeline: a soft, rounded wooden "tok" — no noise, low and quiet */
       tick: function () {
         /* a muted wooden tap, gentle — like a soft desk clock */
@@ -58,7 +63,7 @@
         var o = ctx.createOscillator(), lpf = ctx.createBiquadFilter(), g = ctx.createGain();
         o.type = 'sine'; o.frequency.setValueAtTime(f * 1.04, t); o.frequency.exponentialRampToValueAtTime(f, t + 0.015);
         lpf.type = 'lowpass'; lpf.frequency.value = 1100;
-        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.05, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.055);
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.09, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.055);
         o.connect(lpf); lpf.connect(g); g.connect(out); o.start(t); o.stop(t + 0.08);
       },
       /* gentle click for tags, projects and stories */
@@ -182,13 +187,13 @@
   ];
   /* the process keyring — one hanging tag per step, each with a visual */
   var PROC = [
-    { t: 'Research', d: 'Who is it for? What is already on the shelf?', img: 'assets/research/p06-s.webp', c: 'red' },
-    { t: 'Moodboard', d: 'Colour, mood and memory, pinned in one place.', img: 'assets/research/p09-s.webp', c: 'white' },
-    { t: 'Sketches', d: 'Characters and layouts, drawn by hand first.', img: 'assets/research/p10-s.webp', c: 'grey' },
-    { t: 'Identity', d: 'Logo, type and palette — the brand gets a face.', img: 'assets/sunbuns/04-s.webp', c: 'black' },
-    { t: 'Dieline', d: 'Flat to fold: every panel planned.', img: 'assets/nexibles/10-s.webp', c: 'red' },
-    { t: 'Test print', d: 'Printed, folded and checked in hand.', img: 'assets/nexibles/testprint-s.webp', c: 'white' },
-    { t: 'On the shelf', d: 'The final pack, ready to be picked up.', img: 'assets/hamper/h01.webp', c: 'grey' }
+    { t: 'Research', d: 'Getting to know the brand — who it is for and what is already out there.', img: 'assets/research/p06-s.webp', c: 'red' },
+    { t: 'Moodboard', d: 'Collecting visual references around the brand and connecting them with words.', img: 'assets/research/p09-s.webp', c: 'white' },
+    { t: 'Ideation', d: 'Concepts, colour, pattern and type explorations.', img: 'assets/research/p08-s.webp', c: 'grey' },
+    { t: 'Sketches', d: 'Characters and layouts, drawn by hand first.', img: 'assets/research/p10-s.webp', c: 'black' },
+    { t: 'Execution', d: 'Brand identity, logo, colour palette, packaging and mockups.', img: 'assets/sunbuns/04-s.webp', c: 'red' },
+    { t: 'Test prints', d: 'Printed, folded and checked in hand before the final file.', img: 'assets/nexibles/testprint-s.webp', c: 'white' },
+    { t: 'On-shelf display', d: 'The final packs, out in the world.', img: 'assets/hamper/shelf.webp', c: 'grey' }
   ];
   function renderTimeline() {
     var host = $('#procTrack'); if (!host) return;
@@ -450,8 +455,9 @@
     /* p: 0 → 1 over the whole intro */
     function render(p, time) {
       var a = ease.inOutCubic(seg(p, 0, 0.46));       /* mouth opens */
-      if (p > 0.03 && !mouthSnd) { mouthSnd = true; SFX.mouth(); }
-      if (p > 0.40 && !tingSnd) { tingSnd = true; SFX.ting(); }
+      /* play once sound is unlocked; if the tap is still unlocking it, try again next frame */
+      if (p > 0.03 && p < 0.5 && !mouthSnd && SFX.isReady()) { mouthSnd = true; SFX.mouth(); }
+      if (p > 0.40 && p < 0.75 && !tingSnd && SFX.isReady()) { tingSnd = true; SFX.ting(); }
       var b = seg(p, 0.38, 0.62);                     /* name fades up as the black fills the screen */
       var c = ease.inOutCubic(seg(p, 0.66, 1));       /* name shifts down */
       /* a tiny idle "breath" so she feels alive before you scroll */
@@ -1421,9 +1427,12 @@
       if (small) { maxX = 0; sec.style.height = ''; track.style.transform = ''; return; }   /* phones: swipe sideways instead of a pinned scroll */
       var last = tags[tags.length - 1];
       maxX = last ? Math.max(0, last.offsetLeft + last.offsetWidth + 60 - innerWidth) : 0;
-      sec.style.height = (innerHeight + maxX * 1.25) + 'px';
+      /* the pinned area is only as tall as its content, centred in the window — no empty band before the brands */
+      var pin = $('.proc__pin', sec), ph = pin.offsetHeight;
+      pin.style.top = Math.max(0, (innerHeight - ph) / 2) + 'px';
+      sec.style.height = (ph + maxX) + 'px';
     }
-    function prog() { var r = sec.getBoundingClientRect(); return clamp(-r.top / Math.max(1, sec.offsetHeight - innerHeight), 0, 1); }
+    function prog() { var r = sec.getBoundingClientRect(), pin = $('.proc__pin', sec), top = parseFloat(pin.style.top) || 0; return clamp((top - r.top) / Math.max(1, sec.offsetHeight - pin.offsetHeight), 0, 1); }
     function frame(now) {
       raf = 0;
       var dt = 1 / 60, p = prog();
@@ -1487,17 +1496,17 @@
     btn.type = 'button'; btn.className = 'snd mono'; btn.setAttribute('aria-label', 'Background music');
     btn.innerHTML = '<span class="snd__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="snd__t">Sound</span>';
     document.body.appendChild(btn);
-    var want = true; try { want = localStorage.getItem('as-music2') !== 'off'; } catch (e) {}
+    var want = true; try { want = localStorage.getItem('as-sound3') !== 'off'; } catch (e) {}
     window.__muted = !want;
     var ctx = null, filmOn = false, started = false, loading = null;
     function near(tr) { if (root.style.overflow === 'hidden') return false; var r = tr.el.getBoundingClientRect(); return r.top < innerHeight * tr.top && r.bottom > innerHeight * tr.bottom; }
     function anyNear() { return TRACKS.some(near); }
     function level(tr) { return want && !filmOn && !document.hidden && near(tr) ? tr.vol : 0; }
-    function ui() { btn.classList.toggle('is-on', want && started); btn.setAttribute('aria-pressed', want ? 'true' : 'false'); btn.querySelector('.snd__t').textContent = want && started ? 'Sound on' : 'Sound off'; }
+    function ui() { btn.classList.toggle('is-on', want && started); btn.setAttribute('aria-pressed', want ? 'true' : 'false'); btn.querySelector('.snd__t').textContent = want ? 'Sound: on' : 'Sound: off — tap to turn on'; }
     function load() {
       if (loading) return loading;
       var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return Promise.reject();
-      ctx = new AC();
+      ctx = SFX.ctxGet() || new AC();
       loading = Promise.all(TRACKS.map(function (tr) {
         tr.gain = ctx.createGain(); tr.gain.gain.value = 0; tr.gain.connect(ctx.destination);
         return fetch(tr.src).then(function (r) { return r.arrayBuffer(); })
@@ -1533,13 +1542,13 @@
         .then(function () { if (ctx.state === 'running') begin(); fade(); }).catch(function () {});
     }
     function firstGesture() {
-      ['pointerdown', 'keydown', 'touchend'].forEach(function (ev) { removeEventListener(ev, firstGesture, true); });
+      ['pointerdown', 'mousedown', 'touchend', 'click', 'keydown'].forEach(function (ev) { removeEventListener(ev, firstGesture, true); });
       go();
     }
-    ['pointerdown', 'keydown', 'touchend'].forEach(function (ev) { addEventListener(ev, firstGesture, true); });
+    ['pointerdown', 'mousedown', 'touchend', 'click', 'keydown'].forEach(function (ev) { addEventListener(ev, firstGesture, true); });
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
-      want = !(want && started); window.__muted = !want; try { localStorage.setItem('as-music2', want ? 'on' : 'off'); } catch (er) {}
+      want = !(want && started); window.__muted = !want; try { localStorage.setItem('as-sound3', want ? 'on' : 'off'); } catch (er) {}
       if (want) go(); else fade(0.6);
       ui();
     });
