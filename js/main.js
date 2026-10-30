@@ -191,7 +191,7 @@
     { t: 'Moodboard', d: 'Collecting visual references around the brand and connecting them with words.', img: 'assets/research/p09-s.webp', c: 'white' },
     { t: 'Ideation', d: 'Concepts, colour, pattern and type explorations.', img: 'assets/research/p08-s.webp', c: 'grey' },
     { t: 'Sketches', d: 'Characters and layouts, drawn by hand first.', img: 'assets/research/p10-s.webp', c: 'black' },
-    { t: 'Execution', d: 'Brand identity, logo, colour palette, packaging and mockups.', img: 'assets/sunbuns/04-s.webp', c: 'red' },
+    { t: 'Execution', d: 'Brand identity, logo, colour palette, packaging and mockups.', img: 'assets/sunbuns/12-s.webp', c: 'red' },
     { t: 'Test prints', d: 'Printed, folded and checked in hand before the final file.', img: 'assets/nexibles/testprint-s.webp', c: 'white' },
     { t: 'On-shelf display', d: 'The final packs, out in the world.', img: 'assets/hamper/shelf.webp', c: 'grey' }
   ];

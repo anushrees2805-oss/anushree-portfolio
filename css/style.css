@@ -1055,3 +1055,18 @@ em{font-style:normal}
 .proc__pin{height:auto!important;padding-top:20px!important;padding-bottom:10px}
 .proc--swipe .proc__pin{top:auto!important}
 .plist{margin-top:0!important}.plist__head{margin-bottom:0!important}
+
+/* ---------- Round 8: tighter About + keychain continuation ---------- */
+.about__wrap{margin-top:clamp(14px,2vw,28px)!important}
+.about__copy{border-top:0!important;padding-top:0!important}
+.about__me{flex-wrap:wrap}
+.about__fob{display:inline-flex;flex-direction:column;align-items:center;margin-left:auto;transform-origin:50% 0;animation:fobSway 5.5s ease-in-out infinite}
+.about__ring{display:block;width:14px;height:14px;border-radius:50%;border:3px solid #b7b7b7;box-shadow:inset 0 1px 0 #fff}
+.about__tag{position:relative;display:block;margin-top:0;padding:12px 16px 10px 16px;min-width:120px;background:#080808;color:#fff;border-radius:10px 10px 12px 12px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 10px 16px rgba(0,0,0,.16)}
+.about__tag i{position:absolute;top:6px;left:50%;width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:#fff;box-shadow:inset 0 1px 2px rgba(0,0,0,.35)}
+.about__tag{padding-top:20px}
+.about__ring::after{content:"";display:block;width:2px;height:16px;margin:0 auto;background:linear-gradient(#b7b7b7,#8a8a8a);transform:translateY(12px)}
+@keyframes fobSway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@media (prefers-reduced-motion:reduce){.about__fob{animation:none}}
+.about__wrap{align-items:start!important}
+@media (max-width:900px){.about__wrap{align-items:stretch!important}}
