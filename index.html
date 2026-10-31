@@ -91,9 +91,11 @@
 
     <!-- ============ WORDS: a quick glance at who I am ============ -->
     <section class="vibe" id="vibe" aria-label="Anushree in a few words: curious, creative, imaginative, out of the box, playful, observant, bold, a storyteller">
-      <span class="vibe__l mono" aria-hidden="true"><i></i>Anushree, in a word</span>
-      <div class="vibe__roll" id="vibeRoll" aria-hidden="true"></div>
-      <span class="vibe__r mono" aria-hidden="true">(scroll on)</span>
+      <div class="vibe__screen" id="vibeScreen" aria-hidden="true">
+        <div class="vibe__hud mono"><span><i></i>Anushree, in a word</span><span id="vibeTime">00:00</span></div>
+        <div class="vibe__roll" id="vibeRoll"></div>
+        <div class="vibe__bar"><i id="vibeBar"></i></div>
+      </div>
     </section>
 
     <!-- ============ ABOUT ============ -->
@@ -102,22 +104,20 @@
         <span class="mono">(01) — About me</span>
         <span class="mono dim">Curious mind · Mumbai</span>
       </div>
-      <h2 class="mega mega--sentence reveal-lines" id="aboutTitle">
-        <span class="ln"><span>Curious <em class="serif">by nature.</em></span></span>
-        <span class="ln"><span>Creative <em class="serif">by instinct.</em></span></span>
-      </h2>
 
       <div class="about__wrap">
         <div class="about__copy">
+        <h2 class="mega mega--sentence reveal-lines" id="aboutTitle">
+          <span class="ln"><span>Curious <em class="serif">by nature.</em></span></span>
+          <span class="ln"><span>Creative <em class="serif">by instinct.</em></span></span>
+        </h2>
           <p class="about__statement reveal">Hi, I'm Anushree — a Mumbai designer who is passionate about <strong>visual communication</strong>: ideas you can see, hold and remember.</p>
           <p class="about__more reveal">Sometimes that's a <b>brand and the box it comes in</b>, sometimes a <b>photograph</b>, sometimes a <b>poster</b> you can't walk past. I collect references like souvenirs, ask too many questions and sketch until the idea clicks — and packaging is where it all comes together: <em>a story you can hold in your hands.</em></p>
-          <ul class="about__chips reveal"><li>Branding &amp; packaging</li><li>Photography &amp; film</li><li>Posters &amp; illustration</li></ul>
-          <div class="about__me reveal"><img src="assets/character/anushree-sticker.webp" alt="" loading="lazy" width="1349" height="1066"><span class="mono">That's me — open the box →</span><span class="about__fob" aria-hidden="true"><span class="about__ring"></span><span class="about__tag"><i></i>Hi, I'm A.</span></span></div>
-          <ul class="about__facts reveal">
-            <li><i></i><span class="mono">Studying</span><b>Fashion Communication, NIFT Mumbai</b></li>
-            <li><i></i><span class="mono">Interned</span><b>Packaging design at Nexibles</b></li>
-            <li><i></i><span class="mono">Loves</span><b>Boxes, posters, film &amp; a good story</b></li>
-          </ul>
+          <p class="about__disc mono reveal">Branding &amp; packaging <i></i> Photography &amp; film <i></i> Posters &amp; illustration</p>
+          <div class="about__me reveal">
+            <span class="about__charm" aria-hidden="true"><span class="about__ring"></span><img src="assets/character/anushree-sticker.webp" alt="" loading="lazy" width="1349" height="1066"></span>
+            <span class="about__sig"><b>Anushree Sahu</b><span class="mono">Fashion Communication · NIFT Mumbai</span><span class="mono">Packaging intern · Nexibles</span></span>
+          </div>
         </div>
         <div class="hamper" id="hamper" role="group" aria-label="A gift box filled with my packaging designs">
           <div class="hamper__packs" id="hamperPacks"><!-- rendered --></div>

@@ -66,6 +66,7 @@
     }
     return {
       ctxGet: function () { return init(); },
+      unlocked: function () { return gestured || !!(navigator.userActivation && navigator.userActivation.hasBeenActive); },
       isReady: function () { return ready(); },
       /* timeline: a soft, rounded wooden "tok" — no noise, low and quiet */
       tick: function () {
@@ -219,25 +220,47 @@
     }).join(''));
   }
 
-  /* the word strip under the hero — one word at a time rolls up, the next and last ones ghost above and below */
+  /* the word "ad" between the hero and About — a fast, self-playing reel of words, like a short video.
+     It starts from the top each time it comes into view and loops with a little end card. */
   var VIBE = ['Curious', 'Creative', 'Imaginative', 'Out of the box', 'Playful', 'Observant', 'Bold', 'Detail-obsessed',
     'Storyteller', 'Hands-on', 'Experimental', 'Dreamy', 'Colourful', 'Empathetic', 'Quirky'];
   function vibeRoll() {
-    var host = $('#vibeRoll'); if (!host) return;
-    host.innerHTML = VIBE.map(function (w) { return '<span class="vw">' + esc(w) + '</span>'; }).join('');
-    var els = $$('.vw', host), n = els.length, i = 0, timer = 0, vis = false;
+    var host = $('#vibeRoll'), screen = $('#vibeScreen'), bar = $('#vibeBar'), clock = $('#vibeTime'); if (!host) return;
+    var STEP = REDUCED ? 1100 : 430, END = 1700;
+    host.innerHTML = VIBE.map(function (w, k) {
+      var cls = 'vw' + (k % 4 === 2 ? ' vw--serif' : '') + (w.length > 9 ? ' vw--long' : '');
+      return '<span class="' + cls + '">' + esc(w) + '</span>';
+    }).join('') + '<span class="vw vw--end">Anushree Sahu<b class="u-red">.</b><small class="mono">Graphic designer · Visual storyteller</small></span>';
+    var els = $$('.vw', host), n = els.length, i = 0, timer = 0, vis = false, t0 = 0, raf = 0;
+    var TOTAL = (n - 1) * STEP + END;
     function paint() {
       els.forEach(function (el, k) {
-        var r = ((k - i) % n + n) % n; if (r > n / 2) r -= n;
-        el.className = 'vw ' + (r === 0 ? 'is-cur' : r === -1 ? 'is-prev' : r === 1 ? 'is-next' : r < 0 ? 'is-up' : 'is-down');
+        var r = k - i;
+        if (i === n - 1) r = k === n - 1 ? 0 : 99;                 /* end card: only the name */
+        else if (k === n - 1) r = 99;
+        el.className = el.className.replace(/ is-\w+/g, '') + ' ' + (r === 0 ? 'is-cur' : r === -1 ? 'is-prev' : r === 1 ? 'is-next' : r < 0 ? 'is-up' : 'is-down');
       });
+      screen.classList.toggle('is-flash', i % 5 === 4);              /* a quick inverted "cut", like an ad */
+      screen.classList.toggle('is-end', i === n - 1);
     }
-    function step() { i = (i + 1) % n; paint(); }
-    function run() { clearInterval(timer); timer = 0; if (vis && !document.hidden) timer = setInterval(step, REDUCED ? 1800 : 820); }
+    function tick() {
+      i = (i + 1) % n; if (i === 0) t0 = performance.now();
+      paint(); timer = setTimeout(tick, i === n - 1 ? END : STEP);
+    }
+    function clockLoop(now) {
+      var e = (now - t0) % TOTAL; bar.style.transform = 'scaleX(' + (e / TOTAL).toFixed(4) + ')';
+      var sec = Math.floor(e / 1000); clock.textContent = '00:' + (sec < 10 ? '0' : '') + sec;
+      raf = vis ? requestAnimationFrame(clockLoop) : 0;
+    }
+    function play() { stop(); i = 0; t0 = performance.now(); paint(); timer = setTimeout(tick, STEP); raf = requestAnimationFrame(clockLoop); }
+    function stop() { clearTimeout(timer); timer = 0; cancelAnimationFrame(raf); raf = 0; }
     paint();
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { vis = es[0].isIntersecting; run(); }).observe(host);
-    else { vis = true; run(); }
-    document.addEventListener('visibilitychange', run);
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
+      var now = es[0].isIntersecting; if (now === vis) return; vis = now;
+      if (vis && !document.hidden) play(); else stop();
+    }, { threshold: 0.35 }).observe(screen);
+    else { vis = true; play(); }
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else if (vis) play(); });
   }
 
   /* about: the hamper — a box full of packaging that opens as you arrive */
@@ -438,6 +461,7 @@
      from low opacity inside the black, then it shifts down into the hero. */
   function runIntro() {
     var charEl = $('.intro__char', intro), mouth = $('.intro__mouth', intro), hintEl = $('.intro__hint', intro);
+    try { $('span', hintEl).textContent = (FINE ? 'Click' : 'Tap') + ' to open — sound on 🔊'; } catch (e) {}
     var nameBox = $('.intro__name', intro), metas = $$('.intro__meta', intro);
     /* a white copy rides inside the black layer (so the curtain clips it) and a black copy sits on the white below */
     var nameDark = nameBox.cloneNode(false); nameDark.className = 'intro__name intro__name--dark';
@@ -513,7 +537,18 @@
     layout();
     var target = 0, cur = 0, raf = 0;
     var STEP = function () { return Math.max(800, innerHeight * 1.7); }; /* px of scrolling for the full intro */
-    function push(d) { if (introDone || auto) return; target = clamp(target + d, 0, 1); kick(); }
+    /* sound can only start after a click/tap/key — scrolling alone doesn't count — so the opening waits for one,
+       otherwise the mouth "pop" and the name "ting" would be silently blocked by the browser */
+    var nudgeT = 0;
+    function nudge() {
+      var now = performance.now(); if (now - nudgeT < 700) return; nudgeT = now;
+      hintEl.classList.remove('nudge'); void hintEl.offsetWidth; hintEl.classList.add('nudge');
+    }
+    function push(d) {
+      if (introDone || auto) return;
+      if (d > 0 && !SFX.unlocked()) { nudge(); return; }
+      target = clamp(target + d, 0, 1); kick();
+    }
     var auto = null, handed = false; /* once the name starts to drop, it glides the rest of the way on its own */
     function frame(now) {
       raf = 0;
