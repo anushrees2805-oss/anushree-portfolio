@@ -96,11 +96,11 @@
         tone(t, 1150, 700, 0.08, 0.1);
       },
       /* the faintest swish when the pointer brushes a keychain tag */
-      hover: function () {
+      hover: function (vol) {
         if (!ready()) return; var now = performance.now(); if (now - lastTick < 90) return; lastTick = now;
-        var t = ctx.currentTime;
-        var g = noise(t, 0.09, 'bandpass', 1800, 1.2, 0, 3600); g.linearRampToValueAtTime(0.1, t + 0.03); g.exponentialRampToValueAtTime(0.0001, t + 0.09);
-        tone(t, 2400, 2100, 0.05, 0.045);
+        var t = ctx.currentTime, s = vol == null ? 1 : vol;
+        var g = noise(t, 0.09, 'bandpass', 1800, 1.2, 0, 3600); g.linearRampToValueAtTime(0.1 * s, t + 0.03); g.exponentialRampToValueAtTime(0.0001, t + 0.09);
+        tone(t, 2400, 2100, 0.05, 0.045 * s);
       },
       /* a soft cardboard "pop" — the hamper lid lifting */
       pop: function () {
@@ -109,13 +109,14 @@
         var g = noise(t, 0.12, 'lowpass', 900, 0.8, 0); g.linearRampToValueAtTime(0.06, t + 0.008); g.exponentialRampToValueAtTime(0.0001, t + 0.12);
       },
       /* a tiny, cute jingle — little bells as the charms swing into each other */
-      jingle: function (amt) {
+      jingle: function (amt, vol) {
         if (!ready()) return; var now = performance.now(); if (now - (this._jl || 0) < 140) return; this._jl = now;
         var t = ctx.currentTime, v = Math.min(1, amt || 0.5), base = [2093, 2349, 2637, 3136, 3520];
         for (var k = 0; k < 2 + (v > 0.6 ? 1 : 0); k++) {
           var f = base[Math.floor(Math.random() * base.length)] * (1 + (Math.random() - .5) * 0.02), at = t + k * (0.035 + Math.random() * 0.03);
-          tone(at, f, null, 0.35, 0.035 * v + 0.016);
-          tone(at, f * 2.7, null, 0.08, 0.01 * v);
+          var s = vol == null ? 1 : vol;
+          tone(at, f, null, 0.35, (0.035 * v + 0.016) * s);
+          tone(at, f * 2.7, null, 0.08, 0.01 * v * s);
         }
       },
       /* her mouth opening: a soft little "pop" as the lips part, a breath of air as it widens,
@@ -233,7 +234,7 @@
   /* the word "ad": its own full black screen between the hero and About that plays by itself like a short video.
      Every word has the same font, colour and size and sits dead centre; a soft scroll tick plays with each word.
      It restarts each time it comes into view and loops. */
-  var VIBE = ['Curious', 'Creative', 'Imaginative', 'Out of the box', 'Playful', 'Observant', 'Bold', 'Detail-obsessed',
+  var VIBE = ['Curious', 'Creative', 'Imaginative', 'Playful', 'Observant', 'Bold', 'Detail-obsessed',
     'Storyteller', 'Connected to nature', 'Experimental', 'Dreamy', 'Empathetic', 'Free-spirited', 'Quirky'];
   function vibeRoll() {
     var host = $('#vibeRoll'), screen = $('#vibeScreen'); if (!host) return;
@@ -906,7 +907,7 @@
         var C = CHARMS[i], rest = C.rest + Math.sin(time * 1.3 + i * 2.1) * 2.2 - phi * 0.9;
         c.w += (-(c.th - rest) * 34 - c.w * 3.2) * dt; c.th = clamp(c.th + c.w * dt, -75, 75);
         charmEls[i].setAttribute('transform', 'translate(' + C.anchor[0] + ' ' + C.anchor[1] + ') rotate(' + c.th.toFixed(2) + ')');
-        if (Math.abs(c.w) > 70 && Math.abs(c.w - (c.pw || 0)) > 30) SFX.jingle(Math.abs(c.w) / 260); c.pw = c.w;
+        if (Math.abs(c.w) > 70 && Math.abs(c.w - (c.pw || 0)) > 30) SFX.jingle(Math.abs(c.w) / 260, 0.35); c.pw = c.w;
       });
       if (visible) requestAnimationFrame(render); else running = false;
     }
@@ -927,7 +928,7 @@
 
     $$('.charm', svg).forEach(function (el, i) {
       el.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); cs[i].w += (i % 2 ? -1 : 1) * 260; SFX.click(); start(); });
-      el.addEventListener('pointerenter', function () { cs[i].w += (i % 2 ? -1 : 1) * 60; SFX.hover(); start(); });
+      el.addEventListener('pointerenter', function () { cs[i].w += (i % 2 ? -1 : 1) * 60; SFX.hover(0.3); start(); });
     });
     var dragI = -1, downPt = null, moved = false;
     svg.addEventListener('pointermove', function (e) {
@@ -957,7 +958,7 @@
     svg.addEventListener('pointerleave', function () { last = null; phiT = 0; if (dragI < 0) setHover(-1); });
     tags.forEach(function (el) {
       var i = +el.getAttribute('data-i');
-      el.addEventListener('pointerenter', function () { if (hoverI !== i) SFX.hover(); setHover(i); });
+      el.addEventListener('pointerenter', function () { if (hoverI !== i) SFX.hover(0.3); setHover(i); });
       el.addEventListener('focus', function () { setHover(i); start(); });
       el.addEventListener('blur', function () { setHover(-1); });
       /* click a tag → jump straight to that work section */
