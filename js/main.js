@@ -234,7 +234,7 @@
      Every word has the same font, colour and size and sits dead centre; a soft scroll tick plays with each word.
      It restarts each time it comes into view and loops. */
   var VIBE = ['Curious', 'Creative', 'Imaginative', 'Out of the box', 'Playful', 'Observant', 'Bold', 'Detail-obsessed',
-    'Storyteller', 'Hands-on', 'Experimental', 'Dreamy', 'Empathetic', 'Quirky'];
+    'Storyteller', 'Connected to nature', 'Experimental', 'Dreamy', 'Empathetic', 'Free-spirited', 'Quirky'];
   function vibeRoll() {
     var host = $('#vibeRoll'), screen = $('#vibeScreen'); if (!host) return;
     var STEP = REDUCED ? 1100 : 460;
