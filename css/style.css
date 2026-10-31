@@ -1169,3 +1169,19 @@ em{font-style:normal}
 .or:nth-child(2) .op,.or:nth-child(4) .op{font-family:inherit!important;font-style:normal!important;font-weight:800!important;letter-spacing:-.055em!important}
 .od{width:.14em!important;height:.14em!important;background:#fff!important;opacity:.5}
 .op{color:#fff}
+
+/* Round 14: a faint, slowly drifting strip of packaging work behind the word video */
+.vbg{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:clamp(10px,2vh,22px);opacity:.15;filter:grayscale(1) contrast(1.05);pointer-events:none;z-index:0}
+.vbg::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 50% 50%,rgba(8,8,8,.55),rgba(8,8,8,.15) 70%,rgba(8,8,8,.6))}
+.vbg__row{overflow:hidden}
+.vbg__t{display:flex;gap:clamp(10px,2vh,22px);width:max-content;animation:vbgDrift 70s linear infinite}
+.vbg__row--rev .vbg__t{animation-direction:reverse;animation-duration:85s}
+.vbg img{display:block;width:clamp(150px,30vh,300px);height:clamp(150px,30vh,300px);object-fit:cover;border-radius:14px}
+@keyframes vbgDrift{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.vibe__roll,.vibe__hud{z-index:1}
+.reduced .vbg__t{animation:none}
+@media (max-width:760px){.vbg img{width:clamp(120px,22vh,180px);height:clamp(120px,22vh,180px)}}
+
+/* Round 14: tighter lines in the "Let's create" video */
+.outro__rows{gap:0!important}
+.op{line-height:.98!important}
