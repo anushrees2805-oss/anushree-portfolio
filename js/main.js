@@ -236,8 +236,17 @@
      It restarts each time it comes into view and loops. */
   var VIBE = ['Curious', 'Creative', 'Imaginative', 'Playful', 'Observant', 'Bold', 'Detail-obsessed',
     'Storyteller', 'Connected to nature', 'Experimental', 'Dreamy', 'Empathetic', 'Free-spirited', 'Quirky'];
+  var VIBE_ART = {"Curious": "M118 118L168 168M98 62c4-14 30-14 30 4c0 14-18 16-18 30M110 110v2|C 85 85 52", "Creative": "M38 162l22-20 92-92 20 20-92 92zM140 62l20 20M38 162l16-36 20 20zM150 20v18M141 29h18M168 44v10M163 49h10", "Imaginative": "M48 120c-20 0-26-26-8-34-4-22 22-34 38-20 8-20 40-20 46 2 20-6 36 12 28 30 18 6 14 30-6 30H48zM60 160m-10 0a10 10 0 1 0 20 0a10 10 0 1 0-20 0M36 182m-6 0a6 6 0 1 0 12 0a6 6 0 1 0-12 0", "Playful": "M20 100L180 34 124 168 98 114zM98 114L180 34M98 114l2 40 24-22M18 150c20-10 30 6 50-4M10 176c22-10 32 6 54-4", "Observant": "M18 100Q100 28 182 100Q100 172 18 100zM100 100m-30 0a30 30 0 1 0 60 0a30 30 0 1 0-60 0M100 100m-10 0a10 10 0 1 0 20 0a10 10 0 1 0-20 0", "Bold": "M116 14L56 110h44L80 186l72-106h-46z", "Detail-obsessed": "M100 100m-62 0a62 62 0 1 0 124 0a62 62 0 1 0-124 0M100 24v32M100 144v32M24 100h32M144 100h32M100 100m-4 0a4 4 0 1 0 8 0a4 4 0 1 0-8 0", "Storyteller": "M100 58Q60 38 20 50v110q40-10 80 10 40-20 80-10V50Q140 38 100 58zM100 58v112M36 72q22-4 46 6M36 92q22-4 46 6M118 78q24-10 46-6M118 98q24-10 46-6", "Connected to nature": "M36 166Q36 50 164 36Q152 164 36 166zM36 166Q96 104 150 50M80 120l-2-34M104 96l-2-30M80 120l36 2M104 96l34 2", "Experimental": "M78 20h44M88 20v62L42 162q-8 18 12 18h92q20 0 12-18L112 82V20M58 136h84M84 158m-6 0a6 6 0 1 0 12 0a6 6 0 1 0-12 0M114 150m-4 0a4 4 0 1 0 8 0a4 4 0 1 0-8 0", "Dreamy": "M118 28a72 72 0 1 0 54 96 56 56 0 1 1-54-96zM160 30l4 10 10 4-10 4-4 10-4-10-10-4 10-4zM40 40l3 7 7 3-7 3-3 7-3-7-7-3 7-3z", "Empathetic": "M100 170C30 122 18 82 44 56c24-24 56-10 56 14 0-24 32-38 56-14 26 26 14 66-56 114z", "Free-spirited": "M16 112q42-52 84-6 42-46 84 6M120 64q16-18 32 0 16-18 32 0M34 150q14-16 28 0 14-16 28 0", "Quirky": "M28 108c0-62 76-62 76 0 0 40-44 40-44 10 0-22 30-22 30 0M120 60l16 20 16-20 16 20M128 150c10-20 30-20 40 0"};
   function vibeRoll() {
-    var host = $('#vibeRoll'), screen = $('#vibeScreen'); if (!host) return;
+    var host = $('#vibeRoll'), screen = $('#vibeScreen'), art = $('#vibeArt'); if (!host) return;
+    /* a faint line drawing behind each word, drawn by hand-feel strokes */
+    if (art) art.innerHTML = VIBE.map(function (w) {
+      var d = VIBE_ART[w] || '';
+      return '<svg class="vart" viewBox="0 0 200 200" aria-hidden="true">' + d.split('|')[0].split('M').filter(Boolean).map(function (seg) {
+        return '<path d="M' + seg + '" pathLength="1"/>'; }).join('') +
+        (d.indexOf('|C') > -1 ? (function (c) { c = c.trim().split(' '); return '<circle cx="' + c[1] + '" cy="' + c[2] + '" r="' + c[3] + '" pathLength="1"/>'; })(d.split('|')[1]) : '') + '</svg>';
+    }).join('');
+    var arts = art ? $$('.vart', art) : [];
     var STEP = REDUCED ? 1100 : 460;
     host.innerHTML = VIBE.map(function (w) { return '<span class="vw">' + esc(w) + '</span>'; }).join('');
     var els = $$('.vw', host), n = els.length, i = 0, timer = 0, vis = false;
@@ -253,6 +262,7 @@
         var r = ((k - i) % n + n) % n; if (r > n / 2) r -= n;
         el.className = 'vw ' + (r === 0 ? 'is-cur' : r === -1 ? 'is-prev' : r === 1 ? 'is-next' : r < 0 ? 'is-up' : 'is-down');
       });
+      arts.forEach(function (a, k) { a.classList.toggle('is-on', k === i); });
     }
     function tick() { i = (i + 1) % n; paint(); SFX.roll(); timer = setTimeout(tick, STEP); }
     function play() { stop(); i = 0; paint(); SFX.roll(); timer = setTimeout(tick, STEP); }

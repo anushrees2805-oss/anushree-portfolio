@@ -1185,3 +1185,16 @@ em{font-style:normal}
 /* Round 14: tighter lines in the "Let's create" video */
 .outro__rows{gap:0!important}
 .op{line-height:.98!important}
+
+/* Round 15: line drawings behind the word video (replaces the work strip) */
+.vbg{display:none!important}
+.vibe__art{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;z-index:0}
+.vart{grid-area:1/1;width:min(78vh,82vw);height:min(78vh,82vw);opacity:0;transition:opacity .35s ease}
+.vart path,.vart circle{fill:none;stroke:#fff;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1}
+.vart.is-on{opacity:.2}
+.vart.is-on path,.vart.is-on circle{animation:vartDraw .5s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes vartDraw{to{stroke-dashoffset:0}}
+.reduced .vart.is-on path,.reduced .vart.is-on circle{animation:none;stroke-dashoffset:0}
+@media (max-width:760px){.vart path,.vart circle{stroke-width:1}}
+.vart.is-on{opacity:.3}
+.vart path,.vart circle{stroke-width:1.4}
