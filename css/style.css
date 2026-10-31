@@ -1087,37 +1087,19 @@ em{font-style:normal}
 @media (max-width:900px){.about__facts{grid-template-columns:1fr}.about__facts li:nth-child(2){transform:none}}
 @media (max-width:640px){.hamper__line{font-size:8.5px!important;letter-spacing:.12em!important;margin-right:22%}}
 
-/* ---------- Round 10: the word reel (plays like a short ad) ---------- */
-.vibe{background:#fff;padding:clamp(40px,6vw,90px) var(--gut)}
-.vibe__screen{position:relative;max-width:1240px;margin:0 auto;height:clamp(320px,58vh,580px);background:#080808;color:#fff;border-radius:22px;overflow:hidden;transition:background .12s linear,color .12s linear;box-shadow:0 30px 60px -30px rgba(0,0,0,.45)}
-.vibe__screen.is-flash{background:#f4f4f4;color:#080808}
-.vibe__hud{position:absolute;left:22px;right:22px;top:18px;display:flex;justify-content:space-between;font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.6;z-index:2}
-.vibe__hud span{display:flex;align-items:center;gap:8px}
-.vibe__hud i{width:8px;height:8px;border-radius:50%;background:var(--red);animation:recBlink 1s steps(2) infinite}
-@keyframes recBlink{50%{opacity:.15}}
-.vibe__bar{position:absolute;left:22px;right:22px;bottom:18px;height:3px;background:rgba(127,127,127,.28);border-radius:3px;overflow:hidden;z-index:2}
-.vibe__bar i{display:block;height:100%;background:var(--red);transform-origin:0 50%;transform:scaleX(0)}
-.vibe__roll{position:absolute;inset:0}
-.vw{position:absolute;left:50%;top:50%;white-space:nowrap;font-weight:800;letter-spacing:-.06em;line-height:1;font-size:clamp(56px,10vw,150px);
+/* ---------- Round 11: the word reel — its own full black screen, centred, plays like a video ---------- */
+.vibe{position:relative;background:#080808;padding:0;margin:0}
+.vibe__screen{position:relative;width:100%;height:100vh;height:100svh;min-height:420px;background:#080808;color:#fff;overflow:hidden}
+.vibe__roll{position:absolute;inset:0;font-size:120px}
+.vw{position:absolute;left:50%;top:50%;white-space:nowrap;font-family:var(--sans,inherit);font-weight:800;letter-spacing:-.06em;line-height:1;font-size:1em;color:#fff;text-align:center;
   transform:translate(-50%,-50%);opacity:0;will-change:transform,opacity,filter;
   transition:transform .3s cubic-bezier(.7,0,.2,1),opacity .3s cubic-bezier(.7,0,.2,1),filter .3s ease}
-.vw--long{font-size:clamp(44px,7.4vw,112px)}
-.vw--serif{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.03em;color:var(--red)}
 .vw.is-cur{opacity:1;filter:none}
 .vw.is-prev{opacity:.16;transform:translate(-50%,calc(-50% - .5em)) scale(.9);filter:blur(2px)}
 .vw.is-next{opacity:.16;transform:translate(-50%,calc(-50% + .5em)) scale(.9);filter:blur(2px)}
 .vw.is-up{opacity:0;transform:translate(-50%,calc(-50% - 1em)) scale(.85);filter:blur(5px)}
 .vw.is-down{opacity:0;transform:translate(-50%,calc(-50% + 1em)) scale(.85);filter:blur(5px);transition:none}
-.vw--end{font-size:clamp(46px,7.6vw,118px);text-align:center}
-.vw--end small{display:block;margin-top:14px;font-size:clamp(10px,1vw,13px);letter-spacing:.16em;text-transform:uppercase;font-weight:400;opacity:.65}
-.vw--end.is-cur{animation:endIn .5s cubic-bezier(.2,.8,.2,1)}
-@keyframes endIn{from{transform:translate(-50%,-50%) scale(1.12);filter:blur(6px)}to{transform:translate(-50%,-50%) scale(1);filter:none}}
 .reduced .vw{transition:opacity .4s ease!important;filter:none!important}
-@media (max-width:760px){
-  .vibe__screen{height:clamp(260px,46vh,380px);border-radius:16px}
-  .vibe__hud{left:14px;right:14px;top:12px;font-size:9.5px}.vibe__bar{left:14px;right:14px;bottom:12px}
-  .vw{font-size:clamp(44px,14vw,70px)}.vw--long{font-size:clamp(34px,10vw,52px)}.vw--end{font-size:clamp(34px,10.5vw,54px);white-space:normal;width:90%}
-}
 
 /* intro: the "click to open" hint reads as a button, and pulses if someone tries to scroll first */
 .intro__hint span{padding:10px 18px 9px;border:1px solid var(--black);border-radius:999px;background:#fff}
@@ -1139,3 +1121,10 @@ em{font-style:normal}
 @media (prefers-reduced-motion:reduce){.about__charm{animation:none}}
 .about__copy .mega--sentence{margin-bottom:clamp(26px,3vw,40px)}
 @media (min-width:901px){.about__copy .mega--sentence{font-size:clamp(44px,5.4vw,88px)}}
+
+/* Round 11: smaller A.S. badge on the hero; plain caption beside the sticker */
+.hbadge{width:96px!important;height:96px!important;left:calc(46% - 48px)}
+.hbadge text{font-size:13px!important;letter-spacing:1.6px!important}
+.hbadge>span{font-size:18px!important}
+@media (max-width:900px){.hbadge{width:76px!important;height:76px!important;left:auto}}
+.about__sig{border-left:0;padding-left:0;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}

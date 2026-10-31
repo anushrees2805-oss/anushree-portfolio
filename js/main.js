@@ -220,45 +220,38 @@
     }).join(''));
   }
 
-  /* the word "ad" between the hero and About — a fast, self-playing reel of words, like a short video.
-     It starts from the top each time it comes into view and loops with a little end card. */
+  /* the word "ad": a full black screen between the hero and About that plays by itself like a short video.
+     Every word has the same font, colour and size; it restarts each time it comes into view and loops. */
   var VIBE = ['Curious', 'Creative', 'Imaginative', 'Out of the box', 'Playful', 'Observant', 'Bold', 'Detail-obsessed',
-    'Storyteller', 'Hands-on', 'Experimental', 'Dreamy', 'Colourful', 'Empathetic', 'Quirky'];
+    'Storyteller', 'Hands-on', 'Experimental', 'Dreamy', 'Empathetic', 'Quirky'];
   function vibeRoll() {
-    var host = $('#vibeRoll'), screen = $('#vibeScreen'), bar = $('#vibeBar'), clock = $('#vibeTime'); if (!host) return;
-    var STEP = REDUCED ? 1100 : 430, END = 1700;
-    host.innerHTML = VIBE.map(function (w, k) {
-      var cls = 'vw' + (k % 4 === 2 ? ' vw--serif' : '') + (w.length > 9 ? ' vw--long' : '');
-      return '<span class="' + cls + '">' + esc(w) + '</span>';
-    }).join('') + '<span class="vw vw--end">Anushree Sahu<b class="u-red">.</b><small class="mono">Graphic designer · Visual storyteller</small></span>';
-    var els = $$('.vw', host), n = els.length, i = 0, timer = 0, vis = false, t0 = 0, raf = 0;
-    var TOTAL = (n - 1) * STEP + END;
+    var host = $('#vibeRoll'), screen = $('#vibeScreen'); if (!host) return;
+    var STEP = REDUCED ? 1100 : 430;
+    host.innerHTML = VIBE.map(function (w) { return '<span class="vw">' + esc(w) + '</span>'; }).join('');
+    var els = $$('.vw', host), n = els.length, i = 0, timer = 0, vis = false;
+    /* one size for every word: the biggest that lets the longest word fit */
+    function fit() {
+      host.style.fontSize = '100px';
+      var widest = Math.max.apply(null, els.map(function (e) { return e.scrollWidth; }));
+      var size = 100 * (screen.clientWidth * 0.86) / widest;
+      host.style.fontSize = Math.min(size, 150, screen.clientHeight * 0.3).toFixed(1) + 'px';
+    }
     function paint() {
       els.forEach(function (el, k) {
-        var r = k - i;
-        if (i === n - 1) r = k === n - 1 ? 0 : 99;                 /* end card: only the name */
-        else if (k === n - 1) r = 99;
-        el.className = el.className.replace(/ is-\w+/g, '') + ' ' + (r === 0 ? 'is-cur' : r === -1 ? 'is-prev' : r === 1 ? 'is-next' : r < 0 ? 'is-up' : 'is-down');
+        var r = ((k - i) % n + n) % n; if (r > n / 2) r -= n;
+        el.className = 'vw ' + (r === 0 ? 'is-cur' : r === -1 ? 'is-prev' : r === 1 ? 'is-next' : r < 0 ? 'is-up' : 'is-down');
       });
-      screen.classList.toggle('is-flash', i % 5 === 4);              /* a quick inverted "cut", like an ad */
-      screen.classList.toggle('is-end', i === n - 1);
     }
-    function tick() {
-      i = (i + 1) % n; if (i === 0) t0 = performance.now();
-      paint(); timer = setTimeout(tick, i === n - 1 ? END : STEP);
-    }
-    function clockLoop(now) {
-      var e = (now - t0) % TOTAL; bar.style.transform = 'scaleX(' + (e / TOTAL).toFixed(4) + ')';
-      var sec = Math.floor(e / 1000); clock.textContent = '00:' + (sec < 10 ? '0' : '') + sec;
-      raf = vis ? requestAnimationFrame(clockLoop) : 0;
-    }
-    function play() { stop(); i = 0; t0 = performance.now(); paint(); timer = setTimeout(tick, STEP); raf = requestAnimationFrame(clockLoop); }
-    function stop() { clearTimeout(timer); timer = 0; cancelAnimationFrame(raf); raf = 0; }
-    paint();
+    function tick() { i = (i + 1) % n; paint(); timer = setTimeout(tick, STEP); }
+    function play() { stop(); i = 0; paint(); timer = setTimeout(tick, STEP); }
+    function stop() { clearTimeout(timer); timer = 0; }
+    fit(); paint();
+    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(fit);
+    var rz; addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(fit, 120); });
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
       var now = es[0].isIntersecting; if (now === vis) return; vis = now;
       if (vis && !document.hidden) play(); else stop();
-    }, { threshold: 0.35 }).observe(screen);
+    }, { threshold: 0.3 }).observe(screen);
     else { vis = true; play(); }
     document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else if (vis) play(); });
   }
