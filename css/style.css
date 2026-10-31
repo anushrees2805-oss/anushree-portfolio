@@ -1214,3 +1214,14 @@ em{font-style:normal}
   animation:vgrain 1s steps(4) infinite}
 @keyframes vgrain{0%{transform:translate(0,0)}25%{transform:translate(-4%,3%)}50%{transform:translate(3%,-4%)}75%{transform:translate(-2%,-2%)}100%{transform:translate(0,0)}}
 .reduced .vglow i,.reduced .vgrain{animation:none}
+
+/* Round 17: red-only glow, a faint swinging keyring at the top right, and a thin white line between page 1 and the word video */
+.vglow i:nth-child(1){background:radial-gradient(circle,rgba(255,48,56,.16),transparent 65%)!important}
+.vglow i:nth-child(3){display:none}
+.vibe::before{content:"";position:absolute;left:var(--gut);right:var(--gut);top:0;height:1px;background:rgba(255,255,255,.55);z-index:3}
+.vkey{position:absolute;right:clamp(24px,7vw,120px);top:0;height:min(36vh,330px);width:auto;z-index:0;opacity:.16;transform-origin:50% 0;animation:vkeySwing 6s ease-in-out infinite;pointer-events:none}
+.vkey line,.vkey circle,.vkey ellipse,.vkey path{fill:none;stroke:#fff;stroke-width:2;vector-effect:non-scaling-stroke}
+.vkey text{fill:#fff;font-weight:800;font-size:44px;letter-spacing:-2px}
+@keyframes vkeySwing{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+.reduced .vkey{animation:none}
+@media (max-width:760px){.vkey{height:min(26vh,200px);right:18px}}

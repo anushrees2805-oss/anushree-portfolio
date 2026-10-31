@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,800;0,900;1,500&family=Instrument+Serif:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/character/anushree.webp">
-  <link rel="stylesheet" href="css/style.css?v=19">
+  <link rel="stylesheet" href="css/style.css?v=20">
   <script>
     /* decide before paint whether the intro plays */
     (function () {
@@ -93,6 +93,16 @@
       <div class="vibe__screen" id="vibeScreen" aria-hidden="true">
         <div class="vglow" aria-hidden="true"><i></i><i></i><i></i></div>
         <div class="vgrain" aria-hidden="true"></div>
+        <svg class="vkey" viewBox="0 0 240 520" aria-hidden="true">
+          <line x1="120" y1="0" x2="120" y2="58"/>
+          <circle cx="120" cy="96" r="38"/>
+          <circle cx="120" cy="96" r="30"/>
+          <ellipse cx="120" cy="154" rx="9" ry="16"/>
+          <ellipse cx="120" cy="184" rx="9" ry="16"/>
+          <path d="M60 236 q0-28 28-28 h64 q28 0 28 28 v232 q0 28-28 28 h-64 q-28 0-28-28 z"/>
+          <circle cx="120" cy="240" r="10"/>
+          <text x="120" y="390" text-anchor="middle">A.S.</text>
+        </svg>
         <div class="vibe__hud mono"><i></i>Anushree beyond designing is</div>
         <div class="vibe__roll" id="vibeRoll"></div>
       </div>
@@ -296,8 +306,8 @@
     <span class="cursor__label mono" id="cursorLabel"></span>
   </div>
 
-  <script src="js/dims.js?v=19"></script>
-  <script src="js/data.js?v=19"></script>
-  <script src="js/main.js?v=19"></script>
+  <script src="js/dims.js?v=20"></script>
+  <script src="js/data.js?v=20"></script>
+  <script src="js/main.js?v=20"></script>
 </body>
 </html>
