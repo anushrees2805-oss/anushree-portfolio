@@ -79,6 +79,12 @@
         g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.15, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
         o.connect(lpf); lpf.connect(g); g.connect(out); o.start(t); o.stop(t + 0.08);
       },
+      /* the word reel: a soft scroll-wheel tick with a little air, one per word */
+      roll: function () {
+        if (!ready()) return; var t = ctx.currentTime;
+        var g = noise(t, 0.05, 'bandpass', 2600, 1.4, 0, 1400); g.linearRampToValueAtTime(0.09, t + 0.004); g.exponentialRampToValueAtTime(0.0001, t + 0.05);
+        tone(t, 900, 620, 0.04, 0.05, 'triangle');
+      },
       /* gentle click for tags, projects and stories */
       click: function () {
         if (!ready()) return; var t = ctx.currentTime;
@@ -220,13 +226,14 @@
     }).join(''));
   }
 
-  /* the word "ad": a full black screen between the hero and About that plays by itself like a short video.
-     Every word has the same font, colour and size; it restarts each time it comes into view and loops. */
+  /* the word "ad": its own full black screen between the hero and About that plays by itself like a short video.
+     Every word has the same font, colour and size and sits dead centre; a soft scroll tick plays with each word.
+     It restarts each time it comes into view and loops. */
   var VIBE = ['Curious', 'Creative', 'Imaginative', 'Out of the box', 'Playful', 'Observant', 'Bold', 'Detail-obsessed',
     'Storyteller', 'Hands-on', 'Experimental', 'Dreamy', 'Empathetic', 'Quirky'];
   function vibeRoll() {
     var host = $('#vibeRoll'), screen = $('#vibeScreen'); if (!host) return;
-    var STEP = REDUCED ? 1100 : 430;
+    var STEP = REDUCED ? 1100 : 460;
     host.innerHTML = VIBE.map(function (w) { return '<span class="vw">' + esc(w) + '</span>'; }).join('');
     var els = $$('.vw', host), n = els.length, i = 0, timer = 0, vis = false;
     /* one size for every word: the biggest that lets the longest word fit */
@@ -242,16 +249,16 @@
         el.className = 'vw ' + (r === 0 ? 'is-cur' : r === -1 ? 'is-prev' : r === 1 ? 'is-next' : r < 0 ? 'is-up' : 'is-down');
       });
     }
-    function tick() { i = (i + 1) % n; paint(); timer = setTimeout(tick, STEP); }
-    function play() { stop(); i = 0; paint(); timer = setTimeout(tick, STEP); }
+    function tick() { i = (i + 1) % n; paint(); SFX.roll(); timer = setTimeout(tick, STEP); }
+    function play() { stop(); i = 0; paint(); SFX.roll(); timer = setTimeout(tick, STEP); }
     function stop() { clearTimeout(timer); timer = 0; }
     fit(); paint();
     (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(fit);
     var rz; addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(fit, 120); });
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
-      var now = es[0].isIntersecting; if (now === vis) return; vis = now;
+      var now = es[0].intersectionRatio >= 0.5; if (now === vis) return; vis = now;
       if (vis && !document.hidden) play(); else stop();
-    }, { threshold: 0.3 }).observe(screen);
+    }, { threshold: [0, 0.5, 1] }).observe(screen);
     else { vis = true; play(); }
     document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else if (vis) play(); });
   }

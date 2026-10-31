@@ -1087,19 +1087,25 @@ em{font-style:normal}
 @media (max-width:900px){.about__facts{grid-template-columns:1fr}.about__facts li:nth-child(2){transform:none}}
 @media (max-width:640px){.hamper__line{font-size:8.5px!important;letter-spacing:.12em!important;margin-right:22%}}
 
-/* ---------- Round 11: the word reel — its own full black screen, centred, plays like a video ---------- */
+/* ---------- Round 11: the word reel — its own full black screen between hero and About ---------- */
 .vibe{position:relative;background:#080808;padding:0;margin:0}
 .vibe__screen{position:relative;width:100%;height:100vh;height:100svh;min-height:420px;background:#080808;color:#fff;overflow:hidden}
-.vibe__roll{position:absolute;inset:0;font-size:120px}
-.vw{position:absolute;left:50%;top:50%;white-space:nowrap;font-family:var(--sans,inherit);font-weight:800;letter-spacing:-.06em;line-height:1;font-size:1em;color:#fff;text-align:center;
-  transform:translate(-50%,-50%);opacity:0;will-change:transform,opacity,filter;
-  transition:transform .3s cubic-bezier(.7,0,.2,1),opacity .3s cubic-bezier(.7,0,.2,1),filter .3s ease}
-.vw.is-cur{opacity:1;filter:none}
-.vw.is-prev{opacity:.16;transform:translate(-50%,calc(-50% - .5em)) scale(.9);filter:blur(2px)}
-.vw.is-next{opacity:.16;transform:translate(-50%,calc(-50% + .5em)) scale(.9);filter:blur(2px)}
-.vw.is-up{opacity:0;transform:translate(-50%,calc(-50% - 1em)) scale(.85);filter:blur(5px)}
-.vw.is-down{opacity:0;transform:translate(-50%,calc(-50% + 1em)) scale(.85);filter:blur(5px);transition:none}
+.vibe__hud{position:absolute;left:var(--gut);top:clamp(84px,11vh,120px);display:flex;align-items:center;gap:10px;z-index:2;
+  font-size:clamp(11px,1vw,13px);letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.72)}
+.vibe__hud i{width:8px;height:8px;border-radius:50%;background:var(--red);animation:recBlink 1s steps(2) infinite}
+@keyframes recBlink{50%{opacity:.15}}
+/* every word sits in the same centred cell, so it is always dead centre */
+.vibe__roll{position:absolute;inset:0;display:grid;place-items:center;font-size:120px}
+.vw{grid-area:1/1;white-space:nowrap;text-align:center;color:#fff;font-weight:800;letter-spacing:-.06em;line-height:1;font-size:1em;
+  opacity:0;will-change:transform,opacity,filter;
+  transition:transform .32s cubic-bezier(.7,0,.2,1),opacity .32s cubic-bezier(.7,0,.2,1),filter .32s ease}
+.vw.is-cur{opacity:1;transform:none;filter:none}
+.vw.is-prev{opacity:.16;transform:translateY(-.55em) scale(.9);filter:blur(2px)}
+.vw.is-next{opacity:.16;transform:translateY(.55em) scale(.9);filter:blur(2px)}
+.vw.is-up{opacity:0;transform:translateY(-1.1em) scale(.85);filter:blur(5px)}
+.vw.is-down{opacity:0;transform:translateY(1.1em) scale(.85);filter:blur(5px);transition:none}
 .reduced .vw{transition:opacity .4s ease!important;filter:none!important}
+@media (max-width:760px){.vibe__hud{top:84px;font-size:10px}}
 
 /* intro: the "click to open" hint reads as a button, and pulses if someone tries to scroll first */
 .intro__hint span{padding:10px 18px 9px;border:1px solid var(--black);border-radius:999px;background:#fff}
@@ -1128,3 +1134,5 @@ em{font-style:normal}
 .hbadge>span{font-size:18px!important}
 @media (max-width:900px){.hbadge{width:76px!important;height:76px!important;left:auto}}
 .about__sig{border-left:0;padding-left:0;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+
+.htag{display:none!important}
