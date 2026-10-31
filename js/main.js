@@ -22,12 +22,17 @@
     var AC = window.AudioContext || window.webkitAudioContext, ctx = null, out = null, noiseBuf = null, lastTick = 0, tock = false;
     function init() {
       if (ctx || !AC) return ctx;
-      ctx = new AC(); out = ctx.createGain(); out.gain.value = 1.7; out.connect(ctx.destination);
+      ctx = new AC(); out = ctx.createGain(); out.gain.value = 3.2;
+      /* a gentle limiter so the louder effects never crackle */
+      var lim = ctx.createDynamicsCompressor(); lim.threshold.value = -10; lim.knee.value = 8; lim.ratio.value = 8; lim.attack.value = 0.002; lim.release.value = 0.15;
+      out.connect(lim); lim.connect(ctx.destination);
       noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
       var d = noiseBuf.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
       return ctx;
     }
+    var gestured = false;
     function unlock() {
+      gestured = true;
       /* iPhone: let sound play even when the ring/silent switch is on */
       try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
       if (!init()) return;
@@ -36,7 +41,14 @@
       try { var b = ctx.createBuffer(1, 1, 22050), sn = ctx.createBufferSource(); sn.buffer = b; sn.connect(ctx.destination); sn.start(0); } catch (e) {}
     }
     ['pointerdown', 'mousedown', 'touchstart', 'touchend', 'click', 'keydown'].forEach(function (ev) { addEventListener(ev, unlock, true); });
-    function ready() { return !window.__muted && init() && ctx.state === 'running'; }
+    function ready() {
+      if (window.__muted || !init()) return false;
+      if (ctx.state === 'running') return true;
+      /* audio is still waking up after the first tap: queue the sound instead of dropping it */
+      var act = gestured || (navigator.userActivation && navigator.userActivation.hasBeenActive);
+      if (act) { ctx.resume().catch(function () {}); return true; }
+      return false;
+    }
     function noise(t, dur, type, f, q, vol, f2) {
       var src = ctx.createBufferSource(); src.buffer = noiseBuf;
       var bq = ctx.createBiquadFilter(); bq.type = type; bq.frequency.setValueAtTime(f, t); bq.Q.value = q;
@@ -63,21 +75,21 @@
         var o = ctx.createOscillator(), lpf = ctx.createBiquadFilter(), g = ctx.createGain();
         o.type = 'sine'; o.frequency.setValueAtTime(f * 1.04, t); o.frequency.exponentialRampToValueAtTime(f, t + 0.015);
         lpf.type = 'lowpass'; lpf.frequency.value = 1100;
-        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.09, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.055);
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.15, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
         o.connect(lpf); lpf.connect(g); g.connect(out); o.start(t); o.stop(t + 0.08);
       },
       /* gentle click for tags, projects and stories */
       click: function () {
         if (!ready()) return; var t = ctx.currentTime;
-        var g = noise(t, 0.025, 'highpass', 2500, 0.7, 0); g.linearRampToValueAtTime(0.05, t + 0.001); g.exponentialRampToValueAtTime(0.0001, t + 0.025);
-        tone(t, 1150, 700, 0.07, 0.05);
+        var g = noise(t, 0.025, 'highpass', 2500, 0.7, 0); g.linearRampToValueAtTime(0.1, t + 0.001); g.exponentialRampToValueAtTime(0.0001, t + 0.03);
+        tone(t, 1150, 700, 0.08, 0.1);
       },
       /* the faintest swish when the pointer brushes a keychain tag */
       hover: function () {
         if (!ready()) return; var now = performance.now(); if (now - lastTick < 90) return; lastTick = now;
         var t = ctx.currentTime;
-        var g = noise(t, 0.09, 'bandpass', 1800, 1.2, 0, 3600); g.linearRampToValueAtTime(0.07, t + 0.03); g.exponentialRampToValueAtTime(0.0001, t + 0.09);
-        tone(t, 2400, 2100, 0.05, 0.028);
+        var g = noise(t, 0.09, 'bandpass', 1800, 1.2, 0, 3600); g.linearRampToValueAtTime(0.1, t + 0.03); g.exponentialRampToValueAtTime(0.0001, t + 0.09);
+        tone(t, 2400, 2100, 0.05, 0.045);
       },
       /* a soft cardboard "pop" — the hamper lid lifting */
       pop: function () {
@@ -91,8 +103,8 @@
         var t = ctx.currentTime, v = Math.min(1, amt || 0.5), base = [2093, 2349, 2637, 3136, 3520];
         for (var k = 0; k < 2 + (v > 0.6 ? 1 : 0); k++) {
           var f = base[Math.floor(Math.random() * base.length)] * (1 + (Math.random() - .5) * 0.02), at = t + k * (0.035 + Math.random() * 0.03);
-          tone(at, f, null, 0.35, 0.022 * v + 0.01);
-          tone(at, f * 2.7, null, 0.08, 0.006 * v);
+          tone(at, f, null, 0.35, 0.035 * v + 0.016);
+          tone(at, f * 2.7, null, 0.08, 0.01 * v);
         }
       },
       /* her mouth opening: a soft little "pop" as the lips part, a breath of air as it widens,
@@ -207,6 +219,27 @@
     }).join(''));
   }
 
+  /* the word strip under the hero — one word at a time rolls up, the next and last ones ghost above and below */
+  var VIBE = ['Curious', 'Creative', 'Imaginative', 'Out of the box', 'Playful', 'Observant', 'Bold', 'Detail-obsessed',
+    'Storyteller', 'Hands-on', 'Experimental', 'Dreamy', 'Colourful', 'Empathetic', 'Quirky'];
+  function vibeRoll() {
+    var host = $('#vibeRoll'); if (!host) return;
+    host.innerHTML = VIBE.map(function (w) { return '<span class="vw">' + esc(w) + '</span>'; }).join('');
+    var els = $$('.vw', host), n = els.length, i = 0, timer = 0, vis = false;
+    function paint() {
+      els.forEach(function (el, k) {
+        var r = ((k - i) % n + n) % n; if (r > n / 2) r -= n;
+        el.className = 'vw ' + (r === 0 ? 'is-cur' : r === -1 ? 'is-prev' : r === 1 ? 'is-next' : r < 0 ? 'is-up' : 'is-down');
+      });
+    }
+    function step() { i = (i + 1) % n; paint(); }
+    function run() { clearInterval(timer); timer = 0; if (vis && !document.hidden) timer = setInterval(step, REDUCED ? 1800 : 820); }
+    paint();
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { vis = es[0].isIntersecting; run(); }).observe(host);
+    else { vis = true; run(); }
+    document.addEventListener('visibilitychange', run);
+  }
+
   /* about: the hamper — a box full of packaging that opens as you arrive */
   var HAMPER = [
     ['h01', 'kogen'], ['h02', 'sunbuns'], ['h03', 'nexibles'], ['h04', 'sunbuns'], ['h05', 'nexibles'],
@@ -276,7 +309,7 @@
     }).join('');
   }
 
-  renderTimeline(); renderHamper(); renderProjects(); renderIllustrations(); renderFilms(); renderStories();
+  renderTimeline(); renderHamper(); vibeRoll(); renderProjects(); renderIllustrations(); renderFilms(); renderStories();
 
   /* ======================================================================
      REVEALS + NAV STATE + TIMELINE PROGRESS
