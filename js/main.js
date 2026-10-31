@@ -79,11 +79,15 @@
         g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.15, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
         o.connect(lpf); lpf.connect(g); g.connect(out); o.start(t); o.stop(t + 0.08);
       },
-      /* the word reel: a soft scroll-wheel tick with a little air, one per word */
+      /* the word reel: a quiet music-box note per word, stepping gently up and down a pentatonic scale */
       roll: function () {
         if (!ready()) return; var t = ctx.currentTime;
-        var g = noise(t, 0.05, 'bandpass', 2600, 1.4, 0, 1400); g.linearRampToValueAtTime(0.09, t + 0.004); g.exponentialRampToValueAtTime(0.0001, t + 0.05);
-        tone(t, 900, 620, 0.04, 0.05, 'triangle');
+        var notes = [659.25, 783.99, 880, 987.77, 1174.66, 987.77, 880, 783.99];
+        this._rn = ((this._rn || 0) + 1) % notes.length; var f = notes[this._rn];
+        var o = ctx.createOscillator(), lp = ctx.createBiquadFilter(), g = ctx.createGain();
+        o.type = 'sine'; o.frequency.value = f; lp.type = 'lowpass'; lp.frequency.value = 2400;
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.03, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.38);
+        o.connect(lp); lp.connect(g); g.connect(out); o.start(t); o.stop(t + 0.4);
       },
       /* gentle click for tags, projects and stories */
       click: function () {
@@ -263,6 +267,56 @@
     document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else if (vis) play(); });
   }
 
+  /* the ending video before Contact: rows of "let's …" lines flow sideways, each lighting up as it passes the
+     middle (where you read it). After ~6s it lands on "Let's create." and the contact page glides up beneath it. */
+  var OUTRO = [
+    ["Let's create", "Let's collaborate", "Let's build a brand", "Let's design the box"],
+    ["Your idea + my design", "Let's tell your story", "Let's make it memorable"],
+    ["Let's work together", "Let's sketch it out", "Let's make people stop & look"],
+    ["Say hello", "Let's talk", "Let's create something meaningful"]
+  ];
+  function outroReel() {
+    var scr = $('#outroScreen'), host = $('#outroRows'), sec = $('#outro'), contact = $('#contact'); if (!scr) return;
+    var DUR = REDUCED ? 2500 : 6200, SPEED = [0.07, -0.09, 0.06, -0.08];
+    host.innerHTML = OUTRO.map(function (row) {
+      var one = row.map(function (p) { return '<span class="op">' + esc(p) + '</span><i class="od"></i>'; }).join('');
+      return '<div class="or"><div class="or__t">' + one + one + one + '</div></div>';
+    }).join('');
+    var tracks = $$('.or__t', host), spans = $$('.op', host), raf = 0, t0 = 0, vis = false, ended = false, segs = [];
+    function measure() { segs = tracks.map(function (tr) { return tr.scrollWidth / 3; }); }
+    function frame(now) {
+      raf = 0; if (!vis) return;
+      var t = now - t0, w = scr.clientWidth, cx = w / 2;
+      tracks.forEach(function (tr, k) {
+        var seg = segs[k] || 1, x = ((SPEED[k] * w * t / 1000) % seg + seg) % seg;
+        tr.style.transform = 'translate3d(' + (-seg + x - (k % 2 ? seg * 0.35 : 0)).toFixed(1) + 'px,0,0)';
+      });
+      var sl = scr.getBoundingClientRect().left;
+      spans.forEach(function (sp) {
+        var r = sp.getBoundingClientRect(), d = Math.abs(r.left - sl + r.width / 2 - cx) / (w * 0.5);
+        var o = 0.1 + 0.9 * Math.pow(Math.max(0, 1 - d), 1.8); sp.style.opacity = o.toFixed(3);
+      });
+      if (t > DUR && !scr.classList.contains('is-end')) scr.classList.add('is-end');
+      if (t > DUR + 1500 && !ended) { ended = true; finish(); }
+      if (!ended) raf = requestAnimationFrame(frame);
+    }
+    function finish() {
+      if (contact) contact.classList.add('is-pop');
+      /* if the viewer is still watching, bring the contact page up */
+      var r = sec.getBoundingClientRect();
+      if (!REDUCED && vis && Math.abs(r.top) < innerHeight * 0.25) {
+        var y0 = scrollY, y1 = contact.getBoundingClientRect().top + scrollY;
+        tween(1100, function (e) { scrollTo({ top: y0 + (y1 - y0) * e, behavior: 'instant' }); }, ease.inOutCubic);
+      }
+    }
+    function play() { cancelAnimationFrame(raf); ended = false; scr.classList.remove('is-end'); measure(); t0 = performance.now(); raf = requestAnimationFrame(frame); }
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
+      var now = es[0].intersectionRatio >= 0.6; if (now === vis) return; vis = now;
+      if (vis) play(); else { cancelAnimationFrame(raf); raf = 0; }
+    }, { threshold: [0, 0.6, 1] }).observe(scr);
+    var rz; addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(measure, 150); });
+  }
+
   /* about: the hamper — a box full of packaging that opens as you arrive */
   var HAMPER = [
     ['h01', 'kogen'], ['h02', 'sunbuns'], ['h03', 'nexibles'], ['h04', 'sunbuns'], ['h05', 'nexibles'],
@@ -332,7 +386,7 @@
     }).join('');
   }
 
-  renderTimeline(); renderHamper(); vibeRoll(); renderProjects(); renderIllustrations(); renderFilms(); renderStories();
+  renderTimeline(); renderHamper(); vibeRoll(); outroReel(); renderProjects(); renderIllustrations(); renderFilms(); renderStories();
 
   /* ======================================================================
      REVEALS + NAV STATE + TIMELINE PROGRESS
@@ -1516,13 +1570,13 @@
         t.style.setProperty('--sw', s.th.toFixed(2) + 'deg');
         var r = t.getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - mid); if (d < bd) { bd = d; best = i; }
       });
-      if (best !== act) { act = best; tags.forEach(function (t, i) { t.classList.toggle('is-on', i === best); }); if (moving) SFX.tick(); }
+      if (best !== act) { act = best; tags.forEach(function (t, i) { t.classList.toggle('is-on', i === best); }); }
       if (moving || tags.some(function (t, i) { return Math.abs(sw[i].w) > 0.4 || Math.abs(sw[i].th) > 0.3; })) raf = requestAnimationFrame(frame);
     }
     function kick() { if (!raf) raf = requestAnimationFrame(frame); }
     addEventListener('scroll', function () { var dy = scrollY - lastY; lastY = scrollY; if (prog() > 0 && prog() < 1) vel = clamp(vel - dy * 0.9, -160, 160); kick(); }, { passive: true });
     var lastL = 0;
-    track.addEventListener('scroll', function () { if (!small) return; var dx = track.scrollLeft - lastL; lastL = track.scrollLeft; vel = clamp(vel - dx * 0.6, -160, 160); if (Math.abs(dx) > 2) SFX.tick(); kick(); }, { passive: true });
+    track.addEventListener('scroll', function () { if (!small) return; var dx = track.scrollLeft - lastL; lastL = track.scrollLeft; vel = clamp(vel - dx * 0.6, -160, 160); kick(); }, { passive: true });
     tags.forEach(function (t, i) { t.addEventListener('pointerenter', function () { sw[i].w += (i % 2 ? -1 : 1) * 70; SFX.hover(); kick(); }); });
     addEventListener('resize', function () { size(); kick(); });
     if (document.fonts) document.fonts.ready.then(function () { size(); kick(); });

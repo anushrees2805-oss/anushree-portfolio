@@ -1136,3 +1136,31 @@ em{font-style:normal}
 .about__sig{border-left:0;padding-left:0;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
 
 .htag{display:none!important}
+
+/* ---------- Round 12 ---------- */
+/* hero: the A.S. badge moves to the right, over the bottom corner of the photo */
+.hbadge{left:auto!important;right:calc(var(--gut) + 1vw)!important;bottom:18%!important}
+@media (max-width:900px){.hbadge{right:var(--gut)!important;bottom:47%!important}}
+
+/* the ending video before Contact */
+.outro{position:relative;background:#080808}
+.outro__screen{position:relative;height:100vh;height:100svh;min-height:460px;overflow:hidden;background:#080808;color:#fff;display:flex;flex-direction:column;justify-content:center;gap:clamp(6px,1.6vh,16px)}
+.outro__rows{display:flex;flex-direction:column;gap:clamp(6px,1.6vh,16px);transition:opacity .7s ease,transform .9s cubic-bezier(.7,0,.2,1),filter .7s ease}
+.or{overflow:hidden;white-space:nowrap}
+.or__t{display:inline-flex;align-items:center;will-change:transform}
+.op{font-weight:800;letter-spacing:-.055em;line-height:1.05;font-size:clamp(38px,6.4vw,104px);opacity:.1;padding:0 .18em}
+.or:nth-child(2) .op,.or:nth-child(4) .op{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.03em}
+.od{display:inline-block;flex:none;width:.22em;height:.22em;font-size:clamp(38px,6.4vw,104px);margin:0 .3em;border-radius:50%;background:var(--red)}
+.outro__end{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:18px;text-align:center;opacity:0;transform:scale(1.15);filter:blur(10px);pointer-events:none;
+  transition:opacity .8s ease .2s,transform 1s cubic-bezier(.2,.8,.2,1) .2s,filter .8s ease .2s}
+.outro__end span{font-weight:800;letter-spacing:-.06em;line-height:1;font-size:clamp(56px,11vw,190px)}
+.outro__end small{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.outro__screen.is-end .outro__rows{opacity:0;transform:scale(.92);filter:blur(8px)}
+.outro__screen.is-end .outro__end{opacity:1;transform:none;filter:none}
+.outro .vibe__hud{top:clamp(84px,11vh,120px)}
+@media (max-width:760px){.op,.od{font-size:clamp(30px,10vw,48px)}.outro__end span{font-size:clamp(46px,15vw,74px)}}
+
+/* the contact page "pops up" once the ending video finishes */
+.contact.is-pop .mega--contact,.contact.is-pop .contact__grid{animation:ctPop 1s cubic-bezier(.2,.8,.2,1) both}
+.contact.is-pop .contact__grid{animation-delay:.15s}
+@keyframes ctPop{from{opacity:0;transform:translateY(70px) scale(.97)}to{opacity:1;transform:none}}
