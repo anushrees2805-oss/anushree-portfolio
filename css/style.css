@@ -1164,3 +1164,8 @@ em{font-style:normal}
 .contact.is-pop .mega--contact,.contact.is-pop .contact__grid{animation:ctPop 1s cubic-bezier(.2,.8,.2,1) both}
 .contact.is-pop .contact__grid{animation-delay:.15s}
 @keyframes ctPop{from{opacity:0;transform:translateY(70px) scale(.97)}to{opacity:1;transform:none}}
+
+/* Round 13: the ending video is all white, one font — calm, not busy */
+.or:nth-child(2) .op,.or:nth-child(4) .op{font-family:inherit!important;font-style:normal!important;font-weight:800!important;letter-spacing:-.055em!important}
+.od{width:.14em!important;height:.14em!important;background:#fff!important;opacity:.5}
+.op{color:#fff}

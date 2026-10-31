@@ -277,7 +277,7 @@
   ];
   function outroReel() {
     var scr = $('#outroScreen'), host = $('#outroRows'), sec = $('#outro'), contact = $('#contact'); if (!scr) return;
-    var DUR = REDUCED ? 2500 : 6200, SPEED = [0.07, -0.09, 0.06, -0.08];
+    var DUR = REDUCED ? 1800 : 3400, SPEED = [0.09, -0.11, 0.08, -0.1];
     host.innerHTML = OUTRO.map(function (row) {
       var one = row.map(function (p) { return '<span class="op">' + esc(p) + '</span><i class="od"></i>'; }).join('');
       return '<div class="or"><div class="or__t">' + one + one + one + '</div></div>';
@@ -297,7 +297,7 @@
         var o = 0.1 + 0.9 * Math.pow(Math.max(0, 1 - d), 1.8); sp.style.opacity = o.toFixed(3);
       });
       if (t > DUR && !scr.classList.contains('is-end')) scr.classList.add('is-end');
-      if (t > DUR + 1500 && !ended) { ended = true; finish(); }
+      if (t > DUR + 1000 && !ended) { ended = true; finish(); }
       if (!ended) raf = requestAnimationFrame(frame);
     }
     function finish() {
@@ -437,7 +437,6 @@
     function draw(x) {
       var phi = phiAt(x), lo = small ? -56 : -80, hi = small ? 24 : 80;
       var ti = Math.round(phi / STEP); /* tick each time a word passes */
-      if (tickIdx !== null && ti !== tickIdx) SFX.tick();
       tickIdx = ti;
       words.forEach(function (el, k) {
         var a = k * STEP - phi, o;
@@ -1577,7 +1576,7 @@
     addEventListener('scroll', function () { var dy = scrollY - lastY; lastY = scrollY; if (prog() > 0 && prog() < 1) vel = clamp(vel - dy * 0.9, -160, 160); kick(); }, { passive: true });
     var lastL = 0;
     track.addEventListener('scroll', function () { if (!small) return; var dx = track.scrollLeft - lastL; lastL = track.scrollLeft; vel = clamp(vel - dx * 0.6, -160, 160); kick(); }, { passive: true });
-    tags.forEach(function (t, i) { t.addEventListener('pointerenter', function () { sw[i].w += (i % 2 ? -1 : 1) * 70; SFX.hover(); kick(); }); });
+    tags.forEach(function (t, i) { t.addEventListener('pointerenter', function () { sw[i].w += (i % 2 ? -1 : 1) * 70; kick(); }); });
     addEventListener('resize', function () { size(); kick(); });
     if (document.fonts) document.fonts.ready.then(function () { size(); kick(); });
     addEventListener('load', function () { size(); kick(); });
@@ -1612,7 +1611,7 @@
   (function () {
     var TRACKS = [
       { src: 'assets/audio/cinema.mp3', loop: 48.0, vol: 0.16, el: $('#filmsZone'), top: 0.75, bottom: 0.25 },
-      { src: 'assets/audio/contact-soft.mp3', loop: 41.7391, vol: 0.2, el: $('#contact'), top: 0.65, bottom: 0.2 }
+      { src: 'assets/audio/contact-soft.mp3', loop: 41.7391, vol: 0.2, el: $('#contact'), el2: $('#outro'), top: 0.65, bottom: 0.2 }
     ].filter(function (t) { return t.el; });
     var btn = document.createElement('button');
     btn.type = 'button'; btn.className = 'snd mono'; btn.setAttribute('aria-label', 'Background music');
@@ -1621,7 +1620,10 @@
     var want = true; try { want = localStorage.getItem('as-sound3') !== 'off'; } catch (e) {}
     window.__muted = !want;
     var ctx = null, filmOn = false, started = false, loading = null;
-    function near(tr) { if (root.style.overflow === 'hidden') return false; var r = tr.el.getBoundingClientRect(); return r.top < innerHeight * tr.top && r.bottom > innerHeight * tr.bottom; }
+    function near(tr) {
+      if (root.style.overflow === 'hidden') return false;
+      return [tr.el, tr.el2].some(function (el) { if (!el) return false; var r = el.getBoundingClientRect(); return r.top < innerHeight * tr.top && r.bottom > innerHeight * tr.bottom; });
+    }
     function anyNear() { return TRACKS.some(near); }
     function level(tr) { return want && !filmOn && !document.hidden && near(tr) ? tr.vol : 0; }
     function ui() { btn.classList.toggle('is-on', want && started); btn.setAttribute('aria-pressed', want ? 'true' : 'false'); btn.querySelector('.snd__t').textContent = want ? 'Sound: on' : 'Sound: off — tap to turn on'; }
