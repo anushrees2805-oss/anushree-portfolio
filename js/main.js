@@ -267,12 +267,34 @@
     function tick() { i = (i + 1) % n; paint(); SFX.roll(); timer = setTimeout(tick, STEP); }
     function play() { stop(); i = 0; paint(); SFX.roll(); timer = setTimeout(tick, STEP); }
     function stop() { clearTimeout(timer); timer = 0; }
+    /* faint dust drifting up through the dark, like light in a film frame */
+    var dc = $('#vibeDust'), dx = dc && dc.getContext('2d'), motes = [], draw = 0, last = 0;
+    function sizeDust() {
+      if (!dc) return; var r = Math.min(2, devicePixelRatio || 1);
+      dc.width = screen.clientWidth * r; dc.height = screen.clientHeight * r; dx.setTransform(r, 0, 0, r, 0, 0);
+      var N = Math.round(Math.min(110, screen.clientWidth * screen.clientHeight / 14000));
+      motes = []; for (var q = 0; q < N; q++) motes.push({ x: Math.random() * screen.clientWidth, y: Math.random() * screen.clientHeight,
+        r: Math.random() * 1.4 + 0.4, v: Math.random() * 10 + 4, a: Math.random() * 0.35 + 0.08, red: Math.random() < 0.18, ph: Math.random() * 6 });
+    }
+    function dust(now) {
+      draw = 0; if (!vis || !dx) return;
+      var dt = Math.min(0.05, (now - (last || now)) / 1000); last = now;
+      var W = screen.clientWidth, Hh = screen.clientHeight; dx.clearRect(0, 0, W, Hh);
+      motes.forEach(function (m) {
+        m.y -= m.v * dt; m.x += Math.sin(now / 1400 + m.ph) * 0.12; if (m.y < -4) { m.y = Hh + 4; m.x = Math.random() * W; }
+        dx.globalAlpha = m.a * (0.7 + 0.3 * Math.sin(now / 900 + m.ph));
+        dx.fillStyle = m.red ? '#ff3038' : '#fff'; dx.beginPath(); dx.arc(m.x, m.y, m.r, 0, 6.283); dx.fill();
+      });
+      if (!REDUCED) draw = requestAnimationFrame(dust);
+    }
+    function dustOn() { if (!draw && dx) { last = 0; draw = requestAnimationFrame(dust); } }
+    sizeDust();
     fit(); paint();
     (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(fit);
-    var rz; addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(fit, 120); });
+    var rz; addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { fit(); sizeDust(); }, 120); });
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
       var now = es[0].intersectionRatio >= 0.5; if (now === vis) return; vis = now;
-      if (vis && !document.hidden) play(); else stop();
+      if (vis && !document.hidden) { play(); dustOn(); } else stop();
     }, { threshold: [0, 0.5, 1] }).observe(screen);
     else { vis = true; play(); }
     document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else if (vis) play(); });

@@ -1225,3 +1225,9 @@ em{font-style:normal}
 @keyframes vkeySwing{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
 .reduced .vkey{animation:none}
 @media (max-width:760px){.vkey{height:min(26vh,200px);right:18px}}
+
+/* Round 18: no keyring; brighter red glow; faint drifting dust as the background visual */
+.vkey{display:none!important}
+.vglow i:nth-child(1){background:radial-gradient(circle,rgba(255,48,56,.3),transparent 65%)!important}
+.vglow i:nth-child(2){background:radial-gradient(circle,rgba(255,48,56,.46),transparent 65%)!important}
+.vdust{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
