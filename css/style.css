@@ -1231,3 +1231,72 @@ em{font-style:normal}
 .vglow i:nth-child(1){background:radial-gradient(circle,rgba(255,48,56,.3),transparent 65%)!important}
 .vglow i:nth-child(2){background:radial-gradient(circle,rgba(255,48,56,.46),transparent 65%)!important}
 .vdust{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+/* ======================================================================
+   Round 19 — ONE continuous look: the whole site sits on the same near-black
+   canvas, white type, red accents, the same grain, glow and thin dividers.
+   The light sections invert their colour variables instead of being restyled one by one.
+   ====================================================================== */
+html,body{background:#080808}
+.about,.cat--light,.cat--grey,.cat--dark,.proc,.contact,.keys{
+  --black:#f2f2f2; --ink:#f2f2f2; --ink-2:#9d9d9d; --line:rgba(255,255,255,.14); --grey-l:#141414; --grey-m:#3a3a3a;
+  background:#080808!important; color:#f2f2f2}
+/* readable greys on the dark canvas */
+.about__more,.tl__desc,.arc__desc,.group__s{color:#bdbdbd!important}
+.arc__w--s{color:#8a8a8a!important}
+.about__more b,.about__statement{color:#f2f2f2!important}
+.keys__bg{color:#121212!important}
+
+/* the box in About: an edge and a soft red light under it so it doesn't melt into the black */
+.hamper__front,.hamper__back,.hamper__lid{box-shadow:0 0 0 1px rgba(255,255,255,.1),0 40px 80px -30px rgba(255,48,56,.35)!important}
+
+/* one colour grade for photos-as-backgrounds: no cool blue cast, a warm red light instead */
+.hvid__img{filter:grayscale(1) contrast(1.08) brightness(.9)!important}
+.hvid::after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
+  background:radial-gradient(ellipse 55% 60% at 88% 100%,rgba(255,48,56,.42),transparent 70%),radial-gradient(ellipse 40% 45% at 60% 0%,rgba(255,48,56,.14),transparent 70%)}
+.films-zone__bg{filter:grayscale(1) contrast(1.05)}
+
+/* the same rhythm on every page: a thin white line on top, a red glow in one corner */
+.about,.keys,.cat,.contact,.outro{position:relative}
+.about::before,.keys::before,.cat::before,.contact::before,.outro::before{content:"";position:absolute;left:var(--gut);right:var(--gut);top:0;height:1px;background:rgba(255,255,255,.4);z-index:3;pointer-events:none}
+.about{background:radial-gradient(ellipse 45% 55% at 100% 0%,rgba(255,48,56,.16),transparent 70%),#080808!important}
+#branding{background:radial-gradient(ellipse 40% 30% at 0% 100%,rgba(255,48,56,.14),transparent 70%),#080808!important}
+#lens{background:radial-gradient(ellipse 45% 30% at 100% 0%,rgba(255,48,56,.14),transparent 70%),#080808!important}
+#illustration{background:radial-gradient(ellipse 45% 30% at 0% 100%,rgba(255,48,56,.14),transparent 70%),#080808!important}
+.contact{background:radial-gradient(ellipse 50% 45% at 100% 0%,rgba(255,48,56,.18),transparent 70%),#080808!important}
+
+/* one film grain over the whole site, so every page feels like the same reel */
+body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.vgrain{display:none}
+
+/* project pages open on the same dark canvas */
+.case{--black:#f2f2f2; --ink:#f2f2f2; --ink-2:#9d9d9d; --line:rgba(255,255,255,.14); --grey-l:#141414; background:#080808!important; color:#f2f2f2!important}
+
+/* ---------- Round 19: the word video, more creative ---------- */
+/* a giant outlined echo of the current word, drifting slowly far behind */
+.vecho{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);white-space:nowrap;text-align:center;pointer-events:none;z-index:0;
+  font-weight:900;letter-spacing:-.07em;line-height:.8;font-size:clamp(170px,30vw,520px);color:transparent;-webkit-text-stroke:1.2px rgba(255,255,255,.075)}
+.vecho.is-in{animation:vechoIn 2.4s cubic-bezier(.2,.7,.2,1) both}
+@keyframes vechoIn{from{opacity:0;transform:translate(6%,-50%) scale(1.08)}18%{opacity:1}to{opacity:1;transform:translate(-3%,-50%) scale(1)}}
+/* a red light-leak sweeping across, like a cut in a film reel */
+.vleak{position:absolute;inset:-10% -30%;pointer-events:none;z-index:0;opacity:0;mix-blend-mode:screen;
+  background:linear-gradient(100deg,transparent 35%,rgba(255,48,56,.32) 47%,rgba(255,150,130,.16) 52%,transparent 64%)}
+.vleak.is-flash{animation:vleak .9s cubic-bezier(.3,.1,.2,1)}
+@keyframes vleak{0%{opacity:0;transform:translateX(-45%)}25%{opacity:1}100%{opacity:0;transform:translateX(45%)}}
+/* camera viewfinder corners + frame counter */
+.vframe i{position:absolute;width:26px;height:26px;border:1.5px solid rgba(255,255,255,.45);z-index:2;pointer-events:none}
+.vframe i:nth-child(1){left:calc(var(--gut) - 6px);top:clamp(70px,9vh,100px);border-right:0;border-bottom:0}
+.vframe i:nth-child(2){right:calc(var(--gut) - 6px);top:clamp(70px,9vh,100px);border-left:0;border-bottom:0}
+.vframe i:nth-child(3){left:calc(var(--gut) - 6px);bottom:clamp(26px,5vh,46px);border-right:0;border-top:0}
+.vframe i:nth-child(4){right:calc(var(--gut) - 6px);bottom:clamp(26px,5vh,46px);border-left:0;border-top:0}
+.vcount{position:absolute;left:calc(var(--gut) + 18px);bottom:clamp(34px,5.6vh,54px);z-index:2;font-size:11px;letter-spacing:.16em;color:rgba(255,255,255,.6)}
+.vibe__hud{left:calc(var(--gut) + 18px)!important}
+.reduced .vecho.is-in,.reduced .vleak.is-flash{animation:none}
+@media (max-width:760px){.vecho{font-size:clamp(120px,48vw,240px)}.vframe i{width:18px;height:18px}.vcount{font-size:10px}}
+/* components that used the dark variable as a fill: keep them dark inside the flipped sections */
+.card-hi__box{background:#151515!important;color:#fff!important;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 30px 60px -25px rgba(255,48,56,.35)!important}
+.case__curtain,.case.is-dark,.case .case__bar{background:#080808!important}
+.case .case__bar{border-color:rgba(255,255,255,.14)!important}
+.big-link:nth-child(2) .big-link__t::after{background:#f2f2f2}
+.btn:hover{background:#f2f2f2;color:#080808;border-color:#f2f2f2}

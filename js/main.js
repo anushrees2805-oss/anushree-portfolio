@@ -247,6 +247,7 @@
         (d.indexOf('|C') > -1 ? (function (c) { c = c.trim().split(' '); return '<circle cx="' + c[1] + '" cy="' + c[2] + '" r="' + c[3] + '" pathLength="1"/>'; })(d.split('|')[1]) : '') + '</svg>';
     }).join('');
     var arts = art ? $$('.vart', art) : [];
+    var echo = $('#vibeEcho'), leak = $('#vibeLeak'), count = $('#vibeCount');
     var STEP = REDUCED ? 1100 : 460;
     host.innerHTML = VIBE.map(function (w) { return '<span class="vw">' + esc(w) + '</span>'; }).join('');
     var els = $$('.vw', host), n = els.length, i = 0, timer = 0, vis = false;
@@ -263,6 +264,10 @@
         el.className = 'vw ' + (r === 0 ? 'is-cur' : r === -1 ? 'is-prev' : r === 1 ? 'is-next' : r < 0 ? 'is-up' : 'is-down');
       });
       arts.forEach(function (a, k) { a.classList.toggle('is-on', k === i); });
+      /* creative layer: a giant outlined echo of the word, a frame counter, and a red light-leak every few words */
+      if (echo) { echo.classList.remove('is-in'); void echo.offsetWidth; echo.textContent = VIBE[i]; echo.classList.add('is-in'); }
+      if (count) count.textContent = pad(i + 1) + ' / ' + pad(n);
+      if (leak && i % 3 === 0) { leak.classList.remove('is-flash'); void leak.offsetWidth; leak.classList.add('is-flash'); }
     }
     function tick() { i = (i + 1) % n; paint(); SFX.roll(); timer = setTimeout(tick, STEP); }
     function play() { stop(); i = 0; paint(); SFX.roll(); timer = setTimeout(tick, STEP); }
