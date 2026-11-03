@@ -1297,3 +1297,6 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 .case .case__bar{border-color:rgba(255,255,255,.14)!important}
 .big-link:nth-child(2) .big-link__t::after{background:#f2f2f2}
 .btn:hover{background:#f2f2f2;color:#080808;border-color:#f2f2f2}
+/* Round 21: no white line under the word video, and About starts closer to it */
+.about::before{display:none!important}
+.about.section{padding-top:clamp(28px,3.4vw,44px)!important}
