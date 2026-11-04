@@ -81,20 +81,35 @@
       },
       /* the word reel: a quiet music-box note per word, stepping gently up and down a pentatonic scale */
       roll: function () {
+        /* the landing: a deep "whoomp", a puff of air and a bright note from a short tune */
         if (!ready()) return; var t = ctx.currentTime;
         var notes = [659.25, 783.99, 880, 987.77, 1174.66, 987.77, 880, 783.99];
         this._rn = ((this._rn || 0) + 1) % notes.length; var f = notes[this._rn];
-        var o = ctx.createOscillator(), lp = ctx.createBiquadFilter(), g = ctx.createGain();
-        o.type = 'sine'; o.frequency.value = f; lp.type = 'lowpass'; lp.frequency.value = 2600;
-        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.034, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.26);
-        o.connect(lp); lp.connect(g); g.connect(out); o.start(t); o.stop(t + 0.28);
-        tone(t, 120, 52, 0.16, 0.12, 'sine');   /* a soft low thump right on the cut */
+        tone(t, 130, 38, 0.3, 0.2, 'sine');
+        var src = ctx.createBufferSource(); src.buffer = noiseBuf;
+        var lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(2600, t); lp.frequency.exponentialRampToValueAtTime(220, t + 0.22);
+        var g = ctx.createGain(); g.gain.setValueAtTime(0.08, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.24);
+        src.connect(lp); lp.connect(g); g.connect(out); src.start(t, Math.random() * 0.5); src.stop(t + 0.26);
+        var o = ctx.createOscillator(), o2 = ctx.createOscillator(), ng = ctx.createGain();
+        o.type = 'sine'; o.frequency.value = f; o2.type = 'triangle'; o2.frequency.value = f * 2.005;
+        ng.gain.setValueAtTime(0, t + 0.02); ng.gain.linearRampToValueAtTime(0.03, t + 0.03); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+        o.connect(ng); o2.connect(ng); ng.connect(out); o.start(t + 0.02); o2.start(t + 0.02); o.stop(t + 0.5); o2.stop(t + 0.5);
       },
-      /* the airy rush that builds while the word flies towards you */
+      /* the whoosh: air sweeping past you from one side to the other as the word flies in —
+         a wide gust plus a thin whistle on top, each one swinging the opposite way to the last */
       rush: function (len) {
-        if (!ready()) return; var t = ctx.currentTime, d = Math.max(0.12, len || 0.26);
-        var g = noise(t, d, 'bandpass', 700, 0.9, 0, 4200);
-        g.linearRampToValueAtTime(0.05, t + d * 0.9); g.linearRampToValueAtTime(0.0001, t + d);
+        if (!ready()) return; var t = ctx.currentTime, d = Math.max(0.14, len || 0.26);
+        this._side = -(this._side || 1); var sd = this._side;
+        var pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+        if (pan) { pan.pan.setValueAtTime(-0.85 * sd, t); pan.pan.linearRampToValueAtTime(0.85 * sd, t + d); pan.connect(out); }
+        var dest = pan || out;
+        [[0.7, 380, 5200, 0.16], [7, 900, 4200, 0.05]].forEach(function (L) {
+          var src = ctx.createBufferSource(); src.buffer = noiseBuf;
+          var bq = ctx.createBiquadFilter(); bq.type = 'bandpass'; bq.Q.value = L[0];
+          bq.frequency.setValueAtTime(L[1], t); bq.frequency.exponentialRampToValueAtTime(L[2], t + d);
+          var g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(L[3], t + d * 0.92); g.gain.linearRampToValueAtTime(0.0001, t + d + 0.03);
+          src.connect(bq); bq.connect(g); g.connect(dest); src.start(t, Math.random() * 0.5); src.stop(t + d + 0.06);
+        });
       },
       /* gentle click for tags, projects and stories */
       click: function () {
@@ -247,7 +262,7 @@
     { w: 'Playful', img: 'playful', pos: '50% 35%' },
     { w: 'Curious', img: 'curious', pos: '45% 45%' },
     { w: 'Free-|spirited', img: 'free-spirited', pos: '60% 40%' },
-    { w: 'Dreamy', img: 'dreamy', pos: '50% 50%' },
+    { w: 'Explorer', img: 'dreamy', pos: '50% 50%' },
     { w: 'Connected|to nature', img: 'nature', pos: '40% 55%' },
     { w: 'Story|teller', img: 'storyteller', pos: '50% 30%' }
   ];
