@@ -85,9 +85,16 @@
         var notes = [659.25, 783.99, 880, 987.77, 1174.66, 987.77, 880, 783.99];
         this._rn = ((this._rn || 0) + 1) % notes.length; var f = notes[this._rn];
         var o = ctx.createOscillator(), lp = ctx.createBiquadFilter(), g = ctx.createGain();
-        o.type = 'sine'; o.frequency.value = f; lp.type = 'lowpass'; lp.frequency.value = 2400;
-        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.03, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.38);
-        o.connect(lp); lp.connect(g); g.connect(out); o.start(t); o.stop(t + 0.4);
+        o.type = 'sine'; o.frequency.value = f; lp.type = 'lowpass'; lp.frequency.value = 2600;
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.034, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.26);
+        o.connect(lp); lp.connect(g); g.connect(out); o.start(t); o.stop(t + 0.28);
+        tone(t, 120, 52, 0.16, 0.12, 'sine');   /* a soft low thump right on the cut */
+      },
+      /* the airy rush that builds while the word flies towards you */
+      rush: function (len) {
+        if (!ready()) return; var t = ctx.currentTime, d = Math.max(0.12, len || 0.26);
+        var g = noise(t, d, 'bandpass', 700, 0.9, 0, 4200);
+        g.linearRampToValueAtTime(0.05, t + d * 0.9); g.linearRampToValueAtTime(0.0001, t + d);
       },
       /* gentle click for tags, projects and stories */
       click: function () {
@@ -272,7 +279,7 @@
         ws.forEach(function (w) { w.style.fontSize = size.toFixed(1) + 'px'; });
       });
     }
-    var DUR = REDUCED ? 2200 : 1250, cur = -1, t0 = 0, raf = 0, vis = false;
+    var DUR = REDUCED ? 2200 : 880, cur = -1, t0 = 0, raf = 0, vis = false, rushed = false;
     function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
     function easeIn(t) { return t * t * t * t; }
     function show(k) {
@@ -284,12 +291,13 @@
     function frame(now) {
       raf = 0; if (!vis) return;
       var t = (now - t0) / DUR;
-      if (t >= 1) { t0 = now; t = 0; show((cur + 1) % n); }
+      if (t >= 1) { t0 = now; t = 0; rushed = false; show((cur + 1) % n); }
+      if (!rushed && t >= 0.7 && !REDUCED) { rushed = true; SFX.rush(DUR * 0.3 / 1000); }
       var s, p;
       if (REDUCED) { s = 1; p = 1; }
       else if (t < 0.14) { s = 0.9 + 0.1 * easeOut(t / 0.14); p = 1.14 - 0.08 * easeOut(t / 0.14); }   /* snaps in */
-      else if (t < 0.74) { s = 1 + 0.05 * ((t - 0.14) / 0.6); p = 1.06 - 0.06 * ((t - 0.14) / 0.6); }   /* slow drift */
-      else { var u = (t - 0.74) / 0.26; s = 1.05 + 2.6 * easeIn(u); p = 1; }                             /* rush in */
+      else if (t < 0.7) { s = 1 + 0.05 * ((t - 0.14) / 0.56); p = 1.06 - 0.06 * ((t - 0.14) / 0.56); }   /* slow drift */
+      else { var u = (t - 0.7) / 0.3; s = 1.05 + 2.6 * easeIn(u); p = 1; }                             /* rush in */
       zs[cur].style.transform = 'translate3d(0,0,0) scale(' + s.toFixed(4) + ')';
       imgs[cur].style.transform = 'scale(' + p.toFixed(4) + ')';
       raf = requestAnimationFrame(frame);

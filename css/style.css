@@ -1390,7 +1390,7 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 /* ===== Round 26 — word reel: tall white serif words, each with its photo ===== */
 .vreel{position:absolute;inset:0;z-index:1}
 .vs{position:absolute;inset:0;background:#080808;display:grid;place-items:center;overflow:hidden;visibility:hidden}
-.vs--red{background:var(--red)}
+.vs--red{background:#8e0f16}
 .vs.is-on{visibility:visible}
 .vs__z{position:relative;width:100%;height:100%;display:grid;place-items:center;will-change:transform;transform-origin:50% 50%;backface-visibility:hidden}
 .vs__w{grid-area:1/1;position:relative;z-index:1;margin:0;display:flex;flex-direction:column;align-items:center;
@@ -1402,6 +1402,6 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 .vs__ph{grid-area:1/1;position:relative;z-index:2;margin:0;overflow:hidden;border-radius:6px;
   width:min(34vw,46vh);height:min(42vw,56vh);box-shadow:0 30px 80px rgba(0,0,0,.45);background:#111}
 .vs__ph img{width:100%;height:100%;object-fit:cover;display:block;will-change:transform;transform-origin:50% 50%}
-.vs--red .vs__ph{box-shadow:0 30px 80px rgba(80,0,0,.4)}
+.vs--red .vs__ph{box-shadow:0 30px 80px rgba(30,0,0,.5)}
 @media (max-width:700px){.vs__ph{width:62vw;height:min(80vw,46vh)}.vs__w--o{-webkit-text-stroke:.8px #fff}}
 .vibe .vbgv,.vibe .vibe__roll{display:none}
