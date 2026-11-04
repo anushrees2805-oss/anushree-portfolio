@@ -234,97 +234,77 @@
   /* the word "ad": its own full black screen between the hero and About that plays by itself like a short video.
      Every word has the same font, colour and size and sits dead centre; a soft scroll tick plays with each word.
      It restarts each time it comes into view and loops. */
-  var VIBE = ['Curious', 'Creative', 'Imaginative', 'Playful', 'Storyteller', 'Connected to nature', 'Dreamy', 'Free-spirited'];
-  var VIBE_ART = {"Curious": "M118 118L168 168M98 62c4-14 30-14 30 4c0 14-18 16-18 30M110 110v2|C 85 85 52", "Creative": "M38 162l22-20 92-92 20 20-92 92zM140 62l20 20M38 162l16-36 20 20zM150 20v18M141 29h18M168 44v10M163 49h10", "Imaginative": "M48 120c-20 0-26-26-8-34-4-22 22-34 38-20 8-20 40-20 46 2 20-6 36 12 28 30 18 6 14 30-6 30H48zM60 160m-10 0a10 10 0 1 0 20 0a10 10 0 1 0-20 0M36 182m-6 0a6 6 0 1 0 12 0a6 6 0 1 0-12 0", "Playful": "M20 100L180 34 124 168 98 114zM98 114L180 34M98 114l2 40 24-22M18 150c20-10 30 6 50-4M10 176c22-10 32 6 54-4", "Observant": "M18 100Q100 28 182 100Q100 172 18 100zM100 100m-30 0a30 30 0 1 0 60 0a30 30 0 1 0-60 0M100 100m-10 0a10 10 0 1 0 20 0a10 10 0 1 0-20 0", "Bold": "M116 14L56 110h44L80 186l72-106h-46z", "Detail-obsessed": "M100 100m-62 0a62 62 0 1 0 124 0a62 62 0 1 0-124 0M100 24v32M100 144v32M24 100h32M144 100h32M100 100m-4 0a4 4 0 1 0 8 0a4 4 0 1 0-8 0", "Storyteller": "M100 58Q60 38 20 50v110q40-10 80 10 40-20 80-10V50Q140 38 100 58zM100 58v112M36 72q22-4 46 6M36 92q22-4 46 6M118 78q24-10 46-6M118 98q24-10 46-6", "Connected to nature": "M36 166Q36 50 164 36Q152 164 36 166zM36 166Q96 104 150 50M80 120l-2-34M104 96l-2-30M80 120l36 2M104 96l34 2", "Experimental": "M78 20h44M88 20v62L42 162q-8 18 12 18h92q20 0 12-18L112 82V20M58 136h84M84 158m-6 0a6 6 0 1 0 12 0a6 6 0 1 0-12 0M114 150m-4 0a4 4 0 1 0 8 0a4 4 0 1 0-8 0", "Dreamy": "M118 28a72 72 0 1 0 54 96 56 56 0 1 1-54-96zM160 30l4 10 10 4-10 4-4 10-4-10-10-4 10-4zM40 40l3 7 7 3-7 3-3 7-3-7-7-3 7-3z", "Empathetic": "M100 170C30 122 18 82 44 56c24-24 56-10 56 14 0-24 32-38 56-14 26 26 14 66-56 114z", "Free-spirited": "M16 112q42-52 84-6 42-46 84 6M120 64q16-18 32 0 16-18 32 0M34 150q14-16 28 0 14-16 28 0", "Quirky": "M28 108c0-62 76-62 76 0 0 40-44 40-44 10 0-22 30-22 30 0M120 60l16 20 16-20 16 20M128 150c10-20 30-20 40 0"};
+  var VIBE = [
+    { w: 'Creative', img: 'creative', pos: '62% 40%' },
+    { w: 'Fearless', img: 'fearless', pos: '50% 30%' },
+    { w: 'Playful', img: 'playful', pos: '50% 35%' },
+    { w: 'Curious', img: 'curious', pos: '45% 45%' },
+    { w: 'Free-|spirited', img: 'free-spirited', pos: '60% 40%' },
+    { w: 'Dreamy', img: 'dreamy', pos: '50% 50%' },
+    { w: 'Connected|to nature', img: 'nature', pos: '40% 55%' },
+    { w: 'Story|teller', img: 'storyteller', pos: '50% 30%' }
+  ];
+  /* A fast fashion-film reel: each word sits in tall white serif type around its photo. The frame drifts in,
+     then rushes towards you so the letters fly past the edges — and cuts hard to the next word.
+     Driven frame by frame (transforms only) so it stays smooth on phones. */
   function vibeRoll() {
-    var host = $('#vibeRoll'), screen = $('#vibeScreen'), art = $('#vibeArt'); if (!host) return;
-    /* a faint line drawing behind each word, drawn by hand-feel strokes */
-    if (art) art.innerHTML = VIBE.map(function (w) {
-      var d = VIBE_ART[w] || '';
-      return '<svg class="vart" viewBox="0 0 200 200" aria-hidden="true">' + d.split('|')[0].split('M').filter(Boolean).map(function (seg) {
-        return '<path d="M' + seg + '" pathLength="1"/>'; }).join('') +
-        (d.indexOf('|C') > -1 ? (function (c) { c = c.trim().split(' '); return '<circle cx="' + c[1] + '" cy="' + c[2] + '" r="' + c[3] + '" pathLength="1"/>'; })(d.split('|')[1]) : '') + '</svg>';
+    var host = $('#vibeReel'), screen = $('#vibeScreen'), count = $('#vibeCount'); if (!host) return;
+    var n = VIBE.length;
+    host.innerHTML = VIBE.map(function (v, k) {
+      var lines = v.w.split('|').map(function (l) { return '<span>' + esc(l) + '</span>'; }).join('');
+      return '<div class="vs' + (k % 2 ? ' vs--red' : '') + '"><div class="vs__z">' +
+        '<h3 class="vs__w">' + lines + '</h3>' +
+        '<figure class="vs__ph"><img src="assets/vibe/' + v.img + '.webp" alt="" decoding="async" style="object-position:' + v.pos + '"></figure>' +
+        '<h3 class="vs__w vs__w--o" aria-hidden="true">' + lines + '</h3>' +
+        '</div></div>';
     }).join('');
-    var arts = art ? $$('.vart', art) : [];
-    var echo = $('#vibeEcho'), leak = $('#vibeLeak'), count = $('#vibeCount');
-    var STEP = REDUCED ? 1100 : 460;
-    host.innerHTML = VIBE.map(function (w) { return '<span class="vw">' + esc(w) + '</span>'; }).join('');
-    var els = $$('.vw', host), n = els.length, i = 0, timer = 0, vis = false;
-    /* one size for every word: the biggest that lets the longest word fit */
+    var scenes = $$('.vs', host), zs = scenes.map(function (s) { return $('.vs__z', s); }),
+        imgs = scenes.map(function (s) { return $('img', s); });
+    /* each word gets the biggest size that fits the screen */
     function fit() {
-      host.style.fontSize = '100px';
-      var widest = Math.max.apply(null, els.map(function (e) { return e.scrollWidth; }));
-      var size = 100 * (screen.clientWidth * 0.86) / widest;
-      host.style.fontSize = Math.min(size, 150, screen.clientHeight * 0.3).toFixed(1) + 'px';
-      if (typeof place === 'function') place();
-    }
-    /* a smooth slot-roll, driven frame by frame: the column glides through a few words, eases
-       into the next one, holds it briefly, then glides on — no stepping, no blur */
-    var pos = 0, seg = null, raf2 = 0, HOLD = REDUCED ? 1600 : 900;
-    function easeIO(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
-    function place() {
-      var lh = parseFloat(host.style.fontSize || '120') * 0.62;
-      els.forEach(function (el, k) {
-        var d = ((k - pos) % n + n) % n; if (d > n / 2) d -= n;
-        var a = Math.abs(d);
-        var o = a < 1 ? 1 - a * 0.82 : a < 2 ? 0.18 * (2 - a) : 0;
-        el.style.opacity = o.toFixed(3);
-        el.style.transform = 'translate3d(0,' + (d * lh).toFixed(2) + 'px,0) scale(' + (1 - Math.min(a, 1.5) * 0.07).toFixed(4) + ')';
-        el.style.visibility = o > 0.002 ? 'visible' : 'hidden';
+      var W = screen.clientWidth, H = screen.clientHeight, narrow = W < 700;
+      scenes.forEach(function (s) {
+        var ws = $$('.vs__w', s), probe = ws[0], ln = probe.children.length;
+        probe.style.fontSize = '100px';
+        var widest = Math.max.apply(null, [].map.call(probe.children, function (c) { return c.offsetWidth; }));
+        var size = 100 * W * (narrow ? 0.9 : 0.84) / Math.max(1, widest);
+        size = Math.min(size, H * (ln > 1 ? (narrow ? 0.25 : 0.36) : (narrow ? 0.34 : 0.6)));
+        ws.forEach(function (w) { w.style.fontSize = size.toFixed(1) + 'px'; });
       });
     }
-    function landed() {
-      i = ((Math.round(pos) % n) + n) % n; pos = Math.round(pos);
-      if (count) count.textContent = pad(i + 1) + ' / ' + pad(n);
-      SFX.roll();
+    var DUR = REDUCED ? 2200 : 1250, cur = -1, t0 = 0, raf = 0, vis = false;
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function easeIn(t) { return t * t * t * t; }
+    function show(k) {
+      if (cur > -1) scenes[cur].classList.remove('is-on');
+      cur = k; scenes[k].classList.add('is-on');
+      if (count) count.textContent = pad(k + 1) + ' / ' + pad(n);
+      if (cur > -1) SFX.roll();
     }
-    function frame2(now) {
-      raf2 = 0; if (!vis) return;
-      if (seg) {
-        var t = Math.min(1, (now - seg.t0) / seg.dur);
-        pos = seg.from + (seg.to - seg.from) * easeIO(t); place();
-        if (t >= 1) { seg = null; landed(); timer = setTimeout(spin, HOLD); return; }
-      }
-      raf2 = requestAnimationFrame(frame2);
+    function frame(now) {
+      raf = 0; if (!vis) return;
+      var t = (now - t0) / DUR;
+      if (t >= 1) { t0 = now; t = 0; show((cur + 1) % n); }
+      var s, p;
+      if (REDUCED) { s = 1; p = 1; }
+      else if (t < 0.14) { s = 0.9 + 0.1 * easeOut(t / 0.14); p = 1.14 - 0.08 * easeOut(t / 0.14); }   /* snaps in */
+      else if (t < 0.74) { s = 1 + 0.05 * ((t - 0.14) / 0.6); p = 1.06 - 0.06 * ((t - 0.14) / 0.6); }   /* slow drift */
+      else { var u = (t - 0.74) / 0.26; s = 1.05 + 2.6 * easeIn(u); p = 1; }                             /* rush in */
+      zs[cur].style.transform = 'translate3d(0,0,0) scale(' + s.toFixed(4) + ')';
+      imgs[cur].style.transform = 'scale(' + p.toFixed(4) + ')';
+      raf = requestAnimationFrame(frame);
     }
-    function spin() {
-      if (!vis) return;
-      var steps = REDUCED ? 1 : 1 + Math.floor(Math.random() * 2);   /* glide past one or two words, land on the next */
-      seg = { from: pos, to: pos + steps, t0: performance.now(), dur: REDUCED ? 10 : 420 + steps * 160 };
-      if (!raf2) raf2 = requestAnimationFrame(frame2);
-    }
-    function play() { stop(); pos = 0; i = 0; place(); landed(); timer = setTimeout(spin, HOLD); }
-    function stop() { clearTimeout(timer); timer = 0; cancelAnimationFrame(raf2); raf2 = 0; seg = null; }
-    function paint() { place(); }
-    /* faint dust drifting up through the dark, like light in a film frame */
-    var dc = $('#vibeDust'), dx = dc && dc.getContext('2d'), motes = [], draw = 0, last = 0;
-    function sizeDust() {
-      if (!dc) return; var r = Math.min(2, devicePixelRatio || 1);
-      dc.width = screen.clientWidth * r; dc.height = screen.clientHeight * r; dx.setTransform(r, 0, 0, r, 0, 0);
-      var N = Math.round(Math.min(60, screen.clientWidth * screen.clientHeight / 22000));
-      motes = []; for (var q = 0; q < N; q++) motes.push({ x: Math.random() * screen.clientWidth, y: Math.random() * screen.clientHeight,
-        r: Math.random() * 1.4 + 0.4, v: Math.random() * 10 + 4, a: Math.random() * 0.35 + 0.08, red: Math.random() < 0.18, ph: Math.random() * 6 });
-    }
-    function dust(now) {
-      draw = 0; if (!vis || !dx) return;
-      var dt = Math.min(0.05, (now - (last || now)) / 1000); last = now;
-      var W = screen.clientWidth, Hh = screen.clientHeight; dx.clearRect(0, 0, W, Hh);
-      motes.forEach(function (m) {
-        m.y -= m.v * dt; m.x += Math.sin(now / 1400 + m.ph) * 0.12; if (m.y < -4) { m.y = Hh + 4; m.x = Math.random() * W; }
-        dx.globalAlpha = m.a * (0.7 + 0.3 * Math.sin(now / 900 + m.ph));
-        dx.fillStyle = m.red ? '#ff3038' : '#fff'; dx.beginPath(); dx.arc(m.x, m.y, m.r, 0, 6.283); dx.fill();
-      });
-      if (!REDUCED) draw = requestAnimationFrame(dust);
-    }
-    function dustOn() { if (!draw && dx) { last = 0; draw = requestAnimationFrame(dust); } }
-    sizeDust();
-    fit(); paint();
+    function play() { stop(); show(0); t0 = performance.now(); raf = requestAnimationFrame(frame); }
+    function stop() { cancelAnimationFrame(raf); raf = 0; }
+    fit();
     (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(fit);
-    var rz; addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { fit(); sizeDust(); }, 120); });
+    var rz; addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(fit, 120); });
+    /* decode every photo early so the cuts never flash empty */
+    imgs.forEach(function (im) { if (im.decode) im.decode().catch(function () {}); });
+    show(0); cur = 0;
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
       var now = es[0].intersectionRatio >= 0.5; if (now === vis) return; vis = now;
-      var vv = $('#vibeVideo');
-      if (vis && !document.hidden) { play(); dustOn(); if (vv) { var pr = vv.play(); if (pr && pr.catch) pr.catch(function () {}); } } else { stop(); if (vv) vv.pause(); }
+      if (vis && !document.hidden) play(); else stop();
     }, { threshold: [0, 0.5, 1] }).observe(screen);
     else { vis = true; play(); }
     document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else if (vis) play(); });
