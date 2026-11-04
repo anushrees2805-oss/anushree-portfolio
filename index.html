@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;800;900&family=Noto+Serif+Display:wdth,wght@62.5..100,100..400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/character/anushree.webp">
-  <link rel="stylesheet" href="css/style.css?v=31">
+  <link rel="stylesheet" href="css/style.css?v=32">
   <script>
     /* decide before paint whether the intro plays */
     (function () {
@@ -40,6 +40,18 @@
     <div class="intro__hint mono"><span>Tap to open — sound on 🔊</span><i aria-hidden="true"></i></div>
     <button class="intro__skip mono" type="button">Skip intro →</button>
   </div>
+
+  <!-- ============ WORDS: a quick glance at who I am ============ -->
+  <section class="vibe vibe--ad" id="vibe" aria-label="Anushree beyond designing is creative, fearless, playful, curious, free-spirited, an explorer, connected to nature and a storyteller">
+    <div class="vibe__screen" id="vibeScreen" aria-hidden="true">
+      <div class="vreel" id="vibeReel"></div>
+      <div class="vgrain" aria-hidden="true"></div>
+      <div class="vframe" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div class="vcount mono" id="vibeCount" aria-hidden="true">01 / 08</div>
+      <div class="vibe__hud mono"><i></i>Anushree beyond designing is</div>
+      <button class="vibe__skip mono" type="button" id="vibeSkip">Skip →</button>
+    </div>
+  </section>
 
   <!-- ============ NAV ============ -->
   <header class="nav" id="nav">
@@ -100,7 +112,7 @@
           <span class="ln"><span>Curious <em class="serif">by nature.</em></span></span>
           <span class="ln"><span>Creative <em class="serif">by instinct.</em></span></span>
         </h2>
-          <p class="about__statement reveal">Hi, I'm Anushree — a Mumbai designer who is passionate about <strong>visual communication</strong>: ideas you can see, hold and remember.</p>
+          <p class="about__statement reveal">Hi, I'm Anushree — a Mumbai-based designer who is passionate about <strong>visual communication</strong>: ideas you can see, hold and remember.</p>
           <div class="about__me reveal">
             <span class="about__charm" aria-hidden="true"><span class="about__ring"></span><img src="assets/character/anushree-sticker.webp" alt="" loading="lazy" width="1349" height="1066"></span>
             <span class="about__sig mono">That's me — open the box →</span>
@@ -117,17 +129,6 @@
           </div>
           <button class="hamper__lid" type="button" aria-label="Open or close the box"><span class="hamper__ribbon"></span><span class="hamper__bow"></span></button>
         </div>
-      </div>
-    </section>
-
-    <!-- ============ WORDS: a quick glance at who I am ============ -->
-    <section class="vibe" id="vibe" aria-label="Anushree beyond designing is creative, fearless, playful, curious, free-spirited, an explorer, connected to nature and a storyteller">
-      <div class="vibe__screen" id="vibeScreen" aria-hidden="true">
-        <div class="vreel" id="vibeReel"></div>
-        <div class="vgrain" aria-hidden="true"></div>
-        <div class="vframe" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-        <div class="vcount mono" id="vibeCount" aria-hidden="true">01 / 08</div>
-        <div class="vibe__hud mono"><i></i>Anushree beyond designing is</div>
       </div>
     </section>
 
@@ -295,8 +296,8 @@
     <span class="cursor__label mono" id="cursorLabel"></span>
   </div>
 
-  <script src="js/dims.js?v=31"></script>
-  <script src="js/data.js?v=31"></script>
-  <script src="js/main.js?v=31"></script>
+  <script src="js/dims.js?v=32"></script>
+  <script src="js/data.js?v=32"></script>
+  <script src="js/main.js?v=32"></script>
 </body>
 </html>

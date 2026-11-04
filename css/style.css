@@ -1405,3 +1405,16 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 .vs--red .vs__ph{box-shadow:0 30px 80px rgba(30,0,0,.5)}
 @media (max-width:700px){.vs__ph{width:62vw;height:min(80vw,46vh)}.vs__w--o{-webkit-text-stroke:.8px #fff}}
 .vibe .vbgv,.vibe .vibe__roll{display:none}
+
+/* ===== Round 27 — the word reel plays once as the opening "ad", then the site opens ===== */
+.vibe--ad{position:fixed!important;inset:0;z-index:140;display:none;background:#080808}
+.vibe--ad.is-on{display:block}
+.vibe--ad::before{display:none!important}
+.vibe--ad .vibe__screen{height:100vh;height:100dvh}
+.vibe--ad .vibe__hud{top:clamp(28px,5vh,52px)!important}
+.vibe--ad .vframe i:nth-child(1),.vibe--ad .vframe i:nth-child(2){top:clamp(18px,3.4vh,34px)}
+.vibe__skip{position:absolute;right:calc(var(--gut) + 18px);bottom:clamp(30px,5.2vh,50px);z-index:4;color:rgba(255,255,255,.75);font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:8px 0;background:none;border:0;cursor:pointer}
+.vibe__skip:hover{color:#fff;text-decoration:underline}
+/* About: the two-line heading a step smaller so it doesn't read the same as the hero */
+#aboutTitle{font-size:clamp(26px,3.5vw,56px)!important;line-height:1.02!important}
+@media (max-width:640px){#aboutTitle{font-size:clamp(24px,7.2vw,36px)!important}}

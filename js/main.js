@@ -294,7 +294,7 @@
         ws.forEach(function (w) { w.style.fontSize = size.toFixed(1) + 'px'; });
       });
     }
-    var DUR = REDUCED ? 2200 : 880, cur = -1, t0 = 0, raf = 0, vis = false, rushed = false;
+    var DUR = REDUCED ? 1400 : 640, cur = -1, t0 = 0, raf = 0, vis = false, rushed = false, onEnd = null;
     function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
     function easeIn(t) { return t * t * t * t; }
     function show(k) {
@@ -306,7 +306,10 @@
     function frame(now) {
       raf = 0; if (!vis) return;
       var t = (now - t0) / DUR;
-      if (t >= 1) { t0 = now; t = 0; rushed = false; show((cur + 1) % n); }
+      if (t >= 1) {
+        if (cur === n - 1) { var cb = onEnd; onEnd = null; vis = false; if (cb) cb(); return; }   /* one pass, then hand back */
+        t0 = now; t = 0; rushed = false; show(cur + 1);
+      }
       if (!rushed && t >= 0.7 && !REDUCED) { rushed = true; SFX.rush(DUR * 0.3 / 1000); }
       var s, p;
       if (REDUCED) { s = 1; p = 1; }
@@ -325,13 +328,22 @@
     /* decode every photo early so the cuts never flash empty */
     imgs.forEach(function (im) { if (im.decode) im.decode().catch(function () {}); });
     show(0); cur = 0;
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
-      var now = es[0].intersectionRatio >= 0.5; if (now === vis) return; vis = now;
-      if (vis && !document.hidden) play(); else stop();
-    }, { threshold: [0, 0.5, 1] }).observe(screen);
-    else { vis = true; play(); }
-    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else if (vis) play(); });
+    /* played once as the opening "ad", straight after the name appears */
+    reelAd = function (done) {
+      var sec = $('#vibe'); if (!sec) { done(); return; }
+      var finished = false;
+      function end() {
+        if (finished) return; finished = true; stop(); vis = false;
+        sec.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 380, easing: 'ease', fill: 'forwards' }).onfinish = function () { sec.classList.remove('is-on'); sec.style.display = 'none'; };
+        done();
+      }
+      sec.classList.add('is-on'); fit();
+      sec.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, easing: 'ease', fill: 'forwards' });
+      var sk = $('#vibeSkip'); if (sk) sk.onclick = function (e) { e.stopPropagation(); end(); };
+      onEnd = end; vis = true; play();
+    };
   }
+  var reelAd = null;
 
   /* the ending video before Contact: rows of "let's …" lines flow sideways, each lighting up as it passes the
      middle (where you read it). After ~6s it lands on "Let's create." and the contact page glides up beneath it. */
@@ -562,6 +574,7 @@
     if (introDone) return;
     introDone = true;
     stopIntro();
+    var ad = $('#vibe'); if (ad && ad.classList.contains('is-on')) { ad.classList.remove('is-on'); ad.style.display = 'none'; }
     /* swallow leftover scroll momentum so the hero stays put for a beat */
     var hold = function (e) { e.preventDefault(); };
     addEventListener('wheel', hold, { passive: false }); addEventListener('touchmove', hold, { passive: false });
@@ -668,11 +681,24 @@
       if (d > 0 && !SFX.unlocked()) { nudge(); return; }
       target = clamp(target + d, 0, 1); kick();
     }
+    var adOn = false, adDone = false;
     var auto = null, handed = false; /* once the name starts to drop, it glides the rest of the way on its own */
     function frame(now) {
       raf = 0;
       if (introDone && !auto) return;
-      if (!auto && target >= 0.7 && cur >= 0.62) auto = { from: cur, t0: now + 650, dur: 1300 }; /* rests in the centre for a beat, then drops */
+      if (adOn) return;
+      if (!auto && target >= 0.7 && cur >= 0.62) {
+        if (reelAd && !adDone) {
+          /* the name rests for a beat, then the word reel plays like a quick ad, then the name drops into the hero */
+          adOn = true; adDone = true;
+          setTimeout(function () {
+            if (introDone) { adOn = false; return; }
+            reelAd(function () { adOn = false; if (introDone) return; auto = { from: cur, t0: performance.now() + 200, dur: 1300 }; kick(); });
+          }, 450);
+          return;
+        }
+        auto = { from: cur, t0: now + 650, dur: 1300 }; /* rests in the centre for a beat, then drops */
+      }
       if (auto) {
         var at = clamp((now - auto.t0) / auto.dur, 0, 1);
         cur = auto.from + (1 - auto.from) * (1 - Math.pow(1 - at, 3)) ;
