@@ -1382,3 +1382,7 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
   .jrow--set .jitem:hover img{transform:scale(1.045)}
 }
 @media (max-width:640px){.jrow--set{flex-wrap:wrap}.chap__head{grid-template-columns:1fr}.chap__no{grid-row:auto}}
+
+/* Round 25: the word roll is moved frame by frame from script — no CSS transitions to fight it */
+.vw,.vibe__roll.is-spin .vw,.vibe__roll:not(.is-spin) .vw{transition:none!important;filter:none!important}
+.vw{opacity:0;transform:translate3d(0,0,0)}
