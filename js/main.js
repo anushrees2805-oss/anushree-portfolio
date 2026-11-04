@@ -284,7 +284,7 @@
     function sizeDust() {
       if (!dc) return; var r = Math.min(2, devicePixelRatio || 1);
       dc.width = screen.clientWidth * r; dc.height = screen.clientHeight * r; dx.setTransform(r, 0, 0, r, 0, 0);
-      var N = Math.round(Math.min(110, screen.clientWidth * screen.clientHeight / 14000));
+      var N = Math.round(Math.min(60, screen.clientWidth * screen.clientHeight / 22000));
       motes = []; for (var q = 0; q < N; q++) motes.push({ x: Math.random() * screen.clientWidth, y: Math.random() * screen.clientHeight,
         r: Math.random() * 1.4 + 0.4, v: Math.random() * 10 + 4, a: Math.random() * 0.35 + 0.08, red: Math.random() < 0.18, ph: Math.random() * 6 });
     }
@@ -306,7 +306,8 @@
     var rz; addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { fit(); sizeDust(); }, 120); });
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
       var now = es[0].intersectionRatio >= 0.5; if (now === vis) return; vis = now;
-      if (vis && !document.hidden) { play(); dustOn(); } else stop();
+      var vv = $('#vibeVideo');
+      if (vis && !document.hidden) { play(); dustOn(); if (vv) { var pr = vv.play(); if (pr && pr.catch) pr.catch(function () {}); } } else { stop(); if (vv) vv.pause(); }
     }, { threshold: [0, 0.5, 1] }).observe(screen);
     else { vis = true; play(); }
     document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else if (vis) play(); });
@@ -1155,9 +1156,24 @@
       '<div class="case__intro"><p>' + esc(s.intro) + '</p></div></header>';
     h += '<figure class="case__hero" style="background:#111">' + imgTag(hero, { eager: true, alt: s.title + ' — cover', sizes: '100vw' }).replace('<img ', '<img style="max-height:92vh;width:auto;margin:0 auto" ') + '</figure>';
     h += '<div class="case__sec"><h3>The full story</h3><span class="mono">' + total + ' frames · in sequence</span></div>';
-    h += '<div class="jrows" data-justify="1" data-per="3">';
-    frames.forEach(function (n, k) { var o = img(s.folder, n); o.n = k + 1; h += plateHTML(o, total, 'jitem', s.title); });
-    h += '</div>';
+    if (s.chapters) {
+      /* a story told in chapters: a number, a title and one line, then its own rhythm of frames */
+      var k = 0;
+      s.chapters.forEach(function (c, ci) {
+        h += '<section class="chap reveal"><div class="chap__head"><span class="chap__no mono">' + pad(ci + 1) + '</span><h4 class="chap__t">' + esc(c.t) + '</h4><p class="chap__s">' + esc(c.s) + '</p></div>';
+        h += '<div class="jrows" data-justify="1" data-rows="1">';
+        c.rows.forEach(function (row) {
+          h += '<div class="jrow jrow--set">';
+          row.forEach(function (n) { var o = img(s.folder, n); o.n = ++k; h += plateHTML(o, total, 'jitem', s.title); });
+          h += '</div>';
+        });
+        h += '</div></section>';
+      });
+    } else {
+      h += '<div class="jrows" data-justify="1" data-per="3">';
+      frames.forEach(function (n, k) { var o = img(s.folder, n); o.n = k + 1; h += plateHTML(o, total, 'jitem', s.title); });
+      h += '</div>';
+    }
     h += navHTML('#/story/', prev, next, 'story');
     h += '<div class="case__all"><a class="btn mono" href="#lens">Back to visual storytelling</a></div>';
     return h;
@@ -1182,6 +1198,19 @@
     $$('[data-justify]', caseInner).forEach(function (box) {
       var items = $$('.jitem', box);
       if (!items.length) return;
+      if (box.hasAttribute('data-rows')) {
+        /* rows are set by hand (chapters): size each row so its frames share one height and fill the width */
+        var BW = box.clientWidth, g = BW < 640 ? 6 : 12;
+        box.style.setProperty('--jgap', g + 'px');
+        $$('.jrow--set', box).forEach(function (r) {
+          var its = $$('.jitem', r), ars = its.map(function (it) { var im = it.querySelector('img'); return (+im.getAttribute('width')) / (+im.getAttribute('height')); });
+          if (BW < 640) { its.forEach(function (it, q) { it.style.width = Math.min(BW, innerHeight * 0.8 * ars[q]).toFixed(1) + 'px'; }); return; }
+          var tot = ars.reduce(function (a, b) { return a + b; }, 0), hh = (BW - g * (its.length - 1) - 1) / tot;
+          hh = Math.min(hh, innerHeight * (its.length === 1 ? 0.86 : 0.8));
+          its.forEach(function (it, q) { it.setAttribute('data-ar', ars[q]); it.style.width = (hh * ars[q]).toFixed(2) + 'px'; });
+        });
+        return;
+      }
       box.querySelectorAll('.jrow').forEach(function (r) { while (r.firstChild) box.appendChild(r.firstChild); r.remove(); });
       items.forEach(function (it) { box.appendChild(it); });
       var W = box.clientWidth, gap = W < 640 ? 6 : 10, H = W < 640 ? 220 : W < 1100 ? 320 : 420;

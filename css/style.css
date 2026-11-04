@@ -1354,3 +1354,31 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 .hx__words{line-height:.9!important}
 .hx__words .ln{margin-bottom:.02em}
 @media (max-width:640px){.hx__lead{font-size:clamp(15px,4.2vw,18px)!important;max-width:26ch}}
+
+/* ---------- Round 24: smooth word video ---------- */
+/* the background is a real video loop now (cheap to play), instead of blurred, morphing layers */
+.vglow,.vecho,.vleak,.vart{display:none!important}
+.vbgv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;opacity:.9}
+/* words move with transform + opacity only (no blur filters, which made slower laptops stutter) */
+.vw{filter:none!important;will-change:transform,opacity;backface-visibility:hidden}
+.vw.is-prev,.vw.is-next{opacity:.18!important}
+.vibe__roll.is-spin .vw.is-cur{filter:none!important;opacity:.85}
+.vibe__roll.is-spin .vw{transition:transform .07s linear,opacity .07s linear!important}
+.vibe__roll:not(.is-spin) .vw{transition:transform .34s cubic-bezier(.16,1,.3,1),opacity .24s ease!important}
+/* ---------- Round 24: Kumbharvada told in chapters ---------- */
+.chap{margin-top:clamp(40px,6vw,90px)}
+.chap:first-of-type{margin-top:clamp(20px,3vw,40px)}
+.chap__head{display:grid;grid-template-columns:auto 1fr;align-items:baseline;column-gap:clamp(14px,2vw,28px);margin:0 0 clamp(16px,2vw,26px);padding-top:clamp(14px,1.6vw,20px);border-top:1px solid rgba(255,255,255,.14)}
+.chap__no{grid-row:1 / span 2;color:var(--red);font-size:12px;letter-spacing:.14em}
+.chap__t{margin:0;font-weight:800;text-transform:uppercase;letter-spacing:-.045em;line-height:.95;font-size:clamp(28px,3.6vw,58px)}
+.chap__s{margin:8px 0 0;max-width:46ch;color:#a9a9a9;font-weight:300;font-size:clamp(15px,1.15vw,18px);line-height:1.45}
+.jrow--set{justify-content:center}
+/* interaction: each frame lifts and sharpens as you hover, the rest of the row dims a touch */
+.jrow--set .jitem{overflow:hidden;border-radius:4px;transition:transform .6s var(--ease),opacity .45s ease,filter .45s ease}
+.jrow--set .jitem img{transition:transform 1.1s var(--ease)}
+@media (hover:hover){
+  .jrow--set:hover .jitem{opacity:.72;filter:saturate(.85)}
+  .jrow--set .jitem:hover{opacity:1;filter:none;transform:translateY(-4px)}
+  .jrow--set .jitem:hover img{transform:scale(1.045)}
+}
+@media (max-width:640px){.jrow--set{flex-wrap:wrap}.chap__head{grid-template-columns:1fr}.chap__no{grid-row:auto}}
