@@ -163,21 +163,29 @@ window.SITE = {
       slug: "unlearning-pretty", title: "Unlearning Pretty", folder: "outdoor",
       kind: "Outdoor fashion shoot", cover: 9, camera: "Sony Alpha 6700",
       skip: [12, 14, 17, 23], /* near-duplicate frames */
+      /* the full look → on the rock → close portraits → details → walking through the grass → last light */
+      order: [1, 2, 3, 4, 5, 21, 6, 7, 19, 8, 20, 22, 10, 11, 13, 15, 16, 18, 24, 25, 9],
       intro: "An outdoor fashion story shot on location in dry grass, rock and late light — white layers, a heavy belt, boots, and a face that doesn't need to try. Shot on a Sony Alpha 6700."
     },
     {
       slug: "styling-and-shoot", title: "Styling & Shoot", folder: "styling",
       kind: "Styling + street shoot", cover: 10, camera: "Sony Alpha 6700",
+      /* the look on the street → portraits & details → the sneakers → inside the steel lift */
+      order: [1, 5, 4, 3, 7, 2, 6, 9, 8, 10],
       intro: "A look I styled around my own signature style — where preppy meets streetwear. Gingham checks, washed denim, a crisp white tank, layered silver and red sneakers, shot on location across the city: between parked cars, under the trees and inside a steel lift. Shot on a Sony Alpha 6700."
     },
     {
       slug: "gulls", title: "Gulls", folder: "gateway",
       kind: "Places through my lens · The feathered tourists", cover: 1, camera: "Sony Alpha 6700",
+      /* resting on the wall → take-off → the frenzy → calm on the water */
+      order: [1, 9, 5, 6, 8, 12, 2, 3, 4, 11, 10, 7],
       intro: "The gulls at the Gateway — “the feathered tourists”. A series about wings, water, crowds and the city standing behind them."
     },
     {
       slug: "aakaar", title: "आकार — Kumbharvada", folder: "kumbharvada",
       kind: "Places through my lens · Kumbharvada", cover: 4, camera: "Sony Alpha 6700",
+      /* arriving at the colony → the clay → the hands → the makers → the forms → rows drying in the dark */
+      order: [15, 1, 16, 6, 9, 8, 10, 11, 14, 2, 3, 7, 13, 12, 5, 4],
       intro: "आकार (aakaar) means shape. A walk through the potters' colony of Kumbharvada — clay, hands, rows of diyas and blue doors in low light."
     }
   ]

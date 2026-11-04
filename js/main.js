@@ -188,7 +188,7 @@
   }
   function count(folder) { return D[folder].length; }
   /* a story's frames in their original order, minus any repeated shots listed in `skip` */
-  function storyFrames(s) { var a = []; for (var n = 1; n <= count(s.folder); n++) if ((s.skip || []).indexOf(n) < 0) a.push(n); return a; }
+  function storyFrames(s) { if (s.order) return s.order.slice(); var a = []; for (var n = 1; n <= count(s.folder); n++) if ((s.skip || []).indexOf(n) < 0) a.push(n); return a; }
   function project(slug) { return S.projects.filter(function (p) { return p.slug === slug; })[0]; }
   function story(slug) { return S.stories.filter(function (p) { return p.slug === slug; })[0]; }
 
@@ -718,7 +718,7 @@
     fitHero();
     if (!introDone) runIntro(); else root.classList.add('hero-in');
   });
-  var rT; addEventListener('resize', function () { clearTimeout(rT); rT = setTimeout(function () { fitHero(); layoutJustified(); }, 120); });
+  var rT; addEventListener('resize', function () { clearTimeout(rT); rT = setTimeout(function () { fitHero(); layoutJustified(); fitCaseTitle(); }, 120); });
 
   /* ======================================================================
      KEYCHAIN
@@ -789,7 +789,7 @@
     if (c.name === 'teddy') {
       var f = 'url(#cBeige)', lt = 'url(#cBeigeLt)', st = '#b8936a';
       g = chainSVG(18) + '<circle cx="0" cy="22" r="4.5" fill="none" stroke="url(#kMetal)" stroke-width="2.4"/>' +
-        '<g filter="url(#cFluff)">' +
+        '<g>' +
           '<circle cx="-15" cy="33" r="9" fill="' + f + '"/><circle cx="15" cy="33" r="9" fill="' + f + '"/>' +
           '<ellipse cx="-17" cy="76" rx="7" ry="10.5" transform="rotate(28 -17 76)" fill="' + f + '"/>' +
           '<ellipse cx="17" cy="76" rx="7" ry="10.5" transform="rotate(-28 17 76)" fill="' + f + '"/>' +
@@ -797,10 +797,10 @@
           '<ellipse cx="-11" cy="101" rx="8.5" ry="7.5" fill="' + f + '"/><ellipse cx="11" cy="101" rx="8.5" ry="7.5" fill="' + f + '"/>' +
           '<ellipse cx="0" cy="48" rx="21" ry="19.5" fill="' + f + '"/>' +
         '</g>' +
-        '<circle cx="-15" cy="33.5" r="4.6" fill="#e2bfa0" filter="url(#cSoft)"/><circle cx="15" cy="33.5" r="4.6" fill="#e2bfa0" filter="url(#cSoft)"/>' +
-        '<ellipse cx="0" cy="87" rx="10" ry="11" fill="' + lt + '" filter="url(#cSoft)"/>' +
+        '<circle cx="-15" cy="33.5" r="4.6" fill="#e2bfa0"/><circle cx="15" cy="33.5" r="4.6" fill="#e2bfa0"/>' +
+        '<ellipse cx="0" cy="87" rx="10" ry="11" fill="' + lt + '"/>' +
         '<ellipse cx="-11" cy="102.5" rx="4.3" ry="3.6" fill="#e2bfa0"/><ellipse cx="11" cy="102.5" rx="4.3" ry="3.6" fill="#e2bfa0"/>' +
-        '<ellipse cx="0" cy="55" rx="10.5" ry="8" fill="' + lt + '" filter="url(#cSoft)"/>' +
+        '<ellipse cx="0" cy="55" rx="10.5" ry="8" fill="' + lt + '"/>' +
         '<path d="M0 52 L0 57" stroke="#3a2416" stroke-width="1.1"/>' +
         '<ellipse cx="0" cy="51.5" rx="3.9" ry="2.9" fill="#3a2416"/><ellipse cx="-1" cy="50.6" rx="1.3" ry=".8" fill="#fff" fill-opacity=".6"/>' +
         '<path d="M-4 57.5 Q0 61 4 57.5" fill="none" stroke="#3a2416" stroke-width="1.2" stroke-linecap="round"/>' +
@@ -811,7 +811,7 @@
     } else if (c.name === 'gloves') {
       var glove = function (x, y, r, flip) {
         return '<g transform="translate(' + x + ' ' + y + ') rotate(' + r + ')' + (flip ? ' scale(-1 1)' : '') + '">' +
-          '<g filter="url(#cSoft)">' +
+          '<g>' +
             '<rect x="-11.5" y="13" width="23" height="14" rx="5" fill="url(#cCuff)"/>' +
             '<path d="M-14 12 C-18 -7 -10 -19 2 -19 C15 -19 19 -6 16 6 C15 11 12 14 8.5 14 L-9.5 14 C-12 14 -13.5 13 -14 12Z" fill="url(#cGlove)"/>' +
             '<path d="M-13.5 4 C-21 2 -22 -9 -14.5 -11 C-11 -11 -10 -6.5 -10 -2" fill="url(#cGlove)"/>' +
@@ -828,7 +828,7 @@
     } else {
       var y = 'url(#cGiraffe)', sp = 'url(#cSpot)';
       g = chainSVG(14) + '<circle cx="0" cy="18" r="4.5" fill="none" stroke="url(#kMetal)" stroke-width="2.4"/>' +
-        '<g filter="url(#cFluff)">' +
+        '<g>' +
           '<path d="M16 92 q13 -1 14 11" fill="none" stroke="#e0a63a" stroke-width="2.6" stroke-linecap="round"/>' +
           '<rect x="-6.5" y="96" width="6.5" height="22" rx="3.2" fill="' + y + '"/><rect x="2" y="97" width="6.5" height="21" rx="3.2" fill="' + y + '"/>' +
           '<rect x="12" y="97" width="6.5" height="21" rx="3.2" fill="' + y + '"/><rect x="20.5" y="96" width="6.5" height="22" rx="3.2" fill="' + y + '"/>' +
@@ -838,11 +838,11 @@
           '<ellipse cx="13.5" cy="33" rx="6.5" ry="3.4" transform="rotate(25 13.5 33)" fill="' + y + '"/>' +
           '<ellipse cx="0" cy="39" rx="13" ry="12.5" fill="' + y + '"/>' +
         '</g>' +
-        '<circle cx="30" cy="104" r="3" fill="#8a5426" filter="url(#cSoft)"/>' +
-        ['-1.5,62,3.4', '1.5,74,3.8', '-3,85,3', '6,88,3.6', '15,94,4.2', '23,88,3', '2,96,2.6'].map(function (q) { q = q.split(','); return '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="' + q[2] + '" fill="' + sp + '" filter="url(#cSoft)"/>'; }).join('') +
+        '<circle cx="30" cy="104" r="3" fill="#8a5426"/>' +
+        ['-1.5,62,3.4', '1.5,74,3.8', '-3,85,3', '6,88,3.6', '15,94,4.2', '23,88,3', '2,96,2.6'].map(function (q) { q = q.split(','); return '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="' + q[2] + '" fill="' + sp + '"/>'; }).join('') +
         '<line x1="-5" y1="29" x2="-6" y2="21" stroke="#c88a3a" stroke-width="2.6" stroke-linecap="round"/><circle cx="-6" cy="20.5" r="3.2" fill="#8a5426"/>' +
         '<line x1="5" y1="29" x2="6" y2="21" stroke="#c88a3a" stroke-width="2.6" stroke-linecap="round"/><circle cx="6" cy="20.5" r="3.2" fill="#8a5426"/>' +
-        '<ellipse cx="0" cy="47.5" rx="9.5" ry="7" fill="#f7e1ae" filter="url(#cSoft)"/>' +
+        '<ellipse cx="0" cy="47.5" rx="9.5" ry="7" fill="#f7e1ae"/>' +
         '<ellipse cx="-3.2" cy="47.5" rx="1.3" ry="1" fill="#6b4317"/><ellipse cx="3.2" cy="47.5" rx="1.3" ry="1" fill="#6b4317"/>' +
         '<path d="M-3 51 Q0 53.5 3 51" fill="none" stroke="#6b4317" stroke-width="1" stroke-linecap="round"/>' +
         eye(-5.5, 37, 2.7) + eye(5.5, 37, 2.7) +
@@ -871,7 +871,7 @@
       '<linearGradient id="kBlue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a66ff"/><stop offset="1" stop-color="#2238c9"/></linearGradient>' +
       '<filter id="kShadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#000" flood-opacity=".55"/></filter>' +
       CHARM_DEFS + '</defs>' +
-      '<g id="kAll" filter="url(#kShadow)">' +
+      '<g id="kAll">' +
       /* carabiner */
       '<path d="M362 236 L362 96 A38 38 0 0 1 438 96 L438 236" fill="none" stroke="url(#kMetalH)" stroke-width="20" stroke-linecap="round"/>' +
       '<path d="M368 228 L368 98 A32 32 0 0 1 400 66" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>' +
@@ -890,7 +890,7 @@
     if (small) stage.style.aspectRatio = '800/800';
     if (!FINE) $('.keys__hint').textContent = 'Tap a tag to open';
     var st = document.createElement('style');
-    st.textContent = '.k-no{font:800 34px "Inter Tight","Inter Display",Inter,sans-serif;letter-spacing:-2px}.k-big{font:800 22px "Inter Tight","Inter Display",Inter,sans-serif;letter-spacing:-.6px}.k-serif{font:italic 400 22px "Instrument Serif",serif}.k-mono{font:400 9px "Space Mono",monospace;letter-spacing:1.2px}';
+    st.textContent = '.k-no{font:800 34px "Inter Tight","Inter Display",Inter,sans-serif;letter-spacing:-2px}.k-big{font:800 22px "Inter Tight","Inter Display",Inter,sans-serif;letter-spacing:-.6px}.k-serif{font:300 22px "Inter Tight","Inter Display",Inter,sans-serif}.k-mono{font:400 9px "Space Mono",monospace;letter-spacing:1.2px}';
     stage.querySelector('svg').appendChild(st);
     fitTagType(stage.querySelector('svg'));
     if (document.fonts) document.fonts.ready.then(function () { fitTagType(stage.querySelector('svg')); });
@@ -971,7 +971,7 @@
     svg.addEventListener('pointermove', function (e) {
       var p = svgPt(e), now = performance.now();
       if (last) {
-        var vx = (p.x - last.x) / Math.max(8, now - last.t) * 16; /* px per frame */
+        var vx = clamp(p.x - last.x, -40, 40); /* by distance moved, so a 1000 Hz mouse pushes as much as a 60 Hz one */
         st.forEach(function (s, i) {
           var a = KC[i].anchor, d = Math.hypot(p.x - a[0], p.y - (a[1] + 180));
           var f = clamp(1 - d / 420, 0, 1);
@@ -1028,8 +1028,7 @@
     var portrait = o.h > o.w * 1.15;
     var cls = 'plate' + (extraCls ? ' ' + extraCls : '') + (portrait && !extraCls ? ' narrow' : '');
     return '<figure class="' + cls + ' reveal" data-lb="case" data-i="' + (caseLB.length - 1) + '" data-cursor="View" tabindex="0" role="button" aria-label="View plate ' + o.n + ' of ' + total + '">' +
-      imgTag(o, { sizes: '(max-width:640px) 100vw, 90vw', alt: alt + ', plate ' + o.n }) +
-      '<figcaption><span class="mono">' + pad(o.n) + ' / ' + pad(total) + '</span><span class="mono">' + esc(alt) + '</span></figcaption></figure>';
+      imgTag(o, { sizes: '(max-width:640px) 100vw, 90vw', alt: alt + ', plate ' + o.n }) + '</figure>';
   }
 
   function projectHTML(p) {
@@ -1131,11 +1130,11 @@
       '<div class="case__label"><span class="mono">Visual storytelling · Photo story ' + pad(idx + 1) + '</span></div>' +
       '<h2 class="case__title" id="caseTitle">' + esc(s.title) + '</h2>' +
       '<p class="case__tag">' + esc(s.kind) + '</p>' +
-      '<dl class="case__facts"><dt>Frames</dt><dd>' + total + '</dd><dt>Medium</dt><dd>Photography</dd>' + (s.camera ? '<dt>Shot on</dt><dd>' + esc(s.camera) + '</dd>' : '') + '</dl>' +
+      '<dl class="case__facts"><dt>Frames</dt><dd>' + total + '</dd><dt>Medium</dt><dd>Photography</dd>' + (s.camera ? '<dt>Shot on</dt><dd>' + esc(s.camera) + '</dd>' : '') + '<dt>Edited in</dt><dd>Adobe Photoshop</dd></dl>' +
       '<div class="case__intro"><p>' + esc(s.intro) + '</p></div></header>';
     h += '<figure class="case__hero" style="background:#111">' + imgTag(hero, { eager: true, alt: s.title + ' — cover', sizes: '100vw' }).replace('<img ', '<img style="max-height:92vh;width:auto;margin:0 auto" ') + '</figure>';
     h += '<div class="case__sec"><h3>The full story</h3><span class="mono">' + total + ' frames · in sequence</span></div>';
-    h += '<div class="jrows" data-justify="1">';
+    h += '<div class="jrows" data-justify="1" data-per="3">';
     frames.forEach(function (n, k) { var o = img(s.folder, n); o.n = k + 1; h += plateHTML(o, total, 'jitem', s.title); });
     h += '</div>';
     h += navHTML('#/story/', prev, next, 'story');
@@ -1149,6 +1148,14 @@
       '<a href="' + base + next.slug + '" data-cursor="Next"><span class="mono">Next ' + kind + ' →</span><span class="big">' + esc(next.title) + '</span></a></nav>';
   }
 
+  /* a long title (Kumbharvada, Unlearning Pretty) shrinks until it fits the screen */
+  function fitCaseTitle() {
+    var t = $('#caseTitle', caseInner); if (!t) return;
+    t.style.fontSize = '';
+    var fs = parseFloat(getComputedStyle(t).fontSize), wide = t.scrollWidth, room = t.clientWidth;
+    if (wide > room + 1) t.style.fontSize = (fs * room / wide * 0.97).toFixed(1) + 'px';
+  }
+
   /* justified rows that keep the exact image order */
   function layoutJustified() {
     $$('[data-justify]', caseInner).forEach(function (box) {
@@ -1158,7 +1165,25 @@
       items.forEach(function (it) { box.appendChild(it); });
       var W = box.clientWidth, gap = W < 640 ? 6 : 10, H = W < 640 ? 220 : W < 1100 ? 320 : 420;
       box.style.setProperty('--jgap', gap + 'px');
-      var row = [], sum = 0;
+      var row = [], sum = 0, per = +box.getAttribute('data-per') || 0;
+      if (per) {
+        /* fixed count per row so every picture gets the same attention */
+        per = W < 640 ? 1 : W < 1000 ? 2 : per;
+        var n = items.length, sizes = [];
+        if (per === 3) { var full = Math.floor(n / 3), rem = n % 3; for (var q = 0; q < full; q++) sizes.push(3); if (rem === 1 && full) sizes[sizes.length - 1] = 4; else if (rem) sizes.push(rem); }
+        else for (var q2 = 0; q2 < n; q2 += per) sizes.push(Math.min(per, n - q2));
+        var at = 0;
+        sizes.forEach(function (sz) {
+          var rowEl = document.createElement('div'); rowEl.className = 'jrow';
+          var grp = items.slice(at, at + sz); at += sz;
+          var ars = grp.map(function (it) { var im = it.querySelector('img'); return (+im.getAttribute('width')) / (+im.getAttribute('height')); });
+          var tot = ars.reduce(function (a, b) { return a + b; }, 0), hh = (W - gap * (sz - 1) - 1) / tot;
+          if (per === 1) hh = Math.min(hh, innerHeight * 0.82);
+          grp.forEach(function (it, k) { it.setAttribute('data-ar', ars[k]); it.style.width = (hh * ars[k]).toFixed(2) + 'px'; rowEl.appendChild(it); });
+          box.appendChild(rowEl);
+        });
+        return;
+      }
       function flush(final) {
         if (!row.length) return;
         var rowEl = document.createElement('div'); rowEl.className = 'jrow';
@@ -1191,12 +1216,14 @@
     caseOpen = true;
     caseEl.hidden = false;
     caseEl.classList.toggle('is-dark', kind === 'story');
+    root.classList.add('in-case');
+    var nb = $('#navBack'); if (nb) nb.setAttribute('href', kind === 'work' ? '#branding' : '#lens');
     root.style.overflow = 'hidden';
     curtainT.textContent = data.title;
     var swap = function () {
       caseInner.innerHTML = html;
       caseScroll.scrollTop = 0;
-      layoutJustified();
+      layoutJustified(); fitCaseTitle();
       observeReveals(caseInner);
       var h = $('#caseTitle', caseInner); if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
     };
@@ -1211,7 +1238,7 @@
 
   function closeRoute(then) {
     if (!caseOpen) { if (then) then(); return; }
-    caseOpen = false;
+    caseOpen = false; root.classList.remove('in-case');
     var done = function () {
       caseEl.hidden = true; caseInner.innerHTML = ''; root.style.overflow = '';
       curtain.getAnimations().forEach(function (a) { a.cancel(); });
@@ -1370,8 +1397,10 @@
       curLabel.textContent = lab || '';
       cur.classList.toggle('has-label', !!lab);
     });
-    (function loop() {
-      var k = REDUCED ? 1 : 0.28;
+    var lastT = 0;
+    (function loop(now) {
+      var dt = lastT ? Math.min(0.05, (now - lastT) / 1000) : 1 / 60; lastT = now || 0;
+      var k = REDUCED ? 1 : 1 - Math.pow(1 - 0.32, dt * 60);
       px += (mx - px) * k; py += (my - py) * k;
       cur.style.transform = 'translate3d(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px,0)';
       requestAnimationFrame(loop);
