@@ -1331,3 +1331,26 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 .hx__amp{font-family:var(--sans)!important;font-weight:300!important}
 .hx__lead .ln{overflow:visible!important}
 .hx__lead .ln>span{white-space:normal!important;display:inline-block;max-width:100%}
+
+/* ---------- Round 23: word video ---------- */
+/* spinning words fly past quickly with a motion blur; landing words settle with a soft ease */
+.vibe__roll.is-spin .vw{transition:transform .07s linear,opacity .07s linear,filter .07s linear!important}
+.vibe__roll.is-spin .vw.is-cur{filter:blur(1.6px)!important;opacity:.92}
+.vibe__roll:not(.is-spin) .vw.is-cur{transition:transform .34s cubic-bezier(.16,1,.3,1),opacity .2s ease,filter .25s ease!important}
+/* no flicker; instead slow, morphing red light drifting behind the words */
+.vleak{display:none!important}
+.vglow{filter:blur(60px)}
+.vglow i{filter:none!important;border-radius:42% 58% 63% 37% / 41% 44% 56% 59%}
+.vglow i:nth-child(1){width:52vmax!important;height:44vmax!important;left:-16vmax!important;top:-14vmax!important;background:radial-gradient(circle at 40% 40%,rgba(255,48,56,.34),rgba(120,10,18,.18) 55%,transparent 72%)!important;animation:vmorphA 18s ease-in-out infinite alternate!important}
+.vglow i:nth-child(2){width:46vmax!important;height:52vmax!important;right:-18vmax!important;bottom:-20vmax!important;background:radial-gradient(circle at 55% 45%,rgba(255,48,56,.46),rgba(140,12,20,.2) 55%,transparent 72%)!important;animation:vmorphB 22s ease-in-out infinite alternate!important}
+.vglow i:nth-child(3){display:block!important;width:30vmax!important;height:26vmax!important;left:38%!important;top:62%!important;right:auto!important;background:radial-gradient(circle,rgba(110,8,16,.28),transparent 70%)!important;animation:vmorphC 26s ease-in-out infinite alternate!important}
+@keyframes vmorphA{0%{transform:translate(0,0) rotate(0) scale(1);border-radius:42% 58% 63% 37%/41% 44% 56% 59%}50%{border-radius:61% 39% 45% 55%/55% 62% 38% 45%}100%{transform:translate(10vmax,7vmax) rotate(40deg) scale(1.12);border-radius:37% 63% 52% 48%/48% 37% 63% 52%}}
+@keyframes vmorphB{0%{transform:translate(0,0) rotate(0) scale(1)}50%{border-radius:58% 42% 36% 64%/45% 60% 40% 55%}100%{transform:translate(-11vmax,-6vmax) rotate(-35deg) scale(1.15)}}
+@keyframes vmorphC{0%{transform:translate(-50%,-50%) scale(.9)}100%{transform:translate(-20%,-80%) scale(1.25)}}
+.reduced .vglow i{animation:none!important}
+
+/* ---------- Round 23: first page — calmer spacing between the line and the big words ---------- */
+.hx__lead{font-size:clamp(16px,1.5vw,24px)!important;line-height:1.35!important;max-width:30ch;margin:0 0 clamp(18px,2.6vh,30px)!important;color:rgba(255,255,255,.82)!important;font-weight:300!important}
+.hx__words{line-height:.9!important}
+.hx__words .ln{margin-bottom:.02em}
+@media (max-width:640px){.hx__lead{font-size:clamp(15px,4.2vw,18px)!important;max-width:26ch}}

@@ -258,19 +258,26 @@
       var size = 100 * (screen.clientWidth * 0.86) / widest;
       host.style.fontSize = Math.min(size, 150, screen.clientHeight * 0.3).toFixed(1) + 'px';
     }
-    function paint() {
+    /* stop-and-go, like the reference reel: spin quickly through a few words, land, hold, spin again */
+    var SPIN = REDUCED ? 0 : 72, HOLD = REDUCED ? 1400 : 620, spinLeft = 0;
+    function paint(spinning) {
+      host.classList.toggle('is-spin', !!spinning);
       els.forEach(function (el, k) {
         var r = ((k - i) % n + n) % n; if (r > n / 2) r -= n;
         el.className = 'vw ' + (r === 0 ? 'is-cur' : r === -1 ? 'is-prev' : r === 1 ? 'is-next' : r < 0 ? 'is-up' : 'is-down');
       });
-      arts.forEach(function (a, k) { a.classList.toggle('is-on', k === i); });
-      /* creative layer: a giant outlined echo of the word, a frame counter, and a red light-leak every few words */
+      if (spinning) return;
+      /* on landing: the giant outlined echo and the frame counter catch up */
       if (echo) { echo.classList.remove('is-in'); void echo.offsetWidth; echo.textContent = VIBE[i]; echo.classList.add('is-in'); }
       if (count) count.textContent = pad(i + 1) + ' / ' + pad(n);
-      if (leak && i % 3 === 0) { leak.classList.remove('is-flash'); void leak.offsetWidth; leak.classList.add('is-flash'); }
     }
-    function tick() { i = (i + 1) % n; paint(); SFX.roll(); timer = setTimeout(tick, STEP); }
-    function play() { stop(); i = 0; paint(); SFX.roll(); timer = setTimeout(tick, STEP); }
+    function tick() {
+      i = (i + 1) % n;
+      if (spinLeft > 0 && !REDUCED) { spinLeft--; paint(true); timer = setTimeout(tick, SPIN); return; }
+      paint(false); SFX.roll();
+      timer = setTimeout(function () { spinLeft = 2 + Math.floor(Math.random() * 3); tick(); }, HOLD);
+    }
+    function play() { stop(); i = 0; spinLeft = 0; paint(false); SFX.roll(); timer = setTimeout(function () { spinLeft = 3; tick(); }, HOLD); }
     function stop() { clearTimeout(timer); timer = 0; }
     /* faint dust drifting up through the dark, like light in a film frame */
     var dc = $('#vibeDust'), dx = dc && dc.getContext('2d'), motes = [], draw = 0, last = 0;
@@ -1022,6 +1029,20 @@
      ====================================================================== */
   var caseEl = $('#case'), caseScroll = $('#caseScroll'), caseInner = $('#caseInner'), curtain = $('.case__curtain'), curtainT = $('#curtainTitle');
   var caseOpen = false, lastFocus = null, caseLB = [];
+  /* Back returns to the exact spot the visitor left, not the top of the section */
+  var savedY = null, savedHash = '', prevHash = location.hash, backMode = false;
+  addEventListener('hashchange', function (e) { var o = (e.oldURL || '').split('#')[1]; if (o != null && !/^\//.test(o)) prevHash = '#' + o; else if (o == null) prevHash = ''; }, true);
+  function goBack(e) {
+    if (!caseOpen) return;
+    if (e) e.preventDefault();
+    backMode = true;
+    var to = savedHash && !/^#\//.test(savedHash) ? savedHash : '#home';
+    if (location.hash === to) route(); else location.hash = to;
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('#navBack, .case__back, .case__all a');
+    if (a && caseOpen) goBack(e);
+  });
 
   function plateHTML(o, total, extraCls, alt) {
     caseLB.push({ src: o.src, cap: alt + ' — ' + pad(o.n) + ' / ' + pad(total) });
@@ -1212,7 +1233,7 @@
     if (!data) { location.hash = '#work'; return; }
     var html = kind === 'work' ? projectHTML(data) : storyHTML(data);
     var first = !caseOpen;
-    if (first) lastFocus = document.activeElement;
+    if (first) { lastFocus = document.activeElement; savedY = scrollY; savedHash = prevHash; }
     caseOpen = true;
     caseEl.hidden = false;
     caseEl.classList.toggle('is-dark', kind === 'story');
@@ -1260,10 +1281,14 @@
     var h = location.hash || '';
     var m = h.match(/^#\/(work|story)\/([\w-]+)/);
     if (m) { openRoute(m[1], m[2]); return; }
+    var wasBack = backMode || (savedY != null && caseOpen && h === savedHash); backMode = false;
     closeRoute(function () {
       var id = h.slice(1);
       var el = id && document.getElementById(id);
-      if (el) {
+      if (wasBack && savedY != null) {
+        if (!introDone) finishIntro(true);
+        scrollTo({ top: savedY, behavior: 'instant' });
+      } else if (el) {
         if (!introDone) finishIntro(true);
         el.scrollIntoView({ behavior: 'auto' });
       }

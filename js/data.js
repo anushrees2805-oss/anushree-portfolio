@@ -185,7 +185,7 @@ window.SITE = {
       slug: "aakaar", title: "आकार — Kumbharvada", folder: "kumbharvada",
       kind: "Places through my lens · Kumbharvada", cover: 4, camera: "Sony Alpha 6700",
       /* arriving at the colony → the clay → the hands → the makers → the forms → rows drying in the dark */
-      order: [15, 1, 16, 6, 9, 8, 10, 11, 14, 2, 3, 7, 13, 12, 5, 4],
+      order: [15, 1, 16, 6, 9, 8, 10, 11, 14, 2, 3, 7, 13, 12, 5, 17], /* 17 = the cover frame without its lettering */
       intro: "आकार (aakaar) means shape. A walk through the potters' colony of Kumbharvada — clay, hands, rows of diyas and blue doors in low light."
     }
   ]
