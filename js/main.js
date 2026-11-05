@@ -300,7 +300,8 @@
     { w: 'Curious', img: 'curious', pos: '45% 45%' },
     { w: 'Free-|spirited', img: 'free-spirited', pos: '60% 40%' },
     { w: 'Explorer', img: 'dreamy', pos: '50% 50%' },
-    { w: 'Connected|to nature', img: 'nature', pos: '40% 55%' },
+    { w: 'Connected|to nature', img: 'flower', pos: '55% 78%' },
+    { w: 'Empathetic', img: 'nature', pos: '40% 55%' },
     { w: 'Story|teller', img: 'storyteller', pos: '50% 30%' }
   ];
   /* A fast fashion-film reel: each word sits in tall white serif type around its photo. The frame drifts in,
@@ -334,6 +335,7 @@
       }
       var v = q.v, ls = v.w.split('|'), url = 'assets/vibe/' + v.img + '.webp';
       return '<div class="vs' + (q.k % 2 ? ' vs--red' : '') + '"><div class="vs__z">' +
+        '<p class="vs__is mono">Anushree is</p>' +
         '<h3 class="vs__w">' + ls.map(letters).join('') + '</h3>' +
         '<figure class="vs__ph"><img src="' + url + '" alt="" decoding="async" style="object-position:' + v.pos + '"></figure>' +
         '<h3 class="vs__w vs__w--o" aria-hidden="true">' + ls.map(letters).join('') + '</h3>' +
@@ -354,6 +356,11 @@
         var size = 100 * W * (narrow ? 0.9 : 0.84) / Math.max(1, widest);
         size = Math.min(size, H * (ln > 1 ? (narrow ? 0.25 : 0.36) : (narrow ? 0.34 : 0.6)) / 1.5);
         ws.forEach(function (w) { w.style.fontSize = size.toFixed(1) + 'px'; });
+      });
+      scenes.forEach(function (s) {
+        var w = $('.vs__w', s), ph = $('.vs__ph', s); if (!$('.vs__is', s)) return;
+        var hw = parseFloat(w.style.fontSize) * w.children.length * 0.82 * 1.5 / 2, hp = ph ? ph.offsetHeight / 2 : 0;
+        s.style.setProperty('--lift', (-Math.max(hw, hp) - 22).toFixed(0) + 'px');
       });
       host.style.setProperty('--card', Math.min(W * (narrow ? 0.26 : 0.13), H * 0.24).toFixed(0) + 'px');
     }
@@ -1836,7 +1843,7 @@
      ====================================================================== */
   (function () {
     var TRACKS = [
-      { src: 'assets/audio/magic.mp3', loop: 43.6, vol: 0.26, el: $('#vibe'), top: 0.55, bottom: 0.45 },
+      { src: 'assets/audio/soft90s.mp3', loop: 49.2, vol: 0.24, el: $('#vibe'), top: 0.55, bottom: 0.45 },
       { src: 'assets/audio/cinema.mp3', loop: 48.0, vol: 0.16, el: $('#filmsZone'), top: 0.75, bottom: 0.25 },
       { src: 'assets/audio/contact-soft.mp3', loop: 41.7391, vol: 0.2, el: $('#contact'), el2: $('#outro'), top: 0.65, bottom: 0.2 }
     ].filter(function (t) { return t.el; });

@@ -1465,3 +1465,9 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 .vs--stack .vs__w{opacity:.95}
 @media (max-width:700px){.vk{border-width:3px}}
 .reduced .vs .vch,.reduced .vs__ph,.reduced .vk{transition:none!important}
+
+/* "Anushree is" — a small line above each word */
+.vs__is{grid-area:1/1;align-self:center;z-index:5;margin:0;font-size:clamp(11px,1vw,14px);letter-spacing:.34em;text-transform:uppercase;color:#fff;
+  text-shadow:0 2px 12px rgba(0,0,0,.45);opacity:0;transform:translate3d(0,calc(var(--lift,-200px) + 10px),0);
+  transition:opacity .3s ease .05s,transform .5s cubic-bezier(.16,1,.3,1) .05s}
+.vs.is-on .vs__is{opacity:1;transform:translate3d(0,var(--lift,-200px),0)}
