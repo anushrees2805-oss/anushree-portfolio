@@ -103,7 +103,7 @@
         var pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
         if (pan) { pan.pan.setValueAtTime(-0.85 * sd, t); pan.pan.linearRampToValueAtTime(0.85 * sd, t + d); pan.connect(out); }
         var dest = pan || out;
-        [[0.6, 420, 6000, 0.42], [6, 1000, 4800, 0.12], [1.2, 2400, 9000, 0.1]].forEach(function (L) {
+        [[0.7, 380, 4200, 0.18], [5, 900, 3600, 0.05]].forEach(function (L) {
           var src = ctx.createBufferSource(); src.buffer = noiseBuf;
           var bq = ctx.createBiquadFilter(); bq.type = 'bandpass'; bq.Q.value = L[0];
           bq.frequency.setValueAtTime(L[1], t); bq.frequency.exponentialRampToValueAtTime(L[2], t + d);
@@ -137,6 +137,16 @@
         hat(t + e, 0.09, 0.05); hat(t + b + e, 0.11, 0.09);
         [0.5, 1.5, 2.5, 3.5].forEach(function (q) { hat(t + q * e, 0.03, 0.025); });
         [0, 1, 2, 3].forEach(function (q) { bass(t + q * e, q === 3 ? f * 1.5 : f); });
+      },
+      /* the reel: a soft glass-bell note on each word, drifting through a gentle scale — no drums */
+      chime: function (k) {
+        if (!ready()) return; var t = ctx.currentTime + 0.005;
+        var sc = [523.25, 659.25, 783.99, 880, 783.99, 659.25, 587.33, 698.46], f = sc[k % sc.length];
+        [[1, 0.05, 1.6], [2.01, 0.018, 0.9], [3.99, 0.008, 0.5]].forEach(function (p) {
+          var o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.value = f * p[0];
+          g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(p[1], t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + p[2]);
+          o.connect(g); g.connect(out); o.start(t); o.stop(t + p[2] + 0.05);
+        });
       },
       /* gentle click for tags, projects and stories */
       click: function () {
@@ -328,7 +338,7 @@
       if (cur > -1) scenes[cur].classList.remove('is-on');
       cur = k; scenes[k].classList.add('is-on');
       if (count) count.textContent = pad(k + 1) + ' / ' + pad(n);
-      if (cur > -1 && vis) SFX.beat(k, DUR / 1000);
+      if (cur > -1 && vis) SFX.chime(k);
     }
     function frame(now) {
       raf = 0; if (!vis) return;
@@ -1778,6 +1788,7 @@
      ====================================================================== */
   (function () {
     var TRACKS = [
+      { src: 'assets/audio/magic.mp3', loop: 43.6, vol: 0.26, el: $('#vibe'), top: 0.55, bottom: 0.45 },
       { src: 'assets/audio/cinema.mp3', loop: 48.0, vol: 0.16, el: $('#filmsZone'), top: 0.75, bottom: 0.25 },
       { src: 'assets/audio/contact-soft.mp3', loop: 41.7391, vol: 0.2, el: $('#contact'), el2: $('#outro'), top: 0.65, bottom: 0.2 }
     ].filter(function (t) { return t.el; });
