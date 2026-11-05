@@ -1406,101 +1406,28 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 @media (max-width:700px){.vs__ph{width:62vw;height:min(80vw,46vh)}.vs__w--o{-webkit-text-stroke:.8px #fff}}
 .vibe .vbgv,.vibe .vibe__roll{display:none}
 
-/* ===== Round 28 — About is now one motion film: who I am, then who I am beyond designing ===== */
-.film .vibe__screen{background:#080808}
-.film .vibe__hud,.film .vcount,.film .vframe{z-index:8}
-.film .vgrain{z-index:7}
-/* 1 · the intro */
-.fa{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;
-  padding:clamp(90px,13vh,130px) calc(var(--gut) + 18px) clamp(70px,10vh,100px);color:#fff;
-  transition:transform .6s cubic-bezier(.7,0,.84,0),opacity .45s ease}
-.fa__h{margin:0;font-family:var(--sans,"Inter Tight"),system-ui,sans-serif;font-weight:700;font-size:clamp(40px,6.2vw,100px);
-  line-height:.98;letter-spacing:-.045em;color:#fff}
-.fa__ln{display:block;overflow:hidden;padding:0 0 .08em}
-.fa__ln>span{display:inline-block;transform:translate3d(0,112%,0);transition:transform .95s cubic-bezier(.16,1,.3,1)}
-.f-l1 .fa__ln:nth-child(1)>span,.f-l2 .fa__ln:nth-child(2)>span{transform:none}
-.fa__h em{font-family:"Noto Serif Display","Bodoni 72",Didot,Georgia,serif;font-style:normal!important;font-weight:300;font-stretch:62.5%;
-  font-variation-settings:"wdth" 62.5,"wght" 300;font-size:1.24em;letter-spacing:0;color:rgba(255,255,255,.92)}
-.fa__h em i{font-style:normal;color:#FF3038}
-.fa__row{display:flex;align-items:flex-start;gap:clamp(16px,2vw,30px);margin-top:clamp(26px,4.4vh,52px);max-width:900px}
-.fa__me{flex:none;width:clamp(62px,7vw,104px);height:auto;opacity:0;transform:scale(.3) rotate(-24deg);
-  filter:drop-shadow(0 12px 18px rgba(0,0,0,.5));transition:transform .75s cubic-bezier(.34,1.56,.64,1),opacity .25s ease}
-.f-me .fa__me{opacity:1;transform:rotate(-6deg)}
-.fa__p{margin:0;font-size:clamp(18px,1.9vw,30px);line-height:1.24;letter-spacing:-.025em;font-weight:400;color:#d9d9d9}
-.fa__p strong{font-weight:600;color:#fff;background:linear-gradient(#FF3038,#FF3038) no-repeat 0 94%/0% 2px;transition:background-size .8s cubic-bezier(.16,1,.3,1)}
-.f-hl .fa__p strong{background-size:100% 2px}
-.fw{display:inline-block;opacity:0;transform:translate3d(0,.55em,0);transition:opacity .35s ease,transform .55s cubic-bezier(.16,1,.3,1)}
-.fw.is-in{opacity:1;transform:none}
-.f-out .fa{opacity:0;transform:translate3d(0,-7vh,0)}
-/* 2 · the wipe + title card */
-.fwipe{position:absolute;inset:0;z-index:4;background:#8e0f16;transform:translate3d(0,101%,0);transition:transform .55s cubic-bezier(.76,0,.24,1);pointer-events:none}
-.f-wipe .fwipe{transform:none}
-.f-reel .fwipe{transform:translate3d(0,-101%,0);transition-duration:.6s}
-.ftitle{position:absolute;inset:0;z-index:5;display:grid;place-content:center;justify-items:center;text-align:center;color:#fff;
-  opacity:0;pointer-events:none;transition:opacity .35s ease,transform .6s cubic-bezier(.7,0,.84,0)}
-.ftitle__a{font-family:"Noto Serif Display","Bodoni 72",Didot,Georgia,serif;font-weight:250;font-stretch:62.5%;font-variation-settings:"wdth" 62.5,"wght" 250;
-  text-transform:uppercase;font-size:clamp(84px,18vw,290px);line-height:.84;letter-spacing:-.01em;
-  transform:translate3d(0,40px,0) scale(.96);transition:transform 1.3s cubic-bezier(.16,1,.3,1)}
-.ftitle__b{margin-top:clamp(14px,2.4vh,26px);font-size:clamp(11px,1vw,14px);letter-spacing:.34em;text-transform:uppercase;color:rgba(255,255,255,.85)}
-.f-title .ftitle{opacity:1}
-.f-title .ftitle__a{transform:none}
-.f-reel .ftitle{opacity:0;transform:scale(1.5)}
-/* 3 · the reel sits under the wipe */
-.film .vreel{z-index:3}
-/* 4 · the end card */
-.fend{position:absolute;inset:0;z-index:6;display:grid;place-content:center;justify-items:center;gap:clamp(24px,4vh,40px);
-  padding:0 var(--gut);opacity:0;pointer-events:none;transition:opacity .5s ease}
-.f-end .fend{opacity:1;pointer-events:auto}
-.fend__w{margin:0;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px 20px;max-width:1100px;
-  font-family:"Noto Serif Display","Bodoni 72",Didot,Georgia,serif;font-weight:300;font-stretch:62.5%;font-variation-settings:"wdth" 62.5,"wght" 300;
-  text-transform:uppercase;font-size:clamp(28px,4.4vw,66px);line-height:1;color:#fff;text-align:center}
-.fend__w span{opacity:0;transform:translate3d(0,16px,0);transition:opacity .5s ease,transform .7s cubic-bezier(.16,1,.3,1)}
-.fend__w span.is-in{opacity:1;transform:none}
-.fend__w i{width:6px;height:6px;border-radius:50%;background:#FF3038;flex:none}
-.fend__row{display:flex;align-items:center;gap:26px}
-.fend__re{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:999px;padding:11px 18px 10px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;transition:background .25s,color .25s}
-.fend__re:hover{background:#fff;color:#080808}
-.fend__scroll{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);animation:fendBob 1.6s ease-in-out infinite}
-@keyframes fendBob{50%{transform:translateY(5px)}}
-/* the progress line, like a video scrubber */
-.fbar{position:absolute;left:calc(var(--gut) + 18px);right:calc(var(--gut) + 18px);bottom:clamp(20px,3.4vh,34px);height:1px;background:rgba(255,255,255,.16);z-index:8;overflow:hidden}
-.fbar i{display:block;height:100%;background:#FF3038;transform-origin:0 50%;transform:scaleX(0)}
-/* reduced motion: no slides, just the frames */
-.reduced .fa__ln>span,.reduced .fw,.reduced .fa__me{transform:none!important;opacity:1!important;transition:none!important}
-@media (max-width:700px){
-  .fa__h{font-size:clamp(32px,9.4vw,44px)}
-  .fa__row{gap:14px}
-  .fa__p{font-size:17px}
-  .fend__w{gap:8px 12px}
-}
-/* the box now has its own short heading */
-.box__h{margin:0;font-size:clamp(30px,3.6vw,56px);line-height:1;letter-spacing:-.045em;font-weight:700;color:var(--black)}
-.box__h em{font-weight:300;letter-spacing:-.03em}
-
-/* ===== Round 29 — the film uses the site's own font: Inter Tight, thin and drawn tall ===== */
-.vs__w,.ftitle__a,.fend__w{font-family:var(--sans)!important;font-weight:200!important;font-stretch:normal!important;font-variation-settings:normal!important;
-  text-transform:uppercase;letter-spacing:-.035em!important}
-.vs__w{transform:scaleY(1.5);transform-origin:50% 50%;line-height:.82!important}
+/* ===== Round 28 — reel words in the site's own font (Inter Tight, thin and drawn tall) ===== */
+.vs__w{font-family:var(--sans)!important;font-weight:200!important;font-stretch:normal!important;font-variation-settings:normal!important;
+  letter-spacing:-.035em!important;line-height:.82!important;transform:scaleY(1.5);transform-origin:50% 50%}
 .vs__w--o{-webkit-text-stroke:1.1px rgba(255,255,255,.95)}
-.ftitle__a{display:inline-block;line-height:.8!important}
-.ftitle__a{transform:translate3d(0,40px,0) scaleY(1.5) scale(.96)}
-.f-title .ftitle__a{transform:scaleY(1.5)}
-.ftitle__b{margin-top:clamp(40px,7vh,70px)}
-.fend__w{font-size:clamp(26px,3.8vw,58px);line-height:1;gap:22px 22px}
-.fend__w span{display:inline-block;transform:translate3d(0,16px,0) scaleY(1.4)}
-.fend__w span.is-in{transform:scaleY(1.4)}
-/* the About lines sit closer together */
-.fa__h{line-height:.94!important}
-.fa__ln{padding:0 0 .03em!important}
-.fa__h em{font-family:var(--sans)!important;font-weight:300!important;font-stretch:normal!important;font-variation-settings:normal!important;font-size:1em!important;letter-spacing:-.04em!important;color:rgba(255,255,255,.88)!important}
-/* more about me */
-.fa__txt{display:grid;gap:clamp(12px,1.8vh,18px);min-width:0}
-.fa__p2{margin:0;max-width:640px;font-size:clamp(15px,1.25vw,19px);line-height:1.45;letter-spacing:-.01em;color:#a9a9a9}
-.fa__chips{list-style:none;margin:clamp(4px,1vh,10px) 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
-.fa__chips li{padding:8px 13px 7px;border:1px solid rgba(255,255,255,.32);border-radius:999px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#fff;
-  opacity:0;transform:translate3d(0,10px,0) scale(.94);transition:opacity .35s ease,transform .55s cubic-bezier(.34,1.56,.64,1),background .3s}
-.fa__chips li.is-in{opacity:1;transform:none}
-.fa__chips li:first-child{background:#FF3038;border-color:#FF3038}
-.reduced .fa__chips li{opacity:1!important;transform:none!important}
-@media (max-width:700px){.fa__p2{font-size:14px}.fa__chips li{font-size:9.5px;padding:7px 10px 6px}.fa__row{flex-direction:row}.fa__me{width:54px}}
-@media (max-height:700px){.fa{padding-top:84px}.fa__row{margin-top:16px}}
+
+/* ===== About: same layout, now it plays in like a short motion piece ===== */
+#aboutTitle{font-size:clamp(26px,3.5vw,56px)!important;line-height:1!important}
+@media (max-width:640px){#aboutTitle{font-size:clamp(24px,7.2vw,36px)!important}}
+.js #aboutTitle .ln>span{opacity:1!important}
+#aboutTitle .ln{display:block;overflow:hidden;padding-bottom:.04em}
+.a-wait #aboutTitle .ln>span{display:inline-block;transform:translate3d(0,112%,0)!important;transition:transform .95s cubic-bezier(.16,1,.3,1)!important}
+.a-wait #aboutTitle .ln>span.is-in{transform:none!important}
+.a-wait .aw{display:inline-block;opacity:0;transform:translate3d(0,.5em,0);transition:opacity .35s ease,transform .55s cubic-bezier(.16,1,.3,1)}
+.a-wait .aw.is-in{opacity:1;transform:none}
+.a-wait .about__statement strong{background-size:0% 100%;background-repeat:no-repeat;transition:background-size .8s cubic-bezier(.16,1,.3,1)}
+.a-hl .about__statement strong{background-size:100% 100%}
+.about__more2{margin:clamp(14px,1.8vw,22px) 0 0;max-width:600px;font-size:clamp(15px,1.15vw,18px);line-height:1.5;color:var(--ink-2)}
+.about__pills{list-style:none;margin:clamp(16px,1.8vw,22px) 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.about__pills li{padding:8px 13px 7px;border:1px solid rgba(255,255,255,.3);border-radius:999px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--black)}
+.about__pills li:first-child{background:#FF3038;border-color:#FF3038;color:#fff}
+.a-wait .about__pills li{opacity:0;transform:translate3d(0,10px,0) scale(.94);transition:opacity .35s ease,transform .55s cubic-bezier(.34,1.56,.64,1)}
+.a-wait .about__pills li.is-in{opacity:1;transform:none}
+.a-wait #aboutMe{opacity:0;transform:translate3d(0,18px,0);transition:opacity .45s ease,transform .7s cubic-bezier(.34,1.56,.64,1)}
+.a-wait #aboutMe.is-in{opacity:1;transform:none}
+@media (max-width:640px){.about__pills li{font-size:9.5px;padding:7px 10px 6px}}
