@@ -266,23 +266,49 @@
     { w: 'Connected|to nature', img: 'nature', pos: '40% 55%' },
     { w: 'Story|teller', img: 'storyteller', pos: '50% 30%' }
   ];
-  /* A fast fashion-film reel: each word sits in tall white serif type around its photo. The frame drifts in,
-     then rushes towards you so the letters fly past the edges — and cuts hard to the next word.
-     Driven frame by frame (transforms only) so it stays smooth on phones. */
+  /* ABOUT FILM — one short motion piece that plays when About fills the screen:
+     1. "Curious by nature. Creative by instinct." slides up line by line, the sticker pops in and the
+        intro line writes itself word by word;
+     2. a dark-red panel wipes up and the title card "Anushree — beyond designing is" holds for a beat;
+     3. the word reel: each word in tall white serif around its photo, drifting in, rushing past, hard cut;
+     4. an end card lists all the words, and the page glides on to the next section (first time only).
+     Everything moves with transforms and opacity, driven from one clock so it stays smooth on phones. */
   function vibeRoll() {
-    var host = $('#vibeReel'), screen = $('#vibeScreen'), count = $('#vibeCount'); if (!host) return;
+    var screen = $('#vibeScreen'), host = $('#vibeReel'), film = $('#about'); if (!host || !screen) return;
+    var count = $('#vibeCount'), hud = $('#filmHud'), bar = $('#filmBar'), endEl = $('#filmEnd');
     var n = VIBE.length;
+
+    /* --- the reel scenes --- */
     host.innerHTML = VIBE.map(function (v, k) {
       var lines = v.w.split('|').map(function (l) { return '<span>' + esc(l) + '</span>'; }).join('');
       return '<div class="vs' + (k % 2 ? ' vs--red' : '') + '"><div class="vs__z">' +
         '<h3 class="vs__w">' + lines + '</h3>' +
         '<figure class="vs__ph"><img src="assets/vibe/' + v.img + '.webp" alt="" decoding="async" style="object-position:' + v.pos + '"></figure>' +
-        '<h3 class="vs__w vs__w--o" aria-hidden="true">' + lines + '</h3>' +
+        '<h3 class="vs__w vs__w--o">' + lines + '</h3>' +
         '</div></div>';
     }).join('');
     var scenes = $$('.vs', host), zs = scenes.map(function (s) { return $('.vs__z', s); }),
         imgs = scenes.map(function (s) { return $('img', s); });
-    /* each word gets the biggest size that fits the screen */
+    var words = $('#filmWords');
+    if (words) words.innerHTML = VIBE.map(function (v) { return '<span>' + esc(v.w.indexOf('|to ') > -1 ? v.w.replace('|', ' ') : v.w.replace('|', '')) + '</span>'; }).join('<i></i>');
+    var endWords = words ? $$('span', words) : [];
+
+    /* --- the intro line, split into words so it can write itself --- */
+    var line = $('#filmLine'), fws = [];
+    (function split(el) {
+      [].slice.call(el.childNodes).forEach(function (nd) {
+        if (nd.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          nd.textContent.split(/(\s+)/).forEach(function (bit) {
+            if (!bit) return;
+            if (/^\s+$/.test(bit)) { frag.appendChild(document.createTextNode(bit)); return; }
+            var sp = document.createElement('span'); sp.className = 'fw'; sp.textContent = bit; frag.appendChild(sp); fws.push(sp);
+          });
+          el.replaceChild(frag, nd);
+        } else if (nd.nodeType === 1) split(nd);
+      });
+    })(line);
+
     function fit() {
       var W = screen.clientWidth, H = screen.clientHeight, narrow = W < 700;
       scenes.forEach(function (s) {
@@ -294,56 +320,104 @@
         ws.forEach(function (w) { w.style.fontSize = size.toFixed(1) + 'px'; });
       });
     }
-    var DUR = REDUCED ? 1400 : 640, cur = -1, t0 = 0, raf = 0, vis = false, rushed = false, onEnd = null;
+
+    /* --- timing (ms) --- */
+    var SC = REDUCED ? 1600 : 880;                 /* one reel word */
+    var T = { l1: 150, l2: 520, me: 1150, words: 1300, wordStep: 34, hl: 2300,
+              out: 6300, wipe: 6650, title: 6950, reel: 8300 };
+    if (REDUCED) T = { l1: 0, l2: 0, me: 0, words: 0, wordStep: 0, hl: 0, out: 6500, wipe: 6500, title: 6600, reel: 8200 };
+    var REEL_END = T.reel + SC * n, TOTAL = REEL_END + 400;
+
+    var raf = 0, t0 = 0, playing = false, done = false, steps = [], cur = -1, rushed = false, autoNext = true, userMoved = false;
+    function at(ms, fn) { steps.push({ ms: ms, fn: fn, hit: false }); }
+    function cls(el, c, on) { if (el) el.classList.toggle(c, on); }
+
+    function reset() {
+      film.classList.remove('f-l1', 'f-l2', 'f-me', 'f-hl', 'f-out', 'f-wipe', 'f-title', 'f-reel', 'f-end', 'f-play');
+      fws.forEach(function (w) { w.classList.remove('is-in'); });
+      endWords.forEach(function (w) { w.classList.remove('is-in'); });
+      scenes.forEach(function (s, k) { s.classList.remove('is-on'); zs[k].style.transform = ''; imgs[k].style.transform = ''; });
+      cur = -1; rushed = false; done = false;
+      if (hud) hud.textContent = '(01) — About me';
+      if (bar) bar.style.transform = 'scaleX(0)';
+      if (count) count.textContent = '00:00';
+      steps.forEach(function (s) { s.hit = false; });
+    }
+
+    /* the cue list */
+    at(T.l1, function () { film.classList.add('f-l1'); SFX.tick(); });
+    at(T.l2, function () { film.classList.add('f-l2'); SFX.tick(); });
+    at(T.me, function () { film.classList.add('f-me'); SFX.pop(); });
+    fws.forEach(function (w, k) { at(T.words + k * T.wordStep, function () { w.classList.add('is-in'); }); });
+    at(T.hl, function () { film.classList.add('f-hl'); });
+    at(T.out, function () { film.classList.add('f-out'); });
+    at(T.wipe, function () { film.classList.add('f-wipe'); SFX.rush(0.42); });
+    at(T.title, function () { film.classList.add('f-title'); SFX.roll(); if (hud) hud.textContent = 'Anushree beyond designing is'; });
+    at(T.reel, function () { film.classList.add('f-reel'); });
+    at(REEL_END, function () {
+      if (cur > -1) scenes[cur].classList.remove('is-on');
+      film.classList.add('f-end');
+      endWords.forEach(function (w, k) { setTimeout(function () { w.classList.add('is-in'); }, 60 + k * 70); });
+    });
+
     function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
     function easeIn(t) { return t * t * t * t; }
-    function show(k) {
-      if (cur > -1) scenes[cur].classList.remove('is-on');
-      cur = k; scenes[k].classList.add('is-on');
-      if (count) count.textContent = pad(k + 1) + ' / ' + pad(n);
-      if (cur > -1) SFX.roll();
-    }
+    function mmss(ms) { var s = Math.max(0, Math.round(ms / 1000)); return pad(Math.floor(s / 60)) + ':' + pad(s % 60); }
+
     function frame(now) {
-      raf = 0; if (!vis) return;
-      var t = (now - t0) / DUR;
-      if (t >= 1) {
-        if (cur === n - 1) { var cb = onEnd; onEnd = null; vis = false; if (cb) cb(); return; }   /* one pass, then hand back */
-        t0 = now; t = 0; rushed = false; show(cur + 1);
+      raf = 0; if (!playing) return;
+      var e = now - t0;
+      steps.forEach(function (s) { if (!s.hit && e >= s.ms) { s.hit = true; s.fn(); } });
+      /* the reel */
+      if (e >= T.reel && e < REEL_END) {
+        var k = Math.min(n - 1, Math.floor((e - T.reel) / SC)), t = ((e - T.reel) - k * SC) / SC;
+        if (k !== cur) { if (cur > -1) scenes[cur].classList.remove('is-on'); cur = k; rushed = false; scenes[k].classList.add('is-on'); SFX.roll(); }
+        if (!rushed && t >= 0.7 && !REDUCED) { rushed = true; SFX.rush(SC * 0.3 / 1000); }
+        var s, p;
+        if (REDUCED) { s = 1; p = 1; }
+        else if (t < 0.14) { s = 0.9 + 0.1 * easeOut(t / 0.14); p = 1.14 - 0.08 * easeOut(t / 0.14); }
+        else if (t < 0.7) { s = 1 + 0.05 * ((t - 0.14) / 0.56); p = 1.06 - 0.06 * ((t - 0.14) / 0.56); }
+        else { var u = (t - 0.7) / 0.3; s = 1.05 + 2.6 * easeIn(u); p = 1; }
+        zs[cur].style.transform = 'translate3d(0,0,0) scale(' + s.toFixed(4) + ')';
+        imgs[cur].style.transform = 'scale(' + p.toFixed(4) + ')';
       }
-      if (!rushed && t >= 0.7 && !REDUCED) { rushed = true; SFX.rush(DUR * 0.3 / 1000); }
-      var s, p;
-      if (REDUCED) { s = 1; p = 1; }
-      else if (t < 0.14) { s = 0.9 + 0.1 * easeOut(t / 0.14); p = 1.14 - 0.08 * easeOut(t / 0.14); }   /* snaps in */
-      else if (t < 0.7) { s = 1 + 0.05 * ((t - 0.14) / 0.56); p = 1.06 - 0.06 * ((t - 0.14) / 0.56); }   /* slow drift */
-      else { var u = (t - 0.7) / 0.3; s = 1.05 + 2.6 * easeIn(u); p = 1; }                             /* rush in */
-      zs[cur].style.transform = 'translate3d(0,0,0) scale(' + s.toFixed(4) + ')';
-      imgs[cur].style.transform = 'scale(' + p.toFixed(4) + ')';
+      if (bar) bar.style.transform = 'scaleX(' + Math.min(1, e / TOTAL).toFixed(4) + ')';
+      if (count) count.textContent = mmss(Math.min(e, TOTAL)) + ' / ' + mmss(TOTAL);
+      if (e >= TOTAL) { playing = false; done = true; finish(); return; }
       raf = requestAnimationFrame(frame);
     }
-    function play() { stop(); show(0); t0 = performance.now(); raf = requestAnimationFrame(frame); }
-    function stop() { cancelAnimationFrame(raf); raf = 0; }
+    function play() { stop(); reset(); fit(); film.classList.add('f-play'); playing = true; userMoved = false; t0 = performance.now(); raf = requestAnimationFrame(frame); }
+    function stop() { playing = false; cancelAnimationFrame(raf); raf = 0; }
+
+    /* after the first full play, glide on to the next section — unless the visitor is already scrolling */
+    function finish() {
+      if (!autoNext || userMoved) return; autoNext = false;
+      setTimeout(function () {
+        if (userMoved || !inView) return;
+        var next = $('#box'); if (next) next.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
+      }, 1500);
+    }
+    var lastY = scrollY;
+    addEventListener('scroll', function () { if (playing && Math.abs(scrollY - lastY) > 40) userMoved = true; lastY = scrollY; }, { passive: true });
+    var re = $('#filmReplay'); if (re) re.addEventListener('click', function () { autoNext = false; play(); });
+
     fit();
     (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(fit);
     var rz; addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(fit, 120); });
-    /* decode every photo early so the cuts never flash empty */
     imgs.forEach(function (im) { if (im.decode) im.decode().catch(function () {}); });
-    show(0); cur = 0;
-    /* played once as the opening "ad", straight after the name appears */
-    reelAd = function (done) {
-      var sec = $('#vibe'); if (!sec) { done(); return; }
-      var finished = false;
-      function end() {
-        if (finished) return; finished = true; stop(); vis = false;
-        sec.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 380, easing: 'ease', fill: 'forwards' }).onfinish = function () { sec.classList.remove('is-on'); sec.style.display = 'none'; };
-        done();
-      }
-      sec.classList.add('is-on'); fit();
-      sec.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, easing: 'ease', fill: 'forwards' });
-      var sk = $('#vibeSkip'); if (sk) sk.onclick = function (e) { e.stopPropagation(); end(); };
-      onEnd = end; vis = true; play();
-    };
+    reset();
+
+    /* plays once About fills most of the screen; leaving it rewinds, so coming back plays it fresh */
+    var inView = false;
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
+      var r = es[0].intersectionRatio;
+      if (r >= 0.6 && !inView) { inView = true; if (!document.hidden && !playing && !done) play(); }
+      else if (r < 0.15 && inView) { inView = false; stop(); reset(); }
+    }, { threshold: [0, 0.15, 0.6, 1] }).observe(screen);
+    else { inView = true; play(); }
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else if (inView && !done) play(); });
   }
-  var reelAd = null;
+
 
   /* the ending video before Contact: rows of "let's …" lines flow sideways, each lighting up as it passes the
      middle (where you read it). After ~6s it lands on "Let's create." and the contact page glides up beneath it. */
@@ -477,7 +551,7 @@
   }
   observeReveals(document);
 
-  var navMap = { home: 'home', about: 'about', timeline: 'work', keychain: 'work', branding: 'work', illustration: 'work', lens: 'work', contact: 'contact' };
+  var navMap = { home: 'home', about: 'about', box: 'about', timeline: 'work', keychain: 'work', branding: 'work', illustration: 'work', lens: 'work', contact: 'contact' };
   var navLinks = $$('.nav__links a');
   if ('IntersectionObserver' in window) {
     var nio = new IntersectionObserver(function (es) {
@@ -574,7 +648,6 @@
     if (introDone) return;
     introDone = true;
     stopIntro();
-    var ad = $('#vibe'); if (ad && ad.classList.contains('is-on')) { ad.classList.remove('is-on'); ad.style.display = 'none'; }
     /* swallow leftover scroll momentum so the hero stays put for a beat */
     var hold = function (e) { e.preventDefault(); };
     addEventListener('wheel', hold, { passive: false }); addEventListener('touchmove', hold, { passive: false });
@@ -681,22 +754,11 @@
       if (d > 0 && !SFX.unlocked()) { nudge(); return; }
       target = clamp(target + d, 0, 1); kick();
     }
-    var adOn = false, adDone = false;
     var auto = null, handed = false; /* once the name starts to drop, it glides the rest of the way on its own */
     function frame(now) {
       raf = 0;
       if (introDone && !auto) return;
-      if (adOn) return;
       if (!auto && target >= 0.7 && cur >= 0.62) {
-        if (reelAd && !adDone) {
-          /* the name rests for a beat, then the word reel plays like a quick ad, then the name drops into the hero */
-          adOn = true; adDone = true;
-          setTimeout(function () {
-            if (introDone) { adOn = false; return; }
-            reelAd(function () { adOn = false; if (introDone) return; auto = { from: cur, t0: performance.now() + 200, dur: 1300 }; kick(); });
-          }, 450);
-          return;
-        }
         auto = { from: cur, t0: now + 650, dur: 1300 }; /* rests in the centre for a beat, then drops */
       }
       if (auto) {

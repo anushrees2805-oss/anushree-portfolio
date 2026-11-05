@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;800;900&family=Noto+Serif+Display:wdth,wght@62.5..100,100..400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/character/anushree.webp">
-  <link rel="stylesheet" href="css/style.css?v=32">
+  <link rel="stylesheet" href="css/style.css?v=33">
   <script>
     /* decide before paint whether the intro plays */
     (function () {
@@ -40,18 +40,6 @@
     <div class="intro__hint mono"><span>Tap to open — sound on 🔊</span><i aria-hidden="true"></i></div>
     <button class="intro__skip mono" type="button">Skip intro →</button>
   </div>
-
-  <!-- ============ WORDS: a quick glance at who I am ============ -->
-  <section class="vibe vibe--ad" id="vibe" aria-label="Anushree beyond designing is creative, fearless, playful, curious, free-spirited, an explorer, connected to nature and a storyteller">
-    <div class="vibe__screen" id="vibeScreen" aria-hidden="true">
-      <div class="vreel" id="vibeReel"></div>
-      <div class="vgrain" aria-hidden="true"></div>
-      <div class="vframe" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-      <div class="vcount mono" id="vibeCount" aria-hidden="true">01 / 08</div>
-      <div class="vibe__hud mono"><i></i>Anushree beyond designing is</div>
-      <button class="vibe__skip mono" type="button" id="vibeSkip">Skip →</button>
-    </div>
-  </section>
 
   <!-- ============ NAV ============ -->
   <header class="nav" id="nav">
@@ -99,20 +87,45 @@
       <h1 class="hero__name" id="heroName"><span class="fit"><span>ANUSHREE</span><b class="dot" aria-hidden="true"></b><span>SAHU</span></span></h1>
     </section>
 
-    <!-- ============ ABOUT ============ -->
-    <section class="about section" id="about" aria-labelledby="aboutTitle">
+    <!-- ============ ABOUT: a short motion film — who I am, then who I am beyond designing ============ -->
+    <section class="vibe film" id="about" aria-labelledby="filmTitle">
+      <div class="vibe__screen" id="vibeScreen">
+        <div class="fa" id="filmAbout">
+          <h2 class="fa__h" id="filmTitle">
+            <span class="fa__ln"><span><b>Curious</b> <em>by nature<i>.</i></em></span></span>
+            <span class="fa__ln"><span><b>Creative</b> <em>by instinct<i>.</i></em></span></span>
+          </h2>
+          <div class="fa__row">
+            <img class="fa__me" src="assets/character/anushree-sticker.webp" alt="" width="1349" height="1066" aria-hidden="true">
+            <p class="fa__p" id="filmLine">Hi, I'm Anushree — a Mumbai-based designer who is passionate about <strong>visual communication</strong>: ideas you can see, hold and remember.</p>
+          </div>
+        </div>
+        <div class="fwipe" aria-hidden="true"></div>
+        <div class="ftitle" aria-hidden="true"><span class="ftitle__a">Anushree</span><span class="ftitle__b mono">beyond designing is</span></div>
+        <div class="vreel" id="vibeReel" aria-hidden="true"></div>
+        <div class="fend" id="filmEnd" aria-hidden="true">
+          <p class="fend__w" id="filmWords"></p>
+          <div class="fend__row"><button class="fend__re mono" type="button" id="filmReplay" tabindex="-1">&#8634; Watch again</button><span class="fend__scroll mono">Scroll &darr;</span></div>
+        </div>
+        <p class="visually-hidden">Anushree beyond designing is creative, fearless, playful, curious, free-spirited, an explorer, connected to nature and a storyteller.</p>
+        <div class="vgrain" aria-hidden="true"></div>
+        <div class="vframe" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div class="vcount mono" id="vibeCount" aria-hidden="true">00:00</div>
+        <div class="vibe__hud mono" aria-hidden="true"><i></i><span id="filmHud">(01) — About me</span></div>
+        <div class="fbar" aria-hidden="true"><i id="filmBar"></i></div>
+      </div>
+    </section>
+
+    <!-- ============ THE BOX ============ -->
+    <section class="about section" id="box" aria-labelledby="boxTitle">
       <div class="sec-head">
-        <span class="mono">(01) — About me</span>
-        <span class="mono dim">Curious mind · Mumbai</span>
+        <span class="mono">(01) — Open the box</span>
+        <span class="mono dim">9 packs inside</span>
       </div>
 
       <div class="about__wrap">
         <div class="about__copy">
-        <h2 class="mega mega--sentence reveal-lines" id="aboutTitle">
-          <span class="ln"><span>Curious <em class="serif">by nature.</em></span></span>
-          <span class="ln"><span>Creative <em class="serif">by instinct.</em></span></span>
-        </h2>
-          <p class="about__statement reveal">Hi, I'm Anushree — a Mumbai-based designer who is passionate about <strong>visual communication</strong>: ideas you can see, hold and remember.</p>
+          <h2 class="box__h reveal" id="boxTitle">A box full of <em class="serif">packaging.</em></h2>
           <div class="about__me reveal">
             <span class="about__charm" aria-hidden="true"><span class="about__ring"></span><img src="assets/character/anushree-sticker.webp" alt="" loading="lazy" width="1349" height="1066"></span>
             <span class="about__sig mono">That's me — open the box →</span>
@@ -296,8 +309,8 @@
     <span class="cursor__label mono" id="cursorLabel"></span>
   </div>
 
-  <script src="js/dims.js?v=32"></script>
-  <script src="js/data.js?v=32"></script>
-  <script src="js/main.js?v=32"></script>
+  <script src="js/dims.js?v=33"></script>
+  <script src="js/data.js?v=33"></script>
+  <script src="js/main.js?v=33"></script>
 </body>
 </html>
