@@ -321,8 +321,8 @@
     if (REDUCED) SEQ.forEach(function (q) { q.dur *= 2; });
     host.innerHTML = SEQ.map(function (q, i) {
       if (q.type === 'title') {
-        return '<div class="vs vs--title"><div class="vs__z"><h3 class="vs__w">' + letters('Anushree') + '</h3>' +
-          '<p class="vs__sub mono">beyond designing is</p></div></div>';
+        return '<div class="vs vs--title"><div class="vs__z"><h3 class="vs__w">' + letters('Anushree is') + '</h3>' +
+          '<p class="vs__sub mono">beyond designing</p></div></div>';
       }
       if (q.type === 'stack') {
         return '<div class="vs vs--stack"><div class="vs__z"><h3 class="vs__w">' + letters('All of') + letters('the above') + '</h3>' +
@@ -354,12 +354,12 @@
         probe.style.fontSize = '100px';
         var widest = Math.max.apply(null, [].map.call(probe.children, function (c) { return c.offsetWidth; }));
         var size = 100 * W * (narrow ? 0.9 : 0.84) / Math.max(1, widest);
-        size = Math.min(size, H * (ln > 1 ? (narrow ? 0.25 : 0.36) : (narrow ? 0.34 : 0.6)) / 1.5);
+        size = Math.min(size, H * (ln > 1 ? (narrow ? 0.25 : 0.36) : (narrow ? 0.34 : 0.6)));
         ws.forEach(function (w) { w.style.fontSize = size.toFixed(1) + 'px'; });
       });
       scenes.forEach(function (s) {
         var w = $('.vs__w', s), ph = $('.vs__ph', s); if (!$('.vs__is', s)) return;
-        var hw = parseFloat(w.style.fontSize) * w.children.length * 0.82 * 1.5 / 2, hp = ph ? ph.offsetHeight / 2 : 0;
+        var hw = parseFloat(w.style.fontSize) * w.children.length * 0.86 / 2, hp = ph ? ph.offsetHeight / 2 : 0;
         s.style.setProperty('--lift', (-Math.max(hw, hp) - 22).toFixed(0) + 'px');
       });
       host.style.setProperty('--card', Math.min(W * (narrow ? 0.26 : 0.13), H * 0.24).toFixed(0) + 'px');
@@ -374,9 +374,7 @@
       var q = SEQ[i];
       if (count) count.textContent = q.type === 'word' ? pad(q.k + 1) + ' / ' + pad(n) : (q.type === 'title' ? '00 / ' + pad(n) : '— / ' + pad(n));
       if (!vis) return;
-      if (q.type === 'word') SFX.chime(q.k);
-      else if (q.type === 'title') SFX.chime(0);
-      else VIBE.forEach(function (v, j) { setTimeout(function () { if (vis && cur === i) SFX.tick(); }, 120 + j * 80); });
+      if (q.type === 'stack') VIBE.forEach(function (v, j) { setTimeout(function () { if (vis && cur === i) SFX.tick(); }, 120 + j * 80); });
     }
     /* the photos lean a little towards the pointer */
     var tx = 0, ty = 0, rx = 0, ry = 0;
@@ -1843,7 +1841,7 @@
      ====================================================================== */
   (function () {
     var TRACKS = [
-      { src: 'assets/audio/soft90s.mp3', loop: 49.2, vol: 0.24, el: $('#vibe'), top: 0.55, bottom: 0.45 },
+      { src: 'assets/audio/cinema.mp3', loop: 48.0, vol: 0.26, el: $('#vibe'), top: 0.55, bottom: 0.45 },
       { src: 'assets/audio/cinema.mp3', loop: 48.0, vol: 0.16, el: $('#filmsZone'), top: 0.75, bottom: 0.25 },
       { src: 'assets/audio/contact-soft.mp3', loop: 41.7391, vol: 0.2, el: $('#contact'), el2: $('#outro'), top: 0.65, bottom: 0.2 }
     ].filter(function (t) { return t.el; });

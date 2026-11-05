@@ -1471,3 +1471,8 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
   text-shadow:0 2px 12px rgba(0,0,0,.45);opacity:0;transform:translate3d(0,calc(var(--lift,-200px) + 10px),0);
   transition:opacity .3s ease .05s,transform .5s cubic-bezier(.16,1,.3,1) .05s}
 .vs.is-on .vs__is{opacity:1;transform:translate3d(0,var(--lift,-200px),0)}
+
+/* ===== Round 31 — reel type = the site's headline type (Inter Tight 800, like the hero) ===== */
+.vs__w{font-weight:800!important;letter-spacing:-.055em!important;line-height:.86!important;transform:none!important}
+.vs__w--fill{font-weight:800!important}
+.vs__w--o{-webkit-text-stroke:1.4px rgba(255,255,255,.95)}
