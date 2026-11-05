@@ -1476,3 +1476,31 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 /* the box now has its own short heading */
 .box__h{margin:0;font-size:clamp(30px,3.6vw,56px);line-height:1;letter-spacing:-.045em;font-weight:700;color:var(--black)}
 .box__h em{font-weight:300;letter-spacing:-.03em}
+
+/* ===== Round 29 — the film uses the site's own font: Inter Tight, thin and drawn tall ===== */
+.vs__w,.ftitle__a,.fend__w{font-family:var(--sans)!important;font-weight:200!important;font-stretch:normal!important;font-variation-settings:normal!important;
+  text-transform:uppercase;letter-spacing:-.035em!important}
+.vs__w{transform:scaleY(1.5);transform-origin:50% 50%;line-height:.82!important}
+.vs__w--o{-webkit-text-stroke:1.1px rgba(255,255,255,.95)}
+.ftitle__a{display:inline-block;line-height:.8!important}
+.ftitle__a{transform:translate3d(0,40px,0) scaleY(1.5) scale(.96)}
+.f-title .ftitle__a{transform:scaleY(1.5)}
+.ftitle__b{margin-top:clamp(40px,7vh,70px)}
+.fend__w{font-size:clamp(26px,3.8vw,58px);line-height:1;gap:22px 22px}
+.fend__w span{display:inline-block;transform:translate3d(0,16px,0) scaleY(1.4)}
+.fend__w span.is-in{transform:scaleY(1.4)}
+/* the About lines sit closer together */
+.fa__h{line-height:.94!important}
+.fa__ln{padding:0 0 .03em!important}
+.fa__h em{font-family:var(--sans)!important;font-weight:300!important;font-stretch:normal!important;font-variation-settings:normal!important;font-size:1em!important;letter-spacing:-.04em!important;color:rgba(255,255,255,.88)!important}
+/* more about me */
+.fa__txt{display:grid;gap:clamp(12px,1.8vh,18px);min-width:0}
+.fa__p2{margin:0;max-width:640px;font-size:clamp(15px,1.25vw,19px);line-height:1.45;letter-spacing:-.01em;color:#a9a9a9}
+.fa__chips{list-style:none;margin:clamp(4px,1vh,10px) 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.fa__chips li{padding:8px 13px 7px;border:1px solid rgba(255,255,255,.32);border-radius:999px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#fff;
+  opacity:0;transform:translate3d(0,10px,0) scale(.94);transition:opacity .35s ease,transform .55s cubic-bezier(.34,1.56,.64,1),background .3s}
+.fa__chips li.is-in{opacity:1;transform:none}
+.fa__chips li:first-child{background:#FF3038;border-color:#FF3038}
+.reduced .fa__chips li{opacity:1!important;transform:none!important}
+@media (max-width:700px){.fa__p2{font-size:14px}.fa__chips li{font-size:9.5px;padding:7px 10px 6px}.fa__row{flex-direction:row}.fa__me{width:54px}}
+@media (max-height:700px){.fa{padding-top:84px}.fa__row{margin-top:16px}}

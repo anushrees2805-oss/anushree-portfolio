@@ -85,14 +85,14 @@
         if (!ready()) return; var t = ctx.currentTime;
         var notes = [659.25, 783.99, 880, 987.77, 1174.66, 987.77, 880, 783.99];
         this._rn = ((this._rn || 0) + 1) % notes.length; var f = notes[this._rn];
-        tone(t, 130, 38, 0.3, 0.2, 'sine');
+        tone(t, 210, 72, 0.26, 0.32, 'sine'); tone(t, 105, 48, 0.3, 0.22, 'triangle');
         var src = ctx.createBufferSource(); src.buffer = noiseBuf;
         var lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(2600, t); lp.frequency.exponentialRampToValueAtTime(220, t + 0.22);
-        var g = ctx.createGain(); g.gain.setValueAtTime(0.08, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.24);
+        var g = ctx.createGain(); g.gain.setValueAtTime(0.16, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.24);
         src.connect(lp); lp.connect(g); g.connect(out); src.start(t, Math.random() * 0.5); src.stop(t + 0.26);
         var o = ctx.createOscillator(), o2 = ctx.createOscillator(), ng = ctx.createGain();
         o.type = 'sine'; o.frequency.value = f; o2.type = 'triangle'; o2.frequency.value = f * 2.005;
-        ng.gain.setValueAtTime(0, t + 0.02); ng.gain.linearRampToValueAtTime(0.03, t + 0.03); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+        ng.gain.setValueAtTime(0, t + 0.02); ng.gain.linearRampToValueAtTime(0.07, t + 0.03); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
         o.connect(ng); o2.connect(ng); ng.connect(out); o.start(t + 0.02); o2.start(t + 0.02); o.stop(t + 0.5); o2.stop(t + 0.5);
       },
       /* the whoosh: air sweeping past you from one side to the other as the word flies in —
@@ -103,7 +103,7 @@
         var pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
         if (pan) { pan.pan.setValueAtTime(-0.85 * sd, t); pan.pan.linearRampToValueAtTime(0.85 * sd, t + d); pan.connect(out); }
         var dest = pan || out;
-        [[0.7, 380, 5200, 0.16], [7, 900, 4200, 0.05]].forEach(function (L) {
+        [[0.6, 420, 6000, 0.42], [6, 1000, 4800, 0.12], [1.2, 2400, 9000, 0.1]].forEach(function (L) {
           var src = ctx.createBufferSource(); src.buffer = noiseBuf;
           var bq = ctx.createBiquadFilter(); bq.type = 'bandpass'; bq.Q.value = L[0];
           bq.frequency.setValueAtTime(L[1], t); bq.frequency.exponentialRampToValueAtTime(L[2], t + d);
@@ -294,21 +294,25 @@
     var endWords = words ? $$('span', words) : [];
 
     /* --- the intro line, split into words so it can write itself --- */
-    var line = $('#filmLine'), fws = [];
-    (function split(el) {
+    var fws = [], fws2 = [];
+    function split(el, into) {
       [].slice.call(el.childNodes).forEach(function (nd) {
         if (nd.nodeType === 3) {
           var frag = document.createDocumentFragment();
           nd.textContent.split(/(\s+)/).forEach(function (bit) {
             if (!bit) return;
             if (/^\s+$/.test(bit)) { frag.appendChild(document.createTextNode(bit)); return; }
-            var sp = document.createElement('span'); sp.className = 'fw'; sp.textContent = bit; frag.appendChild(sp); fws.push(sp);
+            var sp = document.createElement('span'); sp.className = 'fw'; sp.textContent = bit; frag.appendChild(sp); into.push(sp);
           });
           el.replaceChild(frag, nd);
-        } else if (nd.nodeType === 1) split(nd);
+        } else if (nd.nodeType === 1) split(nd, into);
       });
-    })(line);
+    }
+    if ($('#filmLine')) split($('#filmLine'), fws);
+    if ($('#filmLine2')) split($('#filmLine2'), fws2);
+    var chips = $$('#filmChips li');
 
+    var STRETCH = 1.5;
     function fit() {
       var W = screen.clientWidth, H = screen.clientHeight, narrow = W < 700;
       scenes.forEach(function (s) {
@@ -316,16 +320,16 @@
         probe.style.fontSize = '100px';
         var widest = Math.max.apply(null, [].map.call(probe.children, function (c) { return c.offsetWidth; }));
         var size = 100 * W * (narrow ? 0.9 : 0.84) / Math.max(1, widest);
-        size = Math.min(size, H * (ln > 1 ? (narrow ? 0.25 : 0.36) : (narrow ? 0.34 : 0.6)));
+        size = Math.min(size, H * (ln > 1 ? (narrow ? 0.25 : 0.36) : (narrow ? 0.34 : 0.6)) / STRETCH);
         ws.forEach(function (w) { w.style.fontSize = size.toFixed(1) + 'px'; });
       });
     }
 
     /* --- timing (ms) --- */
     var SC = REDUCED ? 1600 : 880;                 /* one reel word */
-    var T = { l1: 150, l2: 520, me: 1150, words: 1300, wordStep: 34, hl: 2300,
-              out: 6300, wipe: 6650, title: 6950, reel: 8300 };
-    if (REDUCED) T = { l1: 0, l2: 0, me: 0, words: 0, wordStep: 0, hl: 0, out: 6500, wipe: 6500, title: 6600, reel: 8200 };
+    var T = { l1: 150, l2: 430, me: 950, words: 1050, wordStep: 32, hl: 1900, words2: 2250, chips: 3050,
+              out: 8200, wipe: 8550, title: 8850, reel: 10150 };
+    if (REDUCED) T = { l1: 0, l2: 0, me: 0, words: 0, wordStep: 0, hl: 0, words2: 0, chips: 0, out: 8200, wipe: 8200, title: 8300, reel: 9900 };
     var REEL_END = T.reel + SC * n, TOTAL = REEL_END + 400;
 
     var raf = 0, t0 = 0, playing = false, done = false, steps = [], cur = -1, rushed = false, autoNext = true, userMoved = false;
@@ -334,7 +338,7 @@
 
     function reset() {
       film.classList.remove('f-l1', 'f-l2', 'f-me', 'f-hl', 'f-out', 'f-wipe', 'f-title', 'f-reel', 'f-end', 'f-play');
-      fws.forEach(function (w) { w.classList.remove('is-in'); });
+      fws.concat(fws2, chips).forEach(function (w) { w.classList.remove('is-in'); });
       endWords.forEach(function (w) { w.classList.remove('is-in'); });
       scenes.forEach(function (s, k) { s.classList.remove('is-on'); zs[k].style.transform = ''; imgs[k].style.transform = ''; });
       cur = -1; rushed = false; done = false;
@@ -350,7 +354,9 @@
     at(T.me, function () { film.classList.add('f-me'); SFX.pop(); });
     fws.forEach(function (w, k) { at(T.words + k * T.wordStep, function () { w.classList.add('is-in'); }); });
     at(T.hl, function () { film.classList.add('f-hl'); });
-    at(T.out, function () { film.classList.add('f-out'); });
+    fws2.forEach(function (w, k) { at(T.words2 + k * 28, function () { w.classList.add('is-in'); }); });
+    chips.forEach(function (c, k) { at(T.chips + k * 120, function () { c.classList.add('is-in'); SFX.tick(); }); });
+    at(T.out, function () { film.classList.add('f-out'); SFX.rush(0.3); });
     at(T.wipe, function () { film.classList.add('f-wipe'); SFX.rush(0.42); });
     at(T.title, function () { film.classList.add('f-title'); SFX.roll(); if (hud) hud.textContent = 'Anushree beyond designing is'; });
     at(T.reel, function () { film.classList.add('f-reel'); });
@@ -1839,6 +1845,7 @@
      ====================================================================== */
   (function () {
     var TRACKS = [
+      { src: 'assets/audio/fun.mp3', loop: 33.1, vol: 0.12, el: $('#about'), top: 0.55, bottom: 0.45 },
       { src: 'assets/audio/cinema.mp3', loop: 48.0, vol: 0.16, el: $('#filmsZone'), top: 0.75, bottom: 0.25 },
       { src: 'assets/audio/contact-soft.mp3', loop: 41.7391, vol: 0.2, el: $('#contact'), el2: $('#outro'), top: 0.65, bottom: 0.2 }
     ].filter(function (t) { return t.el; });
