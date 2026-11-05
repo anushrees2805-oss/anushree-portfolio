@@ -111,6 +111,33 @@
           src.connect(bq); bq.connect(g); g.connect(dest); src.start(t, Math.random() * 0.5); src.stop(t + d + 0.06);
         });
       },
+      /* the reel's beat: one bar per word, locked to the cuts — kick on every beat, a clap on the
+         second, crisp hats on the off-beats and a pulsing bass that walks through a short riff */
+      beat: function (k, dur) {
+        if (!ready()) return; var t = ctx.currentTime + 0.005, b = dur / 2, e = b / 2;
+        var riff = [110, 110, 87.31, 98, 110, 130.81, 98, 87.31], f = riff[k % riff.length];
+        function kick(at) {
+          var o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine';
+          o.frequency.setValueAtTime(165, at); o.frequency.exponentialRampToValueAtTime(52, at + 0.12);
+          g.gain.setValueAtTime(0.0001, at); g.gain.exponentialRampToValueAtTime(0.42, at + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, at + 0.3);
+          o.connect(g); g.connect(out); o.start(at); o.stop(at + 0.32);
+          var c = noise(at, 0.012, 'highpass', 3000, 0.7, 0); c.linearRampToValueAtTime(0.12, at + 0.001); c.exponentialRampToValueAtTime(0.0001, at + 0.012);
+        }
+        function hat(at, v, len) { var g = noise(at, len, 'highpass', 7500, 0.8, 0); g.linearRampToValueAtTime(v, at + 0.002); g.exponentialRampToValueAtTime(0.0001, at + len); }
+        function clap(at) {
+          [0, 0.011, 0.022].forEach(function (d, i) { var g = noise(at + d, i < 2 ? 0.02 : 0.16, 'bandpass', 1400, 1.1, 0); g.linearRampToValueAtTime(0.2, at + d + 0.002); g.exponentialRampToValueAtTime(0.0001, at + d + (i < 2 ? 0.02 : 0.16)); });
+        }
+        function bass(at, fr) {
+          var o = ctx.createOscillator(), lp = ctx.createBiquadFilter(), g = ctx.createGain(); o.type = 'sawtooth'; o.frequency.value = fr;
+          lp.type = 'lowpass'; lp.Q.value = 6; lp.frequency.setValueAtTime(900, at); lp.frequency.exponentialRampToValueAtTime(220, at + e * 0.9);
+          g.gain.setValueAtTime(0.0001, at); g.gain.exponentialRampToValueAtTime(0.11, at + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, at + e * 0.95);
+          o.connect(lp); lp.connect(g); g.connect(out); o.start(at); o.stop(at + e);
+        }
+        kick(t); kick(t + b); clap(t + b);
+        hat(t + e, 0.09, 0.05); hat(t + b + e, 0.11, 0.09);
+        [0.5, 1.5, 2.5, 3.5].forEach(function (q) { hat(t + q * e, 0.03, 0.025); });
+        [0, 1, 2, 3].forEach(function (q) { bass(t + q * e, q === 3 ? f * 1.5 : f); });
+      },
       /* gentle click for tags, projects and stories */
       click: function () {
         if (!ready()) return; var t = ctx.currentTime;
@@ -301,7 +328,7 @@
       if (cur > -1) scenes[cur].classList.remove('is-on');
       cur = k; scenes[k].classList.add('is-on');
       if (count) count.textContent = pad(k + 1) + ' / ' + pad(n);
-      if (cur > -1) SFX.roll();
+      if (cur > -1 && vis) SFX.beat(k, DUR / 1000);
     }
     function frame(now) {
       raf = 0; if (!vis) return;
@@ -1751,7 +1778,6 @@
      ====================================================================== */
   (function () {
     var TRACKS = [
-      { src: 'assets/audio/fun.mp3', loop: 33.1, vol: 0.12, el: $('#vibe'), top: 0.55, bottom: 0.45 },
       { src: 'assets/audio/cinema.mp3', loop: 48.0, vol: 0.16, el: $('#filmsZone'), top: 0.75, bottom: 0.25 },
       { src: 'assets/audio/contact-soft.mp3', loop: 41.7391, vol: 0.2, el: $('#contact'), el2: $('#outro'), top: 0.65, bottom: 0.2 }
     ].filter(function (t) { return t.el; });
@@ -1872,7 +1898,7 @@
         var y0 = scrollY, y1 = v.getBoundingClientRect().top + scrollY; gliding = true;
         tween(1200, function (e) { scrollTo({ top: y0 + (y1 - y0) * e, behavior: 'instant' }); if (e >= 1) gliding = false; }, ease.inOutCubic);
         SFX.rush(0.5);
-      }, 7200);
+      }, 20000);
     }
     addEventListener('scroll', function () { if (played && !gliding && Math.abs(scrollY - lastY) > 4) userMoved = true; lastY = scrollY; }, { passive: true });
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {

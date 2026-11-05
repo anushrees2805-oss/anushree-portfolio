@@ -1431,3 +1431,8 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 .a-wait #aboutMe{opacity:0;transform:translate3d(0,18px,0);transition:opacity .45s ease,transform .7s cubic-bezier(.34,1.56,.64,1)}
 .a-wait #aboutMe.is-in{opacity:1;transform:none}
 @media (max-width:640px){.about__pills li{font-size:9.5px;padding:7px 10px 6px}}
+
+/* keychain: no empty band or divider line beneath the tags */
+.keys{min-height:0!important;padding-bottom:20px!important}
+#branding::before{display:none!important}
+#branding.section{padding-top:clamp(28px,3.5vw,56px)!important}
