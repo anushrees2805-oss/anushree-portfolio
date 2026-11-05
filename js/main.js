@@ -309,16 +309,41 @@
   function vibeRoll() {
     var host = $('#vibeReel'), screen = $('#vibeScreen'), count = $('#vibeCount'); if (!host) return;
     var n = VIBE.length;
-    host.innerHTML = VIBE.map(function (v, k) {
-      var lines = v.w.split('|').map(function (l) { return '<span>' + esc(l) + '</span>'; }).join('');
-      return '<div class="vs' + (k % 2 ? ' vs--red' : '') + '"><div class="vs__z">' +
-        '<h3 class="vs__w">' + lines + '</h3>' +
-        '<figure class="vs__ph"><img src="assets/vibe/' + v.img + '.webp" alt="" decoding="async" style="object-position:' + v.pos + '"></figure>' +
-        '<h3 class="vs__w vs__w--o" aria-hidden="true">' + lines + '</h3>' +
+    /* letters are split so they can rise in one after another */
+    function letters(line) {
+      return '<span>' + Array.prototype.map.call(line, function (c, i) {
+        return c === ' ' ? ' ' : '<span class="vch" style="--i:' + i + '">' + esc(c) + '</span>'; }).join('') + '</span>';
+    }
+    function plain(line) { return '<span>' + esc(line) + '</span>'; }
+    /* the running order: opening card → the eight words → a stack of every photo → loop */
+    var SEQ = [{ type: 'title', dur: 1150 }].concat(VIBE.map(function (v, k) { return { type: 'word', v: v, k: k, dur: 1000 }; }), [{ type: 'stack', dur: 2700 }]);
+    if (REDUCED) SEQ.forEach(function (q) { q.dur *= 2; });
+    host.innerHTML = SEQ.map(function (q, i) {
+      if (q.type === 'title') {
+        return '<div class="vs vs--title"><div class="vs__z"><h3 class="vs__w">' + letters('Anushree') + '</h3>' +
+          '<p class="vs__sub mono">beyond designing is</p></div></div>';
+      }
+      if (q.type === 'stack') {
+        return '<div class="vs vs--stack"><div class="vs__z"><h3 class="vs__w">' + letters('All of') + letters('the above') + '</h3>' +
+          '<h3 class="vs__w vs__w--o" aria-hidden="true">' + letters('All of') + letters('the above') + '</h3>' +
+          '<div class="vstack">' + VIBE.map(function (v, j) {
+            var c = j - (n - 1) / 2;
+            return '<figure class="vk" style="--i:' + j + ';--x:' + (c * 1).toFixed(2) + ';--y:' + Math.abs(c).toFixed(2) + ';--r:' + (c * 5.5).toFixed(1) + 'deg;--fx:' + ((j % 2 ? 1 : -1) * (30 + j * 7)) + 'vw;--fr:' + ((j % 2 ? 1 : -1) * 40) + 'deg">' +
+              '<img src="assets/vibe/' + v.img + '.webp" alt="" decoding="async" style="object-position:' + v.pos + '"></figure>'; }).join('') +
+          '</div></div></div>';
+      }
+      var v = q.v, ls = v.w.split('|'), url = 'assets/vibe/' + v.img + '.webp';
+      return '<div class="vs' + (q.k % 2 ? ' vs--red' : '') + '"><div class="vs__z">' +
+        '<h3 class="vs__w">' + ls.map(letters).join('') + '</h3>' +
+        '<figure class="vs__ph"><img src="' + url + '" alt="" decoding="async" style="object-position:' + v.pos + '"></figure>' +
+        '<h3 class="vs__w vs__w--o" aria-hidden="true">' + ls.map(letters).join('') + '</h3>' +
+        '<h3 class="vs__w vs__w--fill" aria-hidden="true" style="background-image:url(' + url + ');background-position:' + v.pos + '">' + ls.map(plain).join('') + '</h3>' +
         '</div></div>';
     }).join('');
-    var scenes = $$('.vs', host), zs = scenes.map(function (s) { return $('.vs__z', s); }),
-        imgs = scenes.map(function (s) { return $('img', s); });
+    var scenes = $$('.vs', host), zs = scenes.map(function (s) { return $('.vs__z', s); });
+    var parts = scenes.map(function (s) {
+      return { img: $('.vs__ph img', s), ph: $('.vs__ph', s), solid: $('.vs__w', s), out: $('.vs__w--o', s), fill: $('.vs__w--fill', s) };
+    });
     /* each word gets the biggest size that fits the screen */
     function fit() {
       var W = screen.clientWidth, H = screen.clientHeight, narrow = W < 700;
@@ -330,28 +355,51 @@
         size = Math.min(size, H * (ln > 1 ? (narrow ? 0.25 : 0.36) : (narrow ? 0.34 : 0.6)) / 1.5);
         ws.forEach(function (w) { w.style.fontSize = size.toFixed(1) + 'px'; });
       });
+      host.style.setProperty('--card', Math.min(W * (narrow ? 0.26 : 0.13), H * 0.24).toFixed(0) + 'px');
     }
-    var DUR = REDUCED ? 2200 : 880, cur = -1, t0 = 0, raf = 0, vis = false, rushed = false;
+    var cur = -1, t0 = 0, raf = 0, vis = false, rushed = false;
     function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
     function easeIn(t) { return t * t * t * t; }
-    function show(k) {
-      if (cur > -1) scenes[cur].classList.remove('is-on');
-      cur = k; scenes[k].classList.add('is-on');
-      if (count) count.textContent = pad(k + 1) + ' / ' + pad(n);
-      if (cur > -1 && vis) SFX.chime(k);
+    function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+    function show(i) {
+      if (cur > -1) { scenes[cur].classList.remove('is-on'); var p = parts[cur]; if (p.ph) p.ph.style.opacity = ''; if (p.solid) p.solid.style.opacity = ''; if (p.out) p.out.style.opacity = ''; if (p.fill) p.fill.style.opacity = ''; }
+      cur = i; scenes[i].classList.add('is-on');
+      var q = SEQ[i];
+      if (count) count.textContent = q.type === 'word' ? pad(q.k + 1) + ' / ' + pad(n) : (q.type === 'title' ? '00 / ' + pad(n) : '— / ' + pad(n));
+      if (!vis) return;
+      if (q.type === 'word') SFX.chime(q.k);
+      else if (q.type === 'title') SFX.chime(0);
+      else VIBE.forEach(function (v, j) { setTimeout(function () { if (vis && cur === i) SFX.tick(); }, 120 + j * 80); });
     }
+    /* the photos lean a little towards the pointer */
+    var tx = 0, ty = 0, rx = 0, ry = 0;
+    screen.addEventListener('pointermove', function (e) {
+      var r = screen.getBoundingClientRect(); tx = ((e.clientX - r.left) / r.width - 0.5) * 2; ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+    });
+    screen.addEventListener('pointerleave', function () { tx = 0; ty = 0; });
     function frame(now) {
       raf = 0; if (!vis) return;
-      var t = (now - t0) / DUR;
-      if (t >= 1) { t0 = now; t = 0; rushed = false; show((cur + 1) % n); }
-      if (!rushed && t >= 0.7 && !REDUCED) { rushed = true; SFX.rush(DUR * 0.3 / 1000); }
-      var s, p;
-      if (REDUCED) { s = 1; p = 1; }
-      else if (t < 0.14) { s = 0.9 + 0.1 * easeOut(t / 0.14); p = 1.14 - 0.08 * easeOut(t / 0.14); }   /* snaps in */
-      else if (t < 0.7) { s = 1 + 0.05 * ((t - 0.14) / 0.56); p = 1.06 - 0.06 * ((t - 0.14) / 0.56); }   /* slow drift */
-      else { var u = (t - 0.7) / 0.3; s = 1.05 + 2.6 * easeIn(u); p = 1; }                             /* rush in */
+      var q = SEQ[cur], t = (now - t0) / q.dur;
+      if (t >= 1) { t0 = now; t = 0; rushed = false; show((cur + 1) % SEQ.length); q = SEQ[cur]; }
+      var stack = q.type === 'stack', RUSH = 0.72;
+      if (!stack && !rushed && t >= RUSH && !REDUCED) { rushed = true; SFX.rush(q.dur * (1 - RUSH) / 1000); }
+      var s, p = 1, P = parts[cur];
+      if (REDUCED) s = 1;
+      else if (stack) s = 0.97 + 0.05 * easeOut(t);
+      else if (t < 0.14) { s = 0.9 + 0.1 * easeOut(t / 0.14); p = 1.14 - 0.08 * easeOut(t / 0.14); }
+      else if (t < RUSH) { s = 1 + 0.05 * ((t - 0.14) / (RUSH - 0.14)); p = 1.06 - 0.06 * ((t - 0.14) / (RUSH - 0.14)); }
+      else {
+        /* rush: the word flies at you and the photo shows through the letters as you pass through them */
+        var u = (t - RUSH) / (1 - RUSH); s = 1.05 + 3.4 * easeIn(u);
+        if (P.fill) P.fill.style.opacity = clamp01(u * 3.2).toFixed(3);
+        if (P.ph) P.ph.style.opacity = (1 - clamp01(u * 2.6)).toFixed(3);
+        if (P.solid && P.fill) P.solid.style.opacity = (1 - clamp01(u * 3.2)).toFixed(3);
+        if (P.out && P.fill) P.out.style.opacity = (1 - clamp01(u * 3.2)).toFixed(3);
+      }
       zs[cur].style.transform = 'translate3d(0,0,0) scale(' + s.toFixed(4) + ')';
-      imgs[cur].style.transform = 'scale(' + p.toFixed(4) + ')';
+      if (P.img) P.img.style.transform = 'scale(' + p.toFixed(4) + ')';
+      rx += (ty * -6 - rx) * 0.08; ry += (tx * 8 - ry) * 0.08;
+      host.style.setProperty('--rx', rx.toFixed(2) + 'deg'); host.style.setProperty('--ry', ry.toFixed(2) + 'deg');
       raf = requestAnimationFrame(frame);
     }
     function play() { stop(); show(0); t0 = performance.now(); raf = requestAnimationFrame(frame); }
@@ -360,7 +408,7 @@
     (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(fit);
     var rz; addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(fit, 120); });
     /* decode every photo early so the cuts never flash empty */
-    imgs.forEach(function (im) { if (im.decode) im.decode().catch(function () {}); });
+    $$('img', host).forEach(function (im) { if (im.decode) im.decode().catch(function () {}); });
     show(0); cur = 0;
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
       var now = es[0].intersectionRatio >= 0.5; if (now === vis) return; vis = now;
