@@ -327,13 +327,18 @@
       return '<span>' + Array.prototype.map.call(line, function (c, i) {
         return c === ' ' ? '<span class="vsp"></span>' : '<span class="vch" style="--i:' + i + '">' + esc(c) + '</span>'; }).join('') + '</span>';
     }
+    /* one word's letters, arriving after a delay (the opener builds word by word) */
+    function word(wd, d0) {
+      return Array.prototype.map.call(wd, function (c, i) { return '<span class="vch" style="--i:' + i + ';--d:' + d0 + 'ms">' + esc(c) + '</span>'; }).join('');
+    }
+    var TW = [0, 650, 1300, 1950];          /* ANUSHREE … BEYOND … DESIGNING … IS */
     function plain(line) { return '<span>' + esc(line) + '</span>'; }
     /* the running order: opening card → the eight words → a stack of every photo → loop */
-    var SEQ = [{ type: 'title', dur: 1500 }].concat(VIBE.map(function (v, k) { return { type: 'word', v: v, k: k, dur: 1000 }; }), [{ type: 'stack', dur: 2700 }]);
+    var SEQ = [{ type: 'title', dur: 3200 }].concat(VIBE.map(function (v, k) { return { type: 'word', v: v, k: k, dur: 1000 }; }), [{ type: 'stack', dur: 2700 }]);
     if (REDUCED) SEQ.forEach(function (q) { q.dur *= 2; });
     host.innerHTML = SEQ.map(function (q, i) {
       if (q.type === 'title') {
-        return '<div class="vs vs--title"><div class="vs__z"><h3 class="vs__w">' + letters('Anushree') + letters('beyond') + letters('designing is') + '</h3></div></div>';
+        return '<div class="vs vs--title"><div class="vs__z"><h3 class="vs__w"><span>' + word('Anushree', TW[0]) + '</span><span>' + word('beyond', TW[1]) + '</span><span>' + word('designing', TW[2]) + '<span class="vsp"></span>' + word('is', TW[3]) + '</span></h3></div></div>';
       }
       if (q.type === 'stack') {
         return '<div class="vs vs--stack"><div class="vs__z"><h3 class="vs__w">' + letters('All of') + letters('the above') + '</h3>' +
@@ -384,7 +389,8 @@
       var q = SEQ[i];
       if (count) count.textContent = q.type === 'word' ? pad(q.k + 1) + ' / ' + pad(n) : (q.type === 'title' ? '00 / ' + pad(n) : '— / ' + pad(n));
       if (!vis) return;
-      SFX.hit(q.type !== 'word');
+      if (q.type === 'title') TW.forEach(function (d, j) { setTimeout(function () { if (vis && cur === i) SFX.hit(j === 3); }, d); });
+      else SFX.hit(q.type !== 'word');
     }
     /* the photos lean a little towards the pointer */
     var tx = 0, ty = 0, rx = 0, ry = 0;
@@ -417,7 +423,12 @@
       host.style.setProperty('--rx', rx.toFixed(2) + 'deg'); host.style.setProperty('--ry', ry.toFixed(2) + 'deg');
       raf = requestAnimationFrame(frame);
     }
-    function play() { stop(); show(0); t0 = performance.now(); raf = requestAnimationFrame(frame); }
+    function play() {
+      stop();
+      /* reset every scene first so the opener's words animate in again on each entry */
+      scenes.forEach(function (sc) { sc.classList.remove('is-on'); }); cur = -1; void host.offsetWidth;
+      show(0); t0 = performance.now(); raf = requestAnimationFrame(frame);
+    }
     function stop() { cancelAnimationFrame(raf); raf = 0; }
     fit();
     (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(fit);
@@ -1851,7 +1862,7 @@
      ====================================================================== */
   (function () {
     var TRACKS = [
-      { src: 'assets/audio/cinema.mp3', loop: 48.0, vol: 0.26, el: $('#vibe'), top: 0.55, bottom: 0.45 },
+      { src: 'assets/audio/ambience.mp3', loop: 32.0, vol: 0.34, el: $('#vibe'), top: 0.55, bottom: 0.45 },
       { src: 'assets/audio/cinema.mp3', loop: 48.0, vol: 0.16, el: $('#filmsZone'), top: 0.75, bottom: 0.25 },
       { src: 'assets/audio/contact-soft.mp3', loop: 41.7391, vol: 0.2, el: $('#contact'), el2: $('#outro'), top: 0.65, bottom: 0.2 }
     ].filter(function (t) { return t.el; });

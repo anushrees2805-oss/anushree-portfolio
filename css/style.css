@@ -1440,7 +1440,7 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 /* ===== Round 30 — the reel, more motion-graphic ===== */
 /* letters rise in one after another */
 .vs .vch{display:inline-block;opacity:0;transform:translate3d(0,.55em,0);
-  transition:transform .55s cubic-bezier(.16,1,.3,1),opacity .22s ease;transition-delay:calc(var(--i) * 26ms)}
+  transition:transform .55s cubic-bezier(.16,1,.3,1),opacity .22s ease;transition-delay:calc(var(--d,0ms) + var(--i) * 26ms)}
 .vs.is-on .vch{opacity:1;transform:none}
 /* the photo opens like a shutter, and leans towards the pointer */
 .vs__ph{clip-path:inset(50% 0 50% 0 round 6px);transition:clip-path .5s cubic-bezier(.7,0,.2,1) .06s;
@@ -1484,3 +1484,6 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 .serif,em.serif,.mega .serif,.mega em.serif,.hamper__brand .serif{font-style:italic!important;letter-spacing:-.035em}
 #aboutTitle em.serif{font-weight:300!important}
 .about__pills li:first-child{background:rgba(255,48,56,.35)!important;border-color:rgba(255,48,56,.55)!important;color:#fff!important}
+
+/* hidden scenes reset instantly, so their letters always animate in fresh */
+.vs:not(.is-on) .vch,.vs:not(.is-on) .vs__ph,.vs:not(.is-on) .vk{transition:none!important}
