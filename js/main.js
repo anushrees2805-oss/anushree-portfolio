@@ -148,6 +148,18 @@
           o.connect(g); g.connect(out); o.start(t); o.stop(t + p[2] + 0.05);
         });
       },
+      /* the reel's hit: a punchy kick + snap that lands with each word */
+      hit: function (big) {
+        if (!ready()) return; var t = ctx.currentTime + 0.004;
+        var o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine';
+        o.frequency.setValueAtTime(big ? 150 : 175, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.16);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(big ? 0.6 : 0.48, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + (big ? 0.5 : 0.34));
+        o.connect(g); g.connect(out); o.start(t); o.stop(t + 0.55);
+        var b = ctx.createOscillator(), bg = ctx.createGain(); b.type = 'triangle'; b.frequency.setValueAtTime(110, t); b.frequency.exponentialRampToValueAtTime(70, t + 0.25);
+        bg.gain.setValueAtTime(0.0001, t); bg.gain.exponentialRampToValueAtTime(0.14, t + 0.006); bg.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+        b.connect(bg); bg.connect(out); b.start(t); b.stop(t + 0.32);
+        [0, 0.012].forEach(function (d) { var n = noise(t + d, 0.09, 'bandpass', 1800, 0.9, 0); n.linearRampToValueAtTime(big ? 0.22 : 0.16, t + d + 0.002); n.exponentialRampToValueAtTime(0.0001, t + d + 0.09); });
+      },
       /* gentle click for tags, projects and stories */
       click: function () {
         if (!ready()) return; var t = ctx.currentTime;
@@ -317,12 +329,11 @@
     }
     function plain(line) { return '<span>' + esc(line) + '</span>'; }
     /* the running order: opening card → the eight words → a stack of every photo → loop */
-    var SEQ = [{ type: 'title', dur: 1150 }].concat(VIBE.map(function (v, k) { return { type: 'word', v: v, k: k, dur: 1000 }; }), [{ type: 'stack', dur: 2700 }]);
+    var SEQ = [{ type: 'title', dur: 1500 }].concat(VIBE.map(function (v, k) { return { type: 'word', v: v, k: k, dur: 1000 }; }), [{ type: 'stack', dur: 2700 }]);
     if (REDUCED) SEQ.forEach(function (q) { q.dur *= 2; });
     host.innerHTML = SEQ.map(function (q, i) {
       if (q.type === 'title') {
-        return '<div class="vs vs--title"><div class="vs__z"><h3 class="vs__w">' + letters('Anushree is') + '</h3>' +
-          '<p class="vs__sub mono">beyond designing</p></div></div>';
+        return '<div class="vs vs--title"><div class="vs__z"><h3 class="vs__w">' + letters('Anushree') + letters('beyond') + letters('designing is') + '</h3></div></div>';
       }
       if (q.type === 'stack') {
         return '<div class="vs vs--stack"><div class="vs__z"><h3 class="vs__w">' + letters('All of') + letters('the above') + '</h3>' +
@@ -353,7 +364,7 @@
         probe.style.fontSize = '100px';
         var widest = Math.max.apply(null, [].map.call(probe.children, function (c) { return c.offsetWidth; }));
         var size = 100 * W * (narrow ? 0.9 : 0.84) / Math.max(1, widest);
-        size = Math.min(size, H * (ln > 1 ? (narrow ? 0.25 : 0.36) : (narrow ? 0.34 : 0.6)));
+        size = Math.min(size, H * (ln > 2 ? (narrow ? 0.2 : 0.25) : ln > 1 ? (narrow ? 0.25 : 0.36) : (narrow ? 0.34 : 0.6)));
         ws.forEach(function (w) { w.style.fontSize = size.toFixed(1) + 'px'; });
       });
       scenes.forEach(function (s) {
@@ -373,6 +384,7 @@
       var q = SEQ[i];
       if (count) count.textContent = q.type === 'word' ? pad(q.k + 1) + ' / ' + pad(n) : (q.type === 'title' ? '00 / ' + pad(n) : '— / ' + pad(n));
       if (!vis) return;
+      SFX.hit(q.type !== 'word');
     }
     /* the photos lean a little towards the pointer */
     var tx = 0, ty = 0, rx = 0, ry = 0;
