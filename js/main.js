@@ -373,7 +373,6 @@
       var q = SEQ[i];
       if (count) count.textContent = q.type === 'word' ? pad(q.k + 1) + ' / ' + pad(n) : (q.type === 'title' ? '00 / ' + pad(n) : '— / ' + pad(n));
       if (!vis) return;
-      if (q.type === 'stack') VIBE.forEach(function (v, j) { setTimeout(function () { if (vis && cur === i) SFX.tick(); }, 120 + j * 80); });
     }
     /* the photos lean a little towards the pointer */
     var tx = 0, ty = 0, rx = 0, ry = 0;
