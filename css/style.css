@@ -1479,3 +1479,8 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 
 /* a clear gap between words in the reel ("ANUSHREE  IS") */
 .vs .vsp{display:inline-block;width:.45em}
+
+/* ===== Round 32 — highlight words in Inter Tight italic; softer red pill ===== */
+.serif,em.serif,.mega .serif,.mega em.serif,.hamper__brand .serif{font-style:italic!important;letter-spacing:-.035em}
+#aboutTitle em.serif{font-weight:300!important}
+.about__pills li:first-child{background:rgba(255,48,56,.35)!important;border-color:rgba(255,48,56,.55)!important;color:#fff!important}
