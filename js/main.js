@@ -313,7 +313,7 @@
     /* letters are split so they can rise in one after another */
     function letters(line) {
       return '<span>' + Array.prototype.map.call(line, function (c, i) {
-        return c === ' ' ? ' ' : '<span class="vch" style="--i:' + i + '">' + esc(c) + '</span>'; }).join('') + '</span>';
+        return c === ' ' ? '<span class="vsp"></span>' : '<span class="vch" style="--i:' + i + '">' + esc(c) + '</span>'; }).join('') + '</span>';
     }
     function plain(line) { return '<span>' + esc(line) + '</span>'; }
     /* the running order: opening card → the eight words → a stack of every photo → loop */
@@ -335,7 +335,6 @@
       }
       var v = q.v, ls = v.w.split('|'), url = 'assets/vibe/' + v.img + '.webp';
       return '<div class="vs' + (q.k % 2 ? ' vs--red' : '') + '"><div class="vs__z">' +
-        '<p class="vs__is mono">Anushree is</p>' +
         '<h3 class="vs__w">' + ls.map(letters).join('') + '</h3>' +
         '<figure class="vs__ph"><img src="' + url + '" alt="" decoding="async" style="object-position:' + v.pos + '"></figure>' +
         '<h3 class="vs__w vs__w--o" aria-hidden="true">' + ls.map(letters).join('') + '</h3>' +
@@ -387,7 +386,7 @@
       var q = SEQ[cur], t = (now - t0) / q.dur;
       if (t >= 1) { t0 = now; t = 0; rushed = false; show((cur + 1) % SEQ.length); q = SEQ[cur]; }
       var stack = q.type === 'stack', RUSH = 0.72;
-      if (!stack && !rushed && t >= RUSH && !REDUCED) { rushed = true; SFX.rush(q.dur * (1 - RUSH) / 1000); }
+      
       var s, p = 1, P = parts[cur];
       if (REDUCED) s = 1;
       else if (stack) s = 0.97 + 0.05 * easeOut(t);

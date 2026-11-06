@@ -1476,3 +1476,6 @@ body::after{content:"";position:fixed;inset:0;z-index:79;pointer-events:none;opa
 .vs__w{font-weight:800!important;letter-spacing:-.055em!important;line-height:.86!important;transform:none!important}
 .vs__w--fill{font-weight:800!important}
 .vs__w--o{-webkit-text-stroke:1.4px rgba(255,255,255,.95)}
+
+/* a clear gap between words in the reel ("ANUSHREE  IS") */
+.vs .vsp{display:inline-block;width:.32em}
