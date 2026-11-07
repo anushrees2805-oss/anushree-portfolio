@@ -162,9 +162,9 @@
       },
       /* the reel: a soft, rounded note in the ambient track's key as each word appears —
          slow attack (no strike), warm, and quiet, with a faint breath of air */
-      soft: function (k) {
+      soft: function (k, hz) {
         if (!ready()) return; var t = ctx.currentTime + 0.01;
-        var sc = [523.25, 659.25, 783.99, 880, 698.46, 587.33, 783.99, 659.25, 523.25], f = sc[k % sc.length];
+        var sc = [523.25, 659.25, 783.99, 880, 698.46, 587.33, 783.99, 659.25, 523.25], f = hz || sc[k % sc.length];
         var lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1800; lp.connect(out);
         [[1, 0.032], [2, 0.006]].forEach(function (p) {
           var o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.value = f * p[0];
@@ -403,6 +403,8 @@
       if (count) count.textContent = q.type === 'word' ? pad(q.k + 1) + ' / ' + pad(n) : (q.type === 'title' ? '00 / ' + pad(n) : '— / ' + pad(n));
       if (!vis) return;
       if (q.type === 'word') SFX.soft(q.k);
+      /* the opener: a soft rising chord, one note per word (C · E · G · C) */
+      else if (q.type === 'title') [261.63, 329.63, 392, 523.25].forEach(function (f, j) { setTimeout(function () { if (vis && cur === i) SFX.soft(0, f); }, TW[j]); });
     }
     /* the photos lean a little towards the pointer */
     var tx = 0, ty = 0, rx = 0, ry = 0;
