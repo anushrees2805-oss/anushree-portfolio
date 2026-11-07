@@ -347,7 +347,7 @@
     var TW = [0, 650, 1300, 1950];          /* ANUSHREE … BEYOND … DESIGNING … IS */
     function plain(line) { return '<span>' + esc(line) + '</span>'; }
     /* the running order: opening card → the eight words → a stack of every photo → loop */
-    var SEQ = [{ type: 'title', dur: 3200 }].concat(VIBE.map(function (v, k) { return { type: 'word', v: v, k: k, dur: 1000 }; }), [{ type: 'stack', dur: 2700 }]);
+    var SEQ = [{ type: 'title', dur: 3200 }].concat(VIBE.map(function (v, k) { return { type: 'word', v: v, k: k, dur: 2000 }; }), [{ type: 'stack', dur: 3700 }]);
     if (REDUCED) SEQ.forEach(function (q) { q.dur *= 2; });
     host.innerHTML = SEQ.map(function (q, i) {
       if (q.type === 'title') {
