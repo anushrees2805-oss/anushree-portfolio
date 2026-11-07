@@ -160,6 +160,19 @@
         b.connect(bg); bg.connect(out); b.start(t); b.stop(t + 0.32);
         [0, 0.012].forEach(function (d) { var n = noise(t + d, 0.09, 'bandpass', 1800, 0.9, 0); n.linearRampToValueAtTime(big ? 0.22 : 0.16, t + d + 0.002); n.exponentialRampToValueAtTime(0.0001, t + d + 0.09); });
       },
+      /* the reel: a soft, rounded note in the ambient track's key as each word appears —
+         slow attack (no strike), warm, and quiet, with a faint breath of air */
+      soft: function (k) {
+        if (!ready()) return; var t = ctx.currentTime + 0.01;
+        var sc = [523.25, 659.25, 783.99, 880, 698.46, 587.33, 783.99, 659.25, 523.25], f = sc[k % sc.length];
+        var lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1800; lp.connect(out);
+        [[1, 0.032], [2, 0.006]].forEach(function (p) {
+          var o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.value = f * p[0];
+          g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(p[1], t + 0.07); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.5);
+          o.connect(g); g.connect(lp); o.start(t); o.stop(t + 1.6);
+        });
+        var a = noise(t, 0.7, 'bandpass', 900, 0.8, 0); a.linearRampToValueAtTime(0.014, t + 0.14); a.exponentialRampToValueAtTime(0.0001, t + 0.7);
+      },
       /* gentle click for tags, projects and stories */
       click: function () {
         if (!ready()) return; var t = ctx.currentTime;
@@ -389,6 +402,7 @@
       var q = SEQ[i];
       if (count) count.textContent = q.type === 'word' ? pad(q.k + 1) + ' / ' + pad(n) : (q.type === 'title' ? '00 / ' + pad(n) : '— / ' + pad(n));
       if (!vis) return;
+      if (q.type === 'word') SFX.soft(q.k);
     }
     /* the photos lean a little towards the pointer */
     var tx = 0, ty = 0, rx = 0, ry = 0;
