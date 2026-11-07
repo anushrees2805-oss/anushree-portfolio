@@ -1860,6 +1860,7 @@
      ====================================================================== */
   (function () {
     var TRACKS = [
+      { src: 'assets/audio/ambience2.mp3', loop: 48.0, vol: 0.24, el: $('#vibe'), top: 0.55, bottom: 0.45 },
       { src: 'assets/audio/cinema.mp3', loop: 48.0, vol: 0.16, el: $('#filmsZone'), top: 0.75, bottom: 0.25 },
       { src: 'assets/audio/contact-soft.mp3', loop: 41.7391, vol: 0.2, el: $('#contact'), el2: $('#outro'), top: 0.65, bottom: 0.2 }
     ].filter(function (t) { return t.el; });
