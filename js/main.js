@@ -347,7 +347,7 @@
     var TW = [0, 650, 1300, 1950];          /* ANUSHREE … BEYOND … DESIGNING … IS */
     function plain(line) { return '<span>' + esc(line) + '</span>'; }
     /* the running order: opening card → the eight words → a stack of every photo → loop */
-    var SEQ = [{ type: 'title', dur: 3200 }].concat(VIBE.map(function (v, k) { return { type: 'word', v: v, k: k, dur: 2000 }; }), [{ type: 'stack', dur: 3700 }]);
+    var SEQ = [{ type: 'title', dur: 5000 }].concat(VIBE.map(function (v, k) { return { type: 'word', v: v, k: k, dur: 5000 }; }), [{ type: 'stack', dur: 5000 }]);
     if (REDUCED) SEQ.forEach(function (q) { q.dur *= 2; });
     host.innerHTML = SEQ.map(function (q, i) {
       if (q.type === 'title') {
@@ -416,13 +416,13 @@
       raf = 0; if (!vis) return;
       var q = SEQ[cur], t = (now - t0) / q.dur;
       if (t >= 1) { t0 = now; t = 0; rushed = false; show((cur + 1) % SEQ.length); q = SEQ[cur]; }
-      var stack = q.type === 'stack', RUSH = 0.72;
+      var stack = q.type === 'stack', RUSH = 1 - 520 / q.dur, IN = 140 / q.dur;
       
       var s, p = 1, P = parts[cur];
       if (REDUCED) s = 1;
       else if (stack) s = 0.97 + 0.05 * easeOut(t);
-      else if (t < 0.14) { s = 0.9 + 0.1 * easeOut(t / 0.14); p = 1.14 - 0.08 * easeOut(t / 0.14); }
-      else if (t < RUSH) { s = 1 + 0.05 * ((t - 0.14) / (RUSH - 0.14)); p = 1.06 - 0.06 * ((t - 0.14) / (RUSH - 0.14)); }
+      else if (t < IN) { s = 0.9 + 0.1 * easeOut(t / IN); p = 1.14 - 0.08 * easeOut(t / IN); }
+      else if (t < RUSH) { s = 1 + 0.06 * ((t - IN) / (RUSH - IN)); p = 1.06 - 0.06 * ((t - IN) / (RUSH - IN)); }
       else {
         /* rush: the word flies at you and the photo shows through the letters as you pass through them */
         var u = (t - RUSH) / (1 - RUSH); s = 1.05 + 3.4 * easeIn(u);
