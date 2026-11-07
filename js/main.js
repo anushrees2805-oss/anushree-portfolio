@@ -344,10 +344,10 @@
     function word(wd, d0) {
       return Array.prototype.map.call(wd, function (c, i) { return '<span class="vch" style="--i:' + i + ';--d:' + d0 + 'ms">' + esc(c) + '</span>'; }).join('');
     }
-    var TW = [0, 650, 1300, 1950];          /* ANUSHREE … BEYOND … DESIGNING … IS */
+    var TW = [0, 480, 960, 1440];          /* ANUSHREE … BEYOND … DESIGNING … IS */
     function plain(line) { return '<span>' + esc(line) + '</span>'; }
     /* the running order: opening card → the eight words → a stack of every photo → loop */
-    var SEQ = [{ type: 'title', dur: 3600 }].concat(VIBE.map(function (v, k) { return { type: 'word', v: v, k: k, dur: 3000 }; }), [{ type: 'stack', dur: 3000 }]);
+    var SEQ = [{ type: 'title', dur: 2900 }].concat(VIBE.map(function (v, k) { return { type: 'word', v: v, k: k, dur: 2300 }; }), [{ type: 'stack', dur: 2500 }]);
     if (REDUCED) SEQ.forEach(function (q) { q.dur *= 2; });
     host.innerHTML = SEQ.map(function (q, i) {
       if (q.type === 'title') {
@@ -416,7 +416,7 @@
       raf = 0; if (!vis) return;
       var q = SEQ[cur], t = (now - t0) / q.dur;
       if (t >= 1) { t0 = now; t = 0; rushed = false; show((cur + 1) % SEQ.length); q = SEQ[cur]; }
-      var stack = q.type === 'stack', RUSH = 1 - 520 / q.dur, IN = 140 / q.dur;
+      var stack = q.type === 'stack', RUSH = 1 - 460 / q.dur, IN = 140 / q.dur;
       
       var s, p = 1, P = parts[cur];
       if (REDUCED) s = 1;
