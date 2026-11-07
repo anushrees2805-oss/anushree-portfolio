@@ -344,10 +344,10 @@
     function word(wd, d0) {
       return Array.prototype.map.call(wd, function (c, i) { return '<span class="vch" style="--i:' + i + ';--d:' + d0 + 'ms">' + esc(c) + '</span>'; }).join('');
     }
-    var TW = [0, 480, 960, 1440];          /* ANUSHREE … BEYOND … DESIGNING … IS */
+    var TW = [0, 340, 680, 1020];          /* ANUSHREE … BEYOND … DESIGNING … IS */
     function plain(line) { return '<span>' + esc(line) + '</span>'; }
     /* the running order: opening card → the eight words → a stack of every photo → loop */
-    var SEQ = [{ type: 'title', dur: 2900 }].concat(VIBE.map(function (v, k) { return { type: 'word', v: v, k: k, dur: 2300 }; }), [{ type: 'stack', dur: 2500 }]);
+    var SEQ = [{ type: 'title', dur: 2100 }].concat(VIBE.map(function (v, k) { return { type: 'word', v: v, k: k, dur: 1500 }; }), [{ type: 'stack', dur: 1900 }]);
     if (REDUCED) SEQ.forEach(function (q) { q.dur *= 2; });
     host.innerHTML = SEQ.map(function (q, i) {
       if (q.type === 'title') {
@@ -416,7 +416,7 @@
       raf = 0; if (!vis) return;
       var q = SEQ[cur], t = (now - t0) / q.dur;
       if (t >= 1) { t0 = now; t = 0; rushed = false; show((cur + 1) % SEQ.length); q = SEQ[cur]; }
-      var stack = q.type === 'stack', RUSH = 1 - 460 / q.dur, IN = 140 / q.dur;
+      var stack = q.type === 'stack', RUSH = 1 - 380 / q.dur, IN = 120 / q.dur;
       
       var s, p = 1, P = parts[cur];
       if (REDUCED) s = 1;
@@ -1097,11 +1097,13 @@
         var C = CHARMS[i], rest = C.rest + Math.sin(time * 1.3 + i * 2.1) * 2.2 - phi * 0.9;
         c.w += (-(c.th - rest) * 34 - c.w * 3.2) * dt; c.th = clamp(c.th + c.w * dt, -75, 75);
         charmEls[i].setAttribute('transform', 'translate(' + C.anchor[0] + ' ' + C.anchor[1] + ') rotate(' + c.th.toFixed(2) + ')');
-        if (Math.abs(c.w) > 70 && Math.abs(c.w - (c.pw || 0)) > 30) SFX.jingle(Math.abs(c.w) / 260, 0.35); c.pw = c.w;
+        if (Math.abs(c.w) > 70 && Math.abs(c.w - (c.pw || 0)) > 30 && keysCentered()) SFX.jingle(Math.abs(c.w) / 260, 0.35); c.pw = c.w;
       });
       if (visible) requestAnimationFrame(render); else running = false;
     }
     function start() { if (!running && !REDUCED) { running = true; render.prev = null; requestAnimationFrame(render); } }
+    /* the charms only jingle when the keychain itself is mid-screen — never under the reel above it */
+    function keysCentered() { var k = $('#keychain'); if (!k) return true; var r = k.getBoundingClientRect(); return r.top < innerHeight * 0.45 && r.bottom > innerHeight * 0.55; }
 
     if (REDUCED) { /* static */
       tags.forEach(function (el) { var i = +el.getAttribute('data-i'), a = KC[i].anchor; el.firstChild.setAttribute('transform', 'rotate(' + KC[i].rest + ' ' + a[0] + ' ' + a[1] + ')'); });
@@ -1996,7 +1998,6 @@
         var r = sec.getBoundingClientRect(); if (r.bottom < innerHeight * 0.5 || r.top > innerHeight * 0.5) return;
         var y0 = scrollY, y1 = v.getBoundingClientRect().top + scrollY; gliding = true;
         tween(1200, function (e) { scrollTo({ top: y0 + (y1 - y0) * e, behavior: 'instant' }); if (e >= 1) gliding = false; }, ease.inOutCubic);
-        SFX.rush(0.5);
       }, 20000);
     }
     addEventListener('scroll', function () { if (played && !gliding && Math.abs(scrollY - lastY) > 4) userMoved = true; lastY = scrollY; }, { passive: true });
