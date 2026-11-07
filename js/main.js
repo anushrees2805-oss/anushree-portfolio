@@ -389,8 +389,6 @@
       var q = SEQ[i];
       if (count) count.textContent = q.type === 'word' ? pad(q.k + 1) + ' / ' + pad(n) : (q.type === 'title' ? '00 / ' + pad(n) : '— / ' + pad(n));
       if (!vis) return;
-      if (q.type === 'title') TW.forEach(function (d, j) { setTimeout(function () { if (vis && cur === i) SFX.hit(j === 3); }, d); });
-      else SFX.hit(q.type !== 'word');
     }
     /* the photos lean a little towards the pointer */
     var tx = 0, ty = 0, rx = 0, ry = 0;
@@ -1862,7 +1860,6 @@
      ====================================================================== */
   (function () {
     var TRACKS = [
-      { src: 'assets/audio/ambience.mp3', loop: 32.0, vol: 0.34, el: $('#vibe'), top: 0.55, bottom: 0.45 },
       { src: 'assets/audio/cinema.mp3', loop: 48.0, vol: 0.16, el: $('#filmsZone'), top: 0.75, bottom: 0.25 },
       { src: 'assets/audio/contact-soft.mp3', loop: 41.7391, vol: 0.2, el: $('#contact'), el2: $('#outro'), top: 0.65, bottom: 0.2 }
     ].filter(function (t) { return t.el; });
