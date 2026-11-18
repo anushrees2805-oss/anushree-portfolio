@@ -187,8 +187,8 @@ window.SITE = {
       kind: "Places through my lens · Kumbharvada", cover: 4, camera: "Sony Alpha 6700",
       /* one continuous story, similar frames side by side: blue doors → stacks of diyas → clay & hands
          → the makers → the forms → diyas laid out → resting in the dark. The cover (4, and its untitled twin 17) is not repeated. */
-      rows: [[15, 16], [1, 12], [6, 9, 8], [10, 11], [2, 3], [14, 13], [7, 5]],
-      order: [15, 16, 1, 12, 6, 9, 8, 10, 11, 2, 3, 14, 13, 7, 5],
+      rows: [[15, 1, 16], [10, 14, 11], [6, 9, 8], [2, 13, 3], [7, 12, 5]], /* three per row, each wide frame framed by two tall ones */
+      order: [15, 1, 16, 10, 14, 11, 6, 9, 8, 2, 13, 3, 7, 12, 5],
       intro: "आकार (aakaar) means shape. A walk through the potters' colony of Kumbharvada — clay, hands, rows of diyas and blue doors in low light."
     }
   ]
