@@ -1303,19 +1303,16 @@
       '<div class="case__intro"><p>' + esc(s.intro) + '</p></div></header>';
     h += '<figure class="case__hero" style="background:#111">' + imgTag(hero, { eager: true, alt: s.title + ' — cover', sizes: '100vw' }).replace('<img ', '<img style="max-height:92vh;width:auto;margin:0 auto" ') + '</figure>';
     h += '<div class="case__sec"><h3>The full story</h3><span class="mono">' + total + ' frames · in sequence</span></div>';
-    if (s.chapters) {
-      /* a story told in chapters: a number, a title and one line, then its own rhythm of frames */
+    if (s.rows) {
+      /* one continuous story: similar frames paired side by side, row by row, no sub-headings */
       var k = 0;
-      s.chapters.forEach(function (c, ci) {
-        h += '<section class="chap reveal"><div class="chap__head"><span class="chap__no mono">' + pad(ci + 1) + '</span><h4 class="chap__t">' + esc(c.t) + '</h4><p class="chap__s">' + esc(c.s) + '</p></div>';
-        h += '<div class="jrows" data-justify="1" data-rows="1">';
-        c.rows.forEach(function (row) {
-          h += '<div class="jrow jrow--set">';
-          row.forEach(function (n) { var o = img(s.folder, n); o.n = ++k; h += plateHTML(o, total, 'jitem', s.title); });
-          h += '</div>';
-        });
-        h += '</div></section>';
+      h += '<div class="jrows" data-justify="1" data-rows="1">';
+      s.rows.forEach(function (row) {
+        h += '<div class="jrow jrow--set">';
+        row.forEach(function (n) { var o = img(s.folder, n); o.n = ++k; h += plateHTML(o, total, 'jitem', s.title); });
+        h += '</div>';
       });
+      h += '</div>';
     } else {
       h += '<div class="jrows" data-justify="1" data-per="3">';
       frames.forEach(function (n, k) { var o = img(s.folder, n); o.n = k + 1; h += plateHTML(o, total, 'jitem', s.title); });

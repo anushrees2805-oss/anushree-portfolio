@@ -155,7 +155,8 @@ window.SITE = {
   films: [
     { slug: "kaun", title: "Kaun", kind: "Short film", dur: "3:18", file: "kaun" },
     { slug: "havaijahaaz", title: "Havaijahaaz", kind: "Short film", dur: "1:58", file: "havaijahaaz" },
-    { slug: "naadan", title: "Naadan", kind: "Film edit", dur: "0:19", file: "naadan" }
+    { slug: "naadan", title: "Naadan", kind: "Film edit", dur: "0:19", file: "naadan" },
+    { slug: "open-home", title: "Open Home", kind: "Coca-Cola ad film · shot & edited by me", dur: "0:49", file: "open-home" }
   ],
 
   stories: [
@@ -184,16 +185,10 @@ window.SITE = {
     {
       slug: "aakaar", title: "आकार — Kumbharvada", folder: "kumbharvada",
       kind: "Places through my lens · Kumbharvada", cover: 4, camera: "Sony Alpha 6700",
-      /* arriving at the colony → the clay → the hands → the makers → the forms → rows drying in the dark */
-      order: [1, 15, 16, 6, 9, 8, 10, 11, 14, 2, 3, 7, 13, 12, 5],
-      /* told in chapters, each with its own rhythm of frames: a wide opener, then pairs and threes */
-      chapters: [
-        { t: 'The colony', s: 'Lanes stacked with diyas, and the blue doors of the workshops.', rows: [[1], [15, 16]] },
-        { t: 'The clay', s: 'Raw earth, sieved, soaked and pressed by hand.', rows: [[6, 9, 8]] },
-        { t: 'The makers', s: 'At the wheel and between the shelves — the people who give the clay its shape.', rows: [[10, 14, 11]] },
-        { t: 'The forms', s: 'Bowls, pots and lamps, waiting their turn.', rows: [[2, 7, 3]] },
-        { t: 'Drying in the dark', s: 'Row after row, resting before the fire.', rows: [[13, 12], [5]] }
-      ],
+      /* one continuous story, similar frames side by side: blue doors → stacks of diyas → clay & hands
+         → the makers → the forms → diyas laid out → resting in the dark. The cover (4, and its untitled twin 17) is not repeated. */
+      rows: [[15, 16], [1, 12], [6, 9, 8], [10, 11], [2, 3], [14, 13], [7, 5]],
+      order: [15, 16, 1, 12, 6, 9, 8, 10, 11, 2, 3, 14, 13, 7, 5],
       intro: "आकार (aakaar) means shape. A walk through the potters' colony of Kumbharvada — clay, hands, rows of diyas and blue doors in low light."
     }
   ]
