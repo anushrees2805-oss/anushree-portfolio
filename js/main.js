@@ -321,7 +321,6 @@
   var VIBE = [
     { w: 'Creative', img: 'creative', pos: '62% 40%' },
     { w: 'Fearless', img: 'fearless', pos: '50% 30%' },
-    { w: 'Playful', img: 'playful', pos: '50% 35%' },
     { w: 'Curious', img: 'curious', pos: '45% 45%' },
     { w: 'Free-|spirited', img: 'free-spirited', pos: '60% 40%' },
     { w: 'Explorer', img: 'dreamy', pos: '50% 50%' },
