@@ -161,19 +161,13 @@ window.SITE = {
 
   stories: [
     {
-      slug: "unlearning-pretty", title: "Unlearning Pretty", folder: "outdoor",
-      kind: "Outdoor fashion shoot", cover: 9, camera: "Sony Alpha 6700",
-      skip: [12, 14, 17, 23], /* near-duplicate frames */
-      /* the full look → on the rock → close portraits → details → walking through the grass → last light */
-      order: [1, 2, 3, 4, 5, 21, 6, 7, 19, 8, 20, 22, 10, 11, 13, 15, 16, 18, 24, 25], /* the title-poster frame (9) stays as the cover only */
-      intro: "An outdoor fashion story shot on location in dry grass, rock and late light — white layers, a heavy belt, boots, and a face that doesn't need to try. Shot on a Sony Alpha 6700."
-    },
-    {
-      slug: "styling-and-shoot", title: "Styling & Shoot", folder: "styling",
-      kind: "Styling + street shoot", cover: 10, camera: "Sony Alpha 6700",
-      /* the look on the street → portraits & details → the sneakers → inside the steel lift */
-      order: [1, 5, 4, 3, 7, 2, 6, 9, 8, 10],
-      intro: "A look I styled around my own signature style — where preppy meets streetwear. Gingham checks, washed denim, a crisp white tank, layered silver and red sneakers, shot on location across the city: between parked cars, under the trees and inside a steel lift. Shot on a Sony Alpha 6700."
+      slug: "aakaar", title: "आकार — Kumbharvada", folder: "kumbharvada",
+      kind: "Places through my lens · Kumbharvada", cover: 4, camera: "Sony Alpha 6700",
+      /* one continuous story, similar frames side by side: blue doors → stacks of diyas → clay & hands
+         → the makers → the forms → diyas laid out → resting in the dark. The cover (4, and its untitled twin 17) is not repeated. */
+      rows: [[15, 1, 16], [10, 14, 11], [6, 9, 8], [2, 13, 3], [7, 12, 5]], /* three per row, each wide frame framed by two tall ones */
+      order: [15, 1, 16, 10, 14, 11, 6, 9, 8, 2, 13, 3, 7, 12, 5],
+      intro: "आकार (aakaar) means shape. A walk through the potters' colony of Kumbharvada — clay, hands, rows of diyas and blue doors in low light."
     },
     {
       slug: "gulls", title: "Gulls", folder: "gateway",
@@ -183,13 +177,19 @@ window.SITE = {
       intro: "The gulls at the Gateway — “the feathered tourists”. A series about wings, water, crowds and the city standing behind them."
     },
     {
-      slug: "aakaar", title: "आकार — Kumbharvada", folder: "kumbharvada",
-      kind: "Places through my lens · Kumbharvada", cover: 4, camera: "Sony Alpha 6700",
-      /* one continuous story, similar frames side by side: blue doors → stacks of diyas → clay & hands
-         → the makers → the forms → diyas laid out → resting in the dark. The cover (4, and its untitled twin 17) is not repeated. */
-      rows: [[15, 1, 16], [10, 14, 11], [6, 9, 8], [2, 13, 3], [7, 12, 5]], /* three per row, each wide frame framed by two tall ones */
-      order: [15, 1, 16, 10, 14, 11, 6, 9, 8, 2, 13, 3, 7, 12, 5],
-      intro: "आकार (aakaar) means shape. A walk through the potters' colony of Kumbharvada — clay, hands, rows of diyas and blue doors in low light."
+      slug: "styling-and-shoot", title: "Styling & Shoot", folder: "styling",
+      kind: "Styling + street shoot", cover: 10, camera: "Sony Alpha 6700",
+      /* the look on the street → portraits & details → the sneakers → inside the steel lift */
+      order: [1, 5, 4, 3, 7, 2, 6, 9, 8, 10],
+      intro: "A look I styled around my own signature style — where preppy meets streetwear. Gingham checks, washed denim, a crisp white tank, layered silver and red sneakers, shot on location across the city: between parked cars, under the trees and inside a steel lift. Shot on a Sony Alpha 6700."
+    },
+    {
+      slug: "unlearning-pretty", title: "Unlearning Pretty", folder: "outdoor",
+      kind: "Outdoor fashion shoot", cover: 9, camera: "Sony Alpha 6700",
+      skip: [12, 14, 17, 23], /* near-duplicate frames */
+      /* the full look → on the rock → close portraits → details → walking through the grass → last light */
+      order: [1, 2, 3, 4, 5, 21, 6, 7, 19, 8, 20, 22, 10, 11, 13, 15, 16, 18, 24, 25], /* the title-poster frame (9) stays as the cover only */
+      intro: "An outdoor fashion story shot on location in dry grass, rock and late light — white layers, a heavy belt, boots, and a face that doesn't need to try. Shot on a Sony Alpha 6700."
     }
   ]
 };
