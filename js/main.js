@@ -1985,9 +1985,10 @@
       w1.forEach(function (w, k) { setTimeout(function () { on(w); }, 800 + k * 32); });
       setTimeout(function () { sec.classList.add('a-hl'); }, 1650);
       w2.forEach(function (w, k) { setTimeout(function () { on(w); }, 1900 + k * 28); });
-      pills.forEach(function (p, k) { setTimeout(function () { on(p); SFX.tick(); }, 2550 + k * 120); });
-      setTimeout(function () { if (me) on(me); SFX.pop(); }, 3100);
-      setTimeout(function () { sec.classList.add('a-done'); }, 3600);
+      var tP = Math.max(2550, 1900 + w2.length * 28 + 150); /* pills arrive once the second line has finished */
+      pills.forEach(function (p, k) { setTimeout(function () { on(p); SFX.tick(); }, tP + k * 120); });
+      setTimeout(function () { if (me) on(me); SFX.pop(); }, tP + 550);
+      setTimeout(function () { sec.classList.add('a-done'); }, tP + 1050);
       /* then on to the reel — unless the visitor has started scrolling themselves */
       setTimeout(function () {
         var v = $('#vibe'); if (!v || userMoved) return;
